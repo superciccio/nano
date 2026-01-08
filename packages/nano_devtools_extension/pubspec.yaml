@@ -1,0 +1,23 @@
+name: nano_devtools_extension
+description: A DevTools extension for the nano package.
+version: 0.0.1
+publish_to: none
+
+environment:
+  sdk: ^3.11.0-276.0.dev
+
+dependencies:
+  flutter:
+    sdk: flutter
+  devtools_extensions: ^0.1.0
+  devtools_app_shared: ^0.1.0
+  nano:
+    path: ../../
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
