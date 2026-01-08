@@ -88,7 +88,7 @@ class NanoView<T extends NanoLogic<P>, P> extends StatefulWidget {
   final Widget Function(BuildContext context, T logic) builder;
 
   /// Parameters to pass to logic.onInit
-  final P params;
+  final P? params;
 
   /// Optional builder for loading state
   final Widget Function(BuildContext context)? loading;
@@ -103,7 +103,7 @@ class NanoView<T extends NanoLogic<P>, P> extends StatefulWidget {
     super.key,
     required this.create,
     required this.builder,
-    required this.params,
+    this.params,
     this.loading,
     this.error,
     this.empty,
@@ -138,7 +138,10 @@ class _NanoViewState<T extends NanoLogic<P>, P> extends State<NanoView<T, P>> {
     try {
       final registry = Scope.of(context);
       _logic = widget.create(registry);
-      _logic!.onInit(widget.params);
+      // We force cast params to P because if P is non-nullable,
+      // the user MUST have provided params (checked statically or runtime failure).
+      // But if P is dynamic/void/nullable, null is fine.
+      _logic!.onInit(widget.params as P);
     } catch (e, s) {
       Nano.observer.onError('NanoViewInit<${T.toString()}>', e, s);
       rethrow;
