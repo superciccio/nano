@@ -48,7 +48,6 @@ class CounterPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return NanoView<CounterLogic, dynamic>(
       create: (r) => CounterLogic(),
-      params: null,
       builder: (context, logic) {
         return Scaffold(
           appBar: AppBar(title: const Text('Sugar Counter')),

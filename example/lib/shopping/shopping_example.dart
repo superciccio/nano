@@ -100,7 +100,6 @@ class ShoppingPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return NanoView<ShoppingLogic, dynamic>(
       create: (r) => ShoppingLogic(),
-      params: null,
       builder: (context, logic) {
         return Scaffold(
           appBar: AppBar(
