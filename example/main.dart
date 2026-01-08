@@ -34,6 +34,7 @@ class WeatherLogic extends NanoLogic<String> {
       // Error
       error('Failed to fetch weather for $city');
       status(NanoStatus.error);
+      Nano.observer.onError('WeatherLogic', error.value!, StackTrace.current);
     }
   }
 }
