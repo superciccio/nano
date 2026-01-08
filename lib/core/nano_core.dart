@@ -73,10 +73,15 @@ class Atom<T> extends ValueNotifier<T> with Diagnosticable {
   /// final count = 0.toAtom();
   /// print(count()); // Same as count.value
   /// count(10); // Same as count.set(10)
+  /// count((c) => c + 1); // Same as count.update((c) => c + 1)
   /// ```
   T call([dynamic newValue = _sentinel]) {
     if (!identical(newValue, _sentinel)) {
-      set(newValue as T);
+      if (newValue is T Function(T)) {
+        update(newValue);
+      } else {
+        set(newValue as T);
+      }
     }
     return value;
   }
