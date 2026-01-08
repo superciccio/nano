@@ -73,7 +73,6 @@ class Scope extends InheritedWidget {
 ///
 /// Example:
 /// ```dart
-/// ```dart
 /// NanoView<CounterLogic, void>(
 ///   create: (reg) => CounterLogic(),
 ///   builder: (context, logic) {

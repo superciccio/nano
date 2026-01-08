@@ -96,7 +96,7 @@ class WeatherPage extends StatelessWidget {
                   return Text(cond, style: Theme.of(context).textTheme.headlineMedium);
                 }),
                 Watch(logic.temperature, builder: (context, temp) {
-                  return Text('${temp}°C', style: Theme.of(context).textTheme.displayLarge);
+                  return Text('$temp°C', style: Theme.of(context).textTheme.displayLarge);
                 }),
                 const SizedBox(height: 32),
                 ElevatedButton(

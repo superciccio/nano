@@ -27,6 +27,16 @@ jobs:
           cd example
           flutter pub get
 
+      - name: Pub Get (Packages)
+        run: |
+          for d in packages/*/; do
+            if [ -f "$d/pubspec.yaml" ]; then
+              cd $d
+              flutter pub get
+              cd ../..
+            fi
+          done
+
       - name: Analyze
         run: flutter analyze
 

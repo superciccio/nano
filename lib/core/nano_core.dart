@@ -80,7 +80,7 @@ class Atom<T> extends ValueNotifier<T> with Diagnosticable {
       if (newValue is T Function(T)) {
         update(newValue as T Function(T));
       } else {
-        set(newValue as T);
+        set(newValue);
       }
     }
     return value;
