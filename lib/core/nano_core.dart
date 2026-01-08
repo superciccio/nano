@@ -64,6 +64,15 @@ class Atom<T> extends ValueNotifier<T> with Diagnosticable {
     set(fn(value));
   }
 
+  /// Ergonomic shortcut to get the value.
+  ///
+  /// Example:
+  /// ```dart
+  /// final count = 0.toAtom();
+  /// print(count()); // Same as count.value
+  /// ```
+  T call() => value;
+
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
@@ -250,4 +259,15 @@ extension AtomIntExtension on Atom<int> {
 extension AtomBoolExtension on Atom<bool> {
   /// Toggles the boolean value.
   void toggle() => value = !value;
+}
+
+/// Ergonomic extensions for any object to create an Atom.
+extension NanoObjectExtension<T> on T {
+  /// Creates an [Atom] from this value.
+  ///
+  /// Example:
+  /// ```dart
+  /// final count = 0.toAtom('count');
+  /// ```
+  Atom<T> toAtom([String? label]) => Atom<T>(this, label: label);
 }
