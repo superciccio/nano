@@ -23,7 +23,7 @@ class SearchService {
 }
 
 // Logic
-class SearchLogic extends NanoLogic<void> {
+class SearchLogic extends NanoLogic<dynamic> {
   final SearchService _service;
   SearchLogic(this._service);
 
@@ -35,7 +35,7 @@ class SearchLogic extends NanoLogic<void> {
   Timer? _debounce;
 
   @override
-  void onInit(void params) {
+  void onInit(dynamic params) {
     // Listen to query changes to trigger search
     query.addListener(() {
       _onQueryChanged(query.value);
@@ -77,8 +77,9 @@ class SearchPage extends StatelessWidget {
         // Register logic, injecting service
         NanoFactory((r) => SearchLogic(r.get())),
       ],
-      child: NanoView<SearchLogic, void>(
+      child: NanoView<SearchLogic, dynamic>(
         create: (r) => r.get(),
+        params: null,
         builder: (context, logic) {
           return Scaffold(
             appBar: AppBar(title: const Text('Async Search')),

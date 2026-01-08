@@ -20,7 +20,7 @@ class CartItem {
 }
 
 // Logic
-class ShoppingLogic extends NanoLogic<void> {
+class ShoppingLogic extends NanoLogic<dynamic> {
   // Available products (static for simplicity)
   final products = const [
     Product(1, 'Laptop', 999.0),
@@ -98,8 +98,9 @@ class ShoppingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return NanoView<ShoppingLogic, void>(
+    return NanoView<ShoppingLogic, dynamic>(
       create: (r) => ShoppingLogic(),
+      params: null,
       builder: (context, logic) {
         return Scaffold(
           appBar: AppBar(

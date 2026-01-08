@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:nano/nano.dart';
 
 // Logic
-class CounterLogic extends NanoLogic<void> {
+class CounterLogic extends NanoLogic<dynamic> {
   // Use .toAtom() extension sugar
   final count = 0.toAtom('count');
   final history = Atom<List<int>>([], label: 'history');
@@ -46,8 +46,9 @@ class CounterPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return NanoView<CounterLogic, void>(
+    return NanoView<CounterLogic, dynamic>(
       create: (r) => CounterLogic(),
+      params: null,
       builder: (context, logic) {
         return Scaffold(
           appBar: AppBar(title: const Text('Sugar Counter')),
