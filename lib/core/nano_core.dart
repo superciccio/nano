@@ -78,7 +78,7 @@ class Atom<T> extends ValueNotifier<T> with Diagnosticable {
   T call([dynamic newValue = _sentinel]) {
     if (!identical(newValue, _sentinel)) {
       if (newValue is T Function(T)) {
-        update(newValue as T Function(T));
+        update(newValue);
       } else {
         set(newValue);
       }
