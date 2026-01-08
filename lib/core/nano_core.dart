@@ -50,6 +50,8 @@ class _DefaultObserver implements NanoObserver {
 /// count.update((v) => v + 1);
 /// ```
 class Atom<T> extends ValueNotifier<T> with Diagnosticable {
+  static const _sentinel = Object();
+
   final String? label;
   Atom(super.value, {this.label}) {
     NanoDebugService.registerAtom(this);
@@ -72,9 +74,9 @@ class Atom<T> extends ValueNotifier<T> with Diagnosticable {
   /// print(count()); // Same as count.value
   /// count(10); // Same as count.set(10)
   /// ```
-  T call([T? newValue]) {
-    if (newValue != null) {
-      set(newValue);
+  T call([dynamic newValue = _sentinel]) {
+    if (!identical(newValue, _sentinel)) {
+      set(newValue as T);
     }
     return value;
   }

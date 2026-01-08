@@ -43,7 +43,7 @@ void main() {
       await tester.pumpWidget(
         Scope(
           modules: [],
-          child: NanoView<_MockLogic, void>(
+          child: NanoView<_MockLogic, dynamic>(
             create: (reg) => logic,
             params: null,
             builder: (context, logic) => Text(
@@ -65,7 +65,7 @@ void main() {
       await tester.pumpWidget(
         Scope(
           modules: [],
-          child: NanoView<_MockLogic, void>(
+          child: NanoView<_MockLogic, dynamic>(
             create: (reg) => logic,
             params: null,
             builder: (context, logic) =>
@@ -139,12 +139,12 @@ class _ScopeChecker extends StatelessWidget {
   }
 }
 
-class _MockLogic extends NanoLogic<void> {
+class _MockLogic extends NanoLogic<dynamic> {
   bool onInitCalled = false;
   int count = 0;
 
   @override
-  void onInit(void params) {
+  void onInit(dynamic params) {
     onInitCalled = true;
   }
 

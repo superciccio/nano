@@ -50,10 +50,10 @@ void main() {
   });
 }
 
-class _MockLogic extends NanoLogic<void> {
+class _MockLogic extends NanoLogic<dynamic> {
   bool onInitCalled = false;
   @override
-  void onInit(void params) {
+  void onInit(dynamic params) {
     onInitCalled = true;
   }
 }

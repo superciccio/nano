@@ -8,7 +8,7 @@ Nano is designed to be invisible, lightweight, and extremely easy to test. It co
 
 ```dart
 // 1. Define your Logic
-class CounterLogic extends NanoLogic<void> {
+class CounterLogic extends NanoLogic<dynamic> {
   final count = Atom(0, label: 'counter');
   void increment() => count((c) => c + 1); // Use call magic!
 }
@@ -20,7 +20,7 @@ Scope(
 )
 
 // 3. Use it in a NanoView
-NanoView<CounterLogic, void>(
+NanoView<CounterLogic, dynamic>(
   create: (reg) => reg.get<CounterLogic>(),
   params: null,
   builder: (context, logic) => Text('${logic.count()}'), // Use call magic!
