@@ -1,66 +1,103 @@
 # Nano 🪐
 
-A minimalist, atomic state management and dependency injection library for Flutter.
+**The invisible state management library for Flutter.**
 
-Nano is designed to be invisible, lightweight, and extremely easy to test. It combines the predictable power of `ValueNotifier` with a clean DI container and surgical rebuilds.
-
-## Quick Start
-
-```dart
-// 1. Define your Logic
-class CounterLogic extends NanoLogic<dynamic> {
-  final count = Atom(0, label: 'counter');
-  void increment() => count((c) => c + 1); // Use call magic!
-}
-
-// 2. Provide it
-Scope(
-  modules: [CounterLogic()],
-  child: MyApp(),
-)
-
-// 3. Use it in a NanoView
-NanoView<CounterLogic, dynamic>(
-  create: (reg) => reg.get<CounterLogic>(),
-  params: null,
-  builder: (context, logic) => Text('${logic.count()}'), // Use call magic!
-)
-```
-
-## Core Concepts
-
-### Atoms ⚛️
-The basic unit of state. It wraps a value and notifies listeners (and the `NanoObserver`) when it changes.
-- `Atom<T>`: Simple state.
-- `ComputedAtom<T>`: Derived state that depends on other atoms.
-- `AsyncAtom<T>`: Managed state for asynchronous operations (Loading, Data, Error).
-
-### NanoLogic 🧠
-The base class for your "ViewModels" or "Controllers". It manages stream subscriptions and provides a lifecycle hook (`onInit`).
-Now supports **State Hydration** via `status` and `error` Atoms.
-- `status`: `Atom<NanoStatus>` (loading, success, error, empty).
-- `error`: `Atom<Object?>`.
-- `onInit(P params)`: Receives parameters from the View.
-
-### Scope & Registry 📦
-A simple, hierarchy-aware dependency injection system using `InheritedWidget`.
-- `Scope(modules: [Service()])`: Standard eager registration.
-- `Scope(modules: [NanoLazy((r) => Service())])`: Lazy singleton (created on first read).
-- `Scope(modules: [NanoFactory((r) => Logic())])`: Factory (fresh instance every time).
-
-### NanoView & Watch 📺
-- `NanoView<T, P>`: A widget that creates a `NanoLogic`, passes `params`, and handles state switching automatically.
-  - Optional builders: `loading`, `error`, `empty`.
-- `Watch<T>`: A "surgical" rebuild widget that only listens to a specific `Atom`.
-- `atom.select((state) => state.prop)`: Optimize performance by listening only to derived changes.
+Nano is designed to be **minimalist**, **atomic**, and **testable**. It combines the simplicity of `ValueNotifier` with a clean Dependency Injection system and surgical rebuilds.
 
 ---
 
-## LLM-Friendly Reference
-If you are an AI assistant using this library:
-- **Rule 1**: Favor `Atoms` over `notifyListeners()` for fine-grained updates.
-- **Rule 2**: Use `View` for high-level page components and `Watch` for individual UI elements.
-- **Rule 3**: Always provide a `label` to `Atom` for better debugging in logs.
-- **Rule 4**: Use `bindStream` in `NanoLogic` to automatically sync streams to state.
+## ✨ Why Nano?
 
-See [NANO_GUIDE.md](file:///c:/Users/Andrea/flutter_projects/nano/NANO_GUIDE.md) for a comprehensive technical reference.
+- **Atomic**: State is broken down into small, independent `Atom`s.
+- **Surgical**: `Watch` only rebuilds what changed.
+- **Smart**: `NanoView` handles Loading/Error/Empty states automatically.
+- **Clean**: Dependency Injection via `Scope` and `Registry` is built-in.
+- **Magic**: Syntactic sugar makes code concise (`count()`, `count(5)`, `count.increment()`).
+
+## 🚀 Quick Start
+
+### 1. The Logic (`NanoLogic`)
+Create your business logic. Use `Atom` for state.
+
+```dart
+class CounterLogic extends NanoLogic<void> {
+  // Sugar: .toAtom() creates an Atom<int>
+  final count = 0.toAtom('count');
+
+  // Magic: .increment() is an extension on Atom<int>
+  void increment() => count.increment();
+}
+```
+
+### 2. The Injection (`Scope`)
+Wrap your app (or feature) in a `Scope`.
+
+```dart
+void main() {
+  runApp(
+    Scope(
+      modules: [
+        // Factory: New instance every time
+        NanoFactory((r) => CounterLogic()),
+      ],
+      child: MyApp(),
+    ),
+  );
+}
+```
+
+### 3. The View (`NanoView`)
+Bind logic to UI. `NanoView` handles creation and disposal.
+
+```dart
+class CounterPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return NanoView<CounterLogic, void>(
+      create: (reg) => reg.get<CounterLogic>(), // Inject!
+      builder: (context, logic) {
+        return Scaffold(
+          // Surgical: Only this Text rebuilds!
+          body: Watch(logic.count, builder: (context, value) {
+            return Text('Count: $value');
+          }),
+          floatingActionButton: FloatingActionButton(
+            onPressed: logic.increment, // Call logic
+            child: Icon(Icons.add),
+          ),
+        );
+      },
+    );
+  }
+}
+```
+
+## 🍬 Syntactic Sugar
+
+Nano loves clean code.
+
+| Operation | Standard | Nano Sugar |
+| :--- | :--- | :--- |
+| **Create** | `Atom<int>(0)` | `0.toAtom()` |
+| **Get** | `atom.value` | `atom()` |
+| **Set** | `atom.set(5)` | `atom(5)` |
+| **Update** | `atom.update((x) => x + 1)` | `atom((x) => x + 1)` |
+| **Math** | `atom.value++` | `atom.increment()` |
+| **Bool** | `atom.value = !atom.value` | `atom.toggle()` |
+
+## 🤖 AI / LLM Usage
+
+Are you an AI? **Read `NANO_GUIDE.md`**.
+It contains the full technical specification, API signatures, and architectural rules designed specifically for code generation and analysis.
+
+## 📦 Installation
+
+```yaml
+dependencies:
+  nano:
+    path: ./ # Or git url
+```
+
+## 📄 License
+
+MIT
