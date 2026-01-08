@@ -3,7 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:nano/core/nano_core.dart';
 import 'package:nano/core/nano_di.dart'
     show Registry, NanoException, NanoFactory, NanoLazy;
-import 'package:nano/core/nano_logic.dart' show NanoLogic;
+import 'package:nano/core/nano_logic.dart' show NanoLogic, NanoStatus;
 
 /// The Dependency Injection Container.
 ///
@@ -73,30 +73,47 @@ class Scope extends InheritedWidget {
 ///
 /// Example:
 /// ```dart
-/// ```dart
-/// NanoView<CounterLogic>(
+/// NanoView<CounterLogic, void>(
 ///   create: (reg) => CounterLogic(),
 ///   builder: (context, logic) {
 ///     return Text('${logic.counter.value}');
 ///   },
 /// )
 /// ```
-class NanoView<T extends NanoLogic> extends StatefulWidget {
+class NanoView<T extends NanoLogic<P>, P> extends StatefulWidget {
   /// Factory to create the [NanoLogic]. Injects the [Registry] for DI.
   final T Function(Registry reg) create;
 
   /// The UI Builder.
   final Widget Function(BuildContext context, T logic) builder;
 
-  /// If provided, the Logic will be destroyed and recreated whenever
-  /// any value in this list changes (e.g., `[userId, currency]`).
-  const NanoView({super.key, required this.create, required this.builder});
+  /// Parameters to pass to logic.onInit
+  final P params;
+
+  /// Optional builder for loading state
+  final Widget Function(BuildContext context)? loading;
+
+  /// Optional builder for error state
+  final Widget Function(BuildContext context, Object? error)? error;
+
+  /// Optional builder for empty state
+  final Widget Function(BuildContext context)? empty;
+
+  const NanoView({
+    super.key,
+    required this.create,
+    required this.builder,
+    required this.params,
+    this.loading,
+    this.error,
+    this.empty,
+  });
 
   @override
-  State<NanoView<T>> createState() => _NanoViewState<T>();
+  State<NanoView<T, P>> createState() => _NanoViewState<T, P>();
 }
 
-class _NanoViewState<T extends NanoLogic> extends State<NanoView<T>> {
+class _NanoViewState<T extends NanoLogic<P>, P> extends State<NanoView<T, P>> {
   T? _logic;
 
   @override
@@ -121,7 +138,7 @@ class _NanoViewState<T extends NanoLogic> extends State<NanoView<T>> {
     try {
       final registry = Scope.of(context);
       _logic = widget.create(registry);
-      _logic!.onInit();
+      _logic!.onInit(widget.params);
     } catch (e, s) {
       Nano.observer.onError('NanoViewInit<${T.toString()}>', e, s);
       rethrow;
@@ -146,7 +163,25 @@ class _NanoViewState<T extends NanoLogic> extends State<NanoView<T>> {
     // Default: Listens to the whole Logic for coarse updates (notifyListeners)
     return ListenableBuilder(
       listenable: _logic!,
-      builder: (context, _) => widget.builder(context, _logic!),
+      builder: (context, _) {
+        // Watch the status and switch surgically
+        return Watch<NanoStatus>(
+          _logic!.status,
+          builder: (context, status) {
+            return switch (status) {
+              NanoStatus.loading =>
+                widget.loading?.call(context) ??
+                    widget.builder(context, _logic!),
+              NanoStatus.success => widget.builder(context, _logic!),
+              NanoStatus.error =>
+                widget.error?.call(context, _logic!.error.value) ??
+                    const SizedBox.shrink(),
+              NanoStatus.empty =>
+                widget.empty?.call(context) ?? const SizedBox.shrink(),
+            };
+          },
+        );
+      },
     );
   }
 }

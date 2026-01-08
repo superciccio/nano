@@ -7,7 +7,7 @@ void main() {
     test('onInit is called', () {
       final logic = _MockLogic();
       expect(logic.onInitCalled, false);
-      logic.onInit();
+      logic.onInit(null);
       expect(logic.onInitCalled, true);
     });
 
@@ -50,10 +50,10 @@ void main() {
   });
 }
 
-class _MockLogic extends NanoLogic {
+class _MockLogic extends NanoLogic<dynamic> {
   bool onInitCalled = false;
   @override
-  void onInit() {
+  void onInit(dynamic params) {
     onInitCalled = true;
   }
 }
