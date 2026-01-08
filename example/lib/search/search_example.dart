@@ -79,7 +79,6 @@ class SearchPage extends StatelessWidget {
       ],
       child: NanoView<SearchLogic, dynamic>(
         create: (r) => r.get(),
-        params: null,
         builder: (context, logic) {
           return Scaffold(
             appBar: AppBar(title: const Text('Async Search')),
