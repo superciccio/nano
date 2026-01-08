@@ -88,7 +88,7 @@ class ShoppingLogic extends NanoLogic<dynamic> {
   }
 
   void clearCart() {
-    _cart({});
+    _cart(<int, int>{});
   }
 }
 
