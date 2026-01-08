@@ -3,6 +3,9 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:nano/core/nano_core.dart' show Nano, Atom;
 
+/// Possible states for a [NanoLogic].
+enum NanoStatus { loading, success, error, empty }
+
 /// Base class for your Business Logic (ViewModel).
 ///
 /// Extends [ChangeNotifier] so you can use `notifyListeners()` if you prefer
@@ -10,18 +13,24 @@ import 'package:nano/core/nano_core.dart' show Nano, Atom;
 ///
 /// Example:
 /// ```dart
-/// class CounterLogic extends NanoLogic {
+/// class CounterLogic extends NanoLogic<void> {
 ///   final counter = Atom(0);
 ///
 ///   void increment() => counter.update((v) => v + 1);
 /// }
 /// ```
-abstract class NanoLogic extends ChangeNotifier with DiagnosticableTreeMixin {
+abstract class NanoLogic<P> extends ChangeNotifier with DiagnosticableTreeMixin {
   final List<StreamSubscription> _subscriptions = [];
+
+  /// The current status of the logic (loading, success, error, empty).
+  final status = Atom<NanoStatus>(NanoStatus.loading);
+
+  /// Holds the error object if status is [NanoStatus.error].
+  final error = Atom<Object?>(null);
 
   /// Called immediately after the Logic is created.
   /// Use this for async initialization (fetching data, etc).
-  void onInit() {}
+  void onInit(P params) {}
 
   /// Helper to bind a [Stream] (e.g., from Drift or Firebase) to an [Atom].
   ///

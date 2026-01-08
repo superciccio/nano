@@ -1,0 +1,44 @@
+name: Verify
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'master'
+          cache: true
+
+      - name: Pub Get (Root)
+        run: flutter pub get
+
+      - name: Pub Get (Example)
+        run: |
+          cd example
+          flutter pub get
+
+      - name: Pub Get (Packages)
+        run: |
+          for d in packages/*/; do
+            if [ -f "$d/pubspec.yaml" ]; then
+              cd $d
+              flutter pub get
+              cd ../..
+            fi
+          done
+
+      - name: Analyze
+        run: flutter analyze
+
+      - name: Run Tests
+        run: flutter test

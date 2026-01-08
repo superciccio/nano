@@ -43,8 +43,9 @@ void main() {
       await tester.pumpWidget(
         Scope(
           modules: [],
-          child: NanoView<_MockLogic>(
+          child: NanoView<_MockLogic, dynamic>(
             create: (reg) => logic,
+            params: null,
             builder: (context, logic) => Text(
               logic.onInitCalled ? 'inited' : 'nope',
               textDirection: TextDirection.ltr,
@@ -58,11 +59,15 @@ void main() {
 
     testWidgets('rebuilds when logic notifies listeners', (tester) async {
       final logic = _MockLogic();
+      // Logic status is loading by default, set to success for this test
+      logic.status.set(NanoStatus.success);
+
       await tester.pumpWidget(
         Scope(
           modules: [],
-          child: NanoView<_MockLogic>(
+          child: NanoView<_MockLogic, dynamic>(
             create: (reg) => logic,
+            params: null,
             builder: (context, logic) =>
                 Text('count: ${logic.count}', textDirection: TextDirection.ltr),
           ),
@@ -134,12 +139,12 @@ class _ScopeChecker extends StatelessWidget {
   }
 }
 
-class _MockLogic extends NanoLogic {
+class _MockLogic extends NanoLogic<dynamic> {
   bool onInitCalled = false;
   int count = 0;
 
   @override
-  void onInit() {
+  void onInit(dynamic params) {
     onInitCalled = true;
   }
 
