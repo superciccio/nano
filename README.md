@@ -8,9 +8,9 @@ Nano is designed to be invisible, lightweight, and extremely easy to test. It co
 
 ```dart
 // 1. Define your Logic
-class CounterLogic extends NanoLogic {
+class CounterLogic extends NanoLogic<void> {
   final count = Atom(0, label: 'counter');
-  void increment() => count.update((c) => c + 1);
+  void increment() => count((c) => c + 1); // Use call magic!
 }
 
 // 2. Provide it
@@ -19,10 +19,11 @@ Scope(
   child: MyApp(),
 )
 
-// 3. Use it in a View
-View<CounterLogic>(
+// 3. Use it in a NanoView
+NanoView<CounterLogic, void>(
   create: (reg) => reg.get<CounterLogic>(),
-  builder: (context, logic) => Text('${logic.count.value}'),
+  params: null,
+  builder: (context, logic) => Text('${logic.count()}'), // Use call magic!
 )
 ```
 
@@ -36,6 +37,10 @@ The basic unit of state. It wraps a value and notifies listeners (and the `NanoO
 
 ### NanoLogic 🧠
 The base class for your "ViewModels" or "Controllers". It manages stream subscriptions and provides a lifecycle hook (`onInit`).
+Now supports **State Hydration** via `status` and `error` Atoms.
+- `status`: `Atom<NanoStatus>` (loading, success, error, empty).
+- `error`: `Atom<Object?>`.
+- `onInit(P params)`: Receives parameters from the View.
 
 ### Scope & Registry 📦
 A simple, hierarchy-aware dependency injection system using `InheritedWidget`.
@@ -43,8 +48,9 @@ A simple, hierarchy-aware dependency injection system using `InheritedWidget`.
 - `Scope(modules: [NanoLazy((r) => Service())])`: Lazy singleton (created on first read).
 - `Scope(modules: [NanoFactory((r) => Logic())])`: Factory (fresh instance every time).
 
-### View & Watch 📺
-- `View<T>`: A widget that creates a `NanoLogic` and rebuilds when `notifyListeners()` is called.
+### NanoView & Watch 📺
+- `NanoView<T, P>`: A widget that creates a `NanoLogic`, passes `params`, and handles state switching automatically.
+  - Optional builders: `loading`, `error`, `empty`.
 - `Watch<T>`: A "surgical" rebuild widget that only listens to a specific `Atom`.
 - `atom.select((state) => state.prop)`: Optimize performance by listening only to derived changes.
 

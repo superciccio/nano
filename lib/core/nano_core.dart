@@ -64,14 +64,20 @@ class Atom<T> extends ValueNotifier<T> with Diagnosticable {
     set(fn(value));
   }
 
-  /// Ergonomic shortcut to get the value.
+  /// Ergonomic shortcut to get/set the value.
   ///
   /// Example:
   /// ```dart
   /// final count = 0.toAtom();
   /// print(count()); // Same as count.value
+  /// count(10); // Same as count.set(10)
   /// ```
-  T call() => value;
+  T call([T? newValue]) {
+    if (newValue != null) {
+      set(newValue);
+    }
+    return value;
+  }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
