@@ -51,6 +51,15 @@ abstract class NanoLogic<P> extends ChangeNotifier with DiagnosticableTreeMixin 
   /// Use this for async initialization (fetching data, etc).
   void onInit(P params) {}
 
+  bool _initialized = false;
+
+  /// Internal method to ensure onInit is called only once.
+  void initialize(P params) {
+    if (_initialized) return;
+    _initialized = true;
+    onInit(params);
+  }
+
   /// Called when an [NanoAction] is dispatched from the UI.
   void onAction(NanoAction action) {}
 

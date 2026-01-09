@@ -178,9 +178,11 @@ sealed class AsyncState<T> with Diagnosticable {
     required R Function(T data) data,
     required R Function() loading,
     required R Function(Object error) error,
+    required R Function() idle,
   }) {
     if (this is AsyncData<T>) return data((this as AsyncData<T>).data);
     if (this is AsyncError<T>) return error((this as AsyncError<T>).error);
+    if (this is AsyncIdle<T>) return idle();
     return loading();
   }
 
@@ -396,4 +398,32 @@ extension NanoObjectExtension<T> on T {
   /// final count = 0.toAtom('count');
   /// ```
   Atom<T> toAtom([String? label]) => Atom<T>(this, label: label);
+}
+
+/// Extension to convert a [ValueListenable] into a [Stream].
+extension ValueListenableStreamExtension<T> on ValueListenable<T> {
+  /// Returns a [Stream] that emits the current value and subsequent updates.
+  Stream<T> get stream {
+    late StreamController<T> controller;
+    VoidCallback? listener;
+
+    void onData() {
+      controller.add(value);
+    }
+
+    controller = StreamController<T>.broadcast(
+      onListen: () {
+        controller.add(value);
+        listener = onData;
+        addListener(listener!);
+      },
+      onCancel: () {
+        if (listener != null) {
+          removeListener(listener!);
+          listener = null;
+        }
+      },
+    );
+    return controller.stream;
+  }
 }
