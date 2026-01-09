@@ -93,6 +93,7 @@ Nano loves clean code.
 | **Set** | `atom.set(5)` | `atom(5)` |
 | **Update** | `atom.update((x) => x + 1)` | `atom((x) => x + 1)` |
 | **Watch** | `Watch(atom, builder: ...)` | `atom.watch(...)` |
+| **Watch Many** | Nested `Watch` widgets | `(atom1, atom2).watch(...)` |
 | **Math** | `atom.value++` | `atom.increment()` |
 | **Bool** | `atom.value = !atom.value` | `atom.toggle()` |
 
