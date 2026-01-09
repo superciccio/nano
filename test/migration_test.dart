@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 class MyProviderWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final myValue = Provider.of<String>(context);
+    final _myValue = Provider.of<String>(context);
     
     return Consumer<String>(
       builder: (context, value, child) {
-        return Text(value);
+        return Text('$value ${_myValue.hashCode}');
       },
     );
   }
@@ -16,8 +16,9 @@ class MyProviderWidget extends StatelessWidget {
 
 // This is a fake signals usage
 void testSignals() {
-  final mySignal = signal(0);
-  final myComputed = computed(() => mySignal.value * 2);
+  final _mySignal = signal(0);
+  final _myComputed = computed(() => _mySignal.value * 2);
+  print('${_mySignal.hashCode} ${_myComputed.hashCode}');
 }
 
 // Mocking some names so the file is syntactically valid enough for the analyzer

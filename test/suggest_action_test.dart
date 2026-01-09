@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:nano/nano.dart';
 
 void testSuggestAction() {
@@ -7,14 +6,14 @@ void testSuggestAction() {
   final atom3 = 0.toAtom();
 
   // Simple usage: OK
-  final okParams = () {
+  final _okParams = () {
     atom1.set(1);
     atom2.set(2);
   };
 
   // Complex usage: Should lint
   // expect_lint: suggest_nano_action
-  final complexParams = () {
+  final _complexParams = () {
     atom1.set(1);
     atom2.set(2);
     atom3.set(3);
@@ -22,9 +21,14 @@ void testSuggestAction() {
 
   // Complex usage with update and assignment
   // expect_lint: suggest_nano_action
-  final complexMixed = () {
+  final _complexMixed = () {
     atom1.update((v) => v + 1);
     atom2.value = 5;
     atom3.increment();
   };
+  
+  // Use the variables to avoid warnings
+  _okParams();
+  _complexParams();
+  _complexMixed();
 }

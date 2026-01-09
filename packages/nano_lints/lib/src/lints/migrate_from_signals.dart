@@ -1,5 +1,3 @@
-import 'package:analyzer/dart/ast/ast.dart';
-import 'package:analyzer/error/error.dart' as analyzer;
 import 'package:analyzer/diagnostic/diagnostic.dart' as analyzer;
 import 'package:analyzer/error/listener.dart';
 import 'package:custom_lint_builder/custom_lint_builder.dart';
@@ -75,18 +73,6 @@ class _MigrateFromSignalsFix extends DartFix {
         changeBuilder.addDartFileEdit((builder) {
           final arg = node.argumentList.arguments.first.toSource();
           builder.addSimpleReplacement(node.sourceRange, '$arg.toAtom()');
-        });
-      }
-
-      if (node.methodName.name == 'computed') {
-        final changeBuilder = reporter.createChangeBuilder(
-          message: 'Migrate computed to ComputedAtom',
-          priority: 1,
-        );
-
-        changeBuilder.addDartFileEdit((builder) {
-          final arg = node.argumentList.arguments.first.toSource();
-          builder.addSimpleReplacement(node.sourceRange, 'ComputedAtom([], $arg)');
         });
       }
     });
