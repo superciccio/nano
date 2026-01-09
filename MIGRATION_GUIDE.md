@@ -30,7 +30,11 @@ analyzer:
 | :--- | :--- | :--- |
 | `refactor_to_nano` | `StatefulWidget` with `setState` | Refactors to `NanoLogic` + `NanoView`. |
 | `migrate_from_provider` | `Provider`, `Consumer`, `context.read<T>()` | Refactors to `context.read<T>()` (Nano version) or `Registry`. |
-| `migrate_from_signals` | `signal(val)`, `signal.value` | Refactors to `val.toAtom()`. |
+| `migrate_from_signals` | `signal(val)`, `computed(...)` | Refactors to `val.toAtom()` or `ComputedAtom`. |
+| `avoid_nested_watch` | Nested `Watch` widgets | Suggests using tuple syntax `(a, b).watch(...)`. |
+| `suggest_nano_action` | Complex logic in UI callbacks | Suggests creating a `NanoAction` and dispatching it. |
+| `avoid_atom_outside_logic` | `Atom` created outside `NanoLogic`/`Service` | Enforces proper state encapsulation. |
+| `logic_naming_convention` | `NanoLogic` classes not ending in "Logic" | Enforces naming convention. |
 
 ### 3. Running a Dry-Run
 To see what would be changed without applying the changes permanently, use the provided dry-run script:
@@ -51,7 +55,10 @@ dart run custom_lint --fix
 
 - **Atomic State**: Break down large state objects into individual `Atom`s in your `NanoLogic`.
 - **Surgical Rebuilds**: Use `atom.watch((context, value) => ...)` instead of rebuilding the whole widget tree.
+- **Tuple Watch**: For multiple atoms, use `(atom1, atom2).watch((context, v1, v2) => ...)` to avoid nesting.
 - **Dependency Injection**: Register services in the `Scope` modules and access them via `context.read<T>()` or `registry.get<T>()`.
+- **Actions**: For complex UI callbacks (>2 state updates), create a `NanoAction` and dispatch it to keep logic in `NanoLogic`.
+
 
 ## 🤖 Structural Linting
 The migration tool uses **Structural Linting**, which means it detects patterns based on code structure rather than strict typing. This allows it to work without requiring `provider` or `signals` as dependencies in your project.
