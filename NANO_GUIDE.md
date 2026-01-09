@@ -34,6 +34,7 @@ class Atom<T> extends ValueNotifier<T> {
 - `.decrement([amount])`: For `Atom<int>`.
 - `.toggle()`: For `Atom<bool>`.
 - `.select<R>(selector)`: Creates a `SelectorAtom` derived from the parent.
+- `.stream`: Converts the Atom (or any `ValueListenable`) into a `Stream<T>` that emits current value and subsequent updates.
 
 ## 1.1 Creating Custom Atoms
 

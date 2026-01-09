@@ -399,3 +399,31 @@ extension NanoObjectExtension<T> on T {
   /// ```
   Atom<T> toAtom([String? label]) => Atom<T>(this, label: label);
 }
+
+/// Extension to convert a [ValueListenable] into a [Stream].
+extension ValueListenableStreamExtension<T> on ValueListenable<T> {
+  /// Returns a [Stream] that emits the current value and subsequent updates.
+  Stream<T> get stream {
+    late StreamController<T> controller;
+    VoidCallback? listener;
+
+    void onData() {
+      controller.add(value);
+    }
+
+    controller = StreamController<T>.broadcast(
+      onListen: () {
+        controller.add(value);
+        listener = onData;
+        addListener(listener!);
+      },
+      onCancel: () {
+        if (listener != null) {
+          removeListener(listener!);
+          listener = null;
+        }
+      },
+    );
+    return controller.stream;
+  }
+}
