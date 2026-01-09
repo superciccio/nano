@@ -4,11 +4,17 @@ import 'package:nano/nano.dart';
 
 void main() {
   group('NanoLogic', () {
-    test('onInit is called', () {
+    test('initialize calls onInit once', () {
       final logic = _MockLogic();
       expect(logic.onInitCalled, false);
-      logic.onInit(null);
+
+      logic.initialize(null);
       expect(logic.onInitCalled, true);
+      expect(logic.onInitCallCount, 1);
+
+      // Call again should not trigger onInit
+      logic.initialize(null);
+      expect(logic.onInitCallCount, 1);
     });
 
     test('bindStream updates atom and handles lifecycle', () async {
@@ -52,9 +58,12 @@ void main() {
 
 class _MockLogic extends NanoLogic<dynamic> {
   bool onInitCalled = false;
+  int onInitCallCount = 0;
+
   @override
   void onInit(dynamic params) {
     onInitCalled = true;
+    onInitCallCount++;
   }
 }
 

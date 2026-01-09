@@ -57,6 +57,44 @@ void main() {
       expect(find.text('inited'), findsOneWidget);
     });
 
+    testWidgets('NanoView disposes logic by default', (tester) async {
+      final logic = _MockLogic();
+      await tester.pumpWidget(
+        Scope(
+          modules: [],
+          child: NanoView<_MockLogic, dynamic>(
+            create: (reg) => logic,
+            builder: (context, logic) => const SizedBox(),
+          ),
+        ),
+      );
+
+      // Trigger disposal by pumping a different widget
+      await tester.pumpWidget(const SizedBox());
+
+      expect(logic.isDisposed, true);
+    });
+
+    testWidgets('NanoView does NOT dispose logic if autoDispose: false',
+        (tester) async {
+      final logic = _MockLogic();
+      await tester.pumpWidget(
+        Scope(
+          modules: [],
+          child: NanoView<_MockLogic, dynamic>(
+            create: (reg) => logic,
+            autoDispose: false,
+            builder: (context, logic) => const SizedBox(),
+          ),
+        ),
+      );
+
+      // Trigger disposal by pumping a different widget
+      await tester.pumpWidget(const SizedBox());
+
+      expect(logic.isDisposed, false);
+    });
+
     testWidgets('rebuilds when logic notifies listeners', (tester) async {
       final logic = _MockLogic();
       // Logic status is loading by default, set to success for this test
@@ -143,6 +181,64 @@ void main() {
     });
   });
 
+  group('AsyncAtomWidgetExtension', () {
+    testWidgets('.when() handles states correctly', (tester) async {
+      final asyncAtom = AsyncAtom<String>();
+
+      Widget buildTestWidget() {
+        return Directionality(
+          textDirection: TextDirection.ltr,
+          child: asyncAtom.when(
+            idle: (context) => const Text('idle'),
+            loading: (context) => const Text('loading'),
+            data: (context, data) => Text('data: $data'),
+            error: (context, error) => Text('error: $error'),
+          ),
+        );
+      }
+
+      // Initial state is Idle
+      await tester.pumpWidget(buildTestWidget());
+      expect(find.text('idle'), findsOneWidget);
+
+      // Loading
+      asyncAtom.set(const AsyncLoading());
+      await tester.pump();
+      expect(find.text('loading'), findsOneWidget);
+
+      // Data
+      asyncAtom.set(const AsyncData('test'));
+      await tester.pump();
+      expect(find.text('data: test'), findsOneWidget);
+
+      // Error
+      asyncAtom.set(AsyncError('fail', StackTrace.empty));
+      await tester.pump();
+      expect(find.text('error: fail'), findsOneWidget);
+    });
+
+    testWidgets('.when() uses loading for idle if idle not provided',
+        (tester) async {
+      final asyncAtom = AsyncAtom<String>();
+
+      Widget buildTestWidget() {
+        return Directionality(
+          textDirection: TextDirection.ltr,
+          child: asyncAtom.when(
+            // No idle builder provided
+            loading: (context) => const Text('loading'),
+            data: (context, data) => Text('data: $data'),
+            error: (context, error) => Text('error: $error'),
+          ),
+        );
+      }
+
+      // Initial state is Idle, should fall back to loading
+      await tester.pumpWidget(buildTestWidget());
+      expect(find.text('loading'), findsOneWidget);
+    });
+  });
+
   testWidgets('context.read<T>() works', (tester) async {
     final logic = _MockLogic();
     await tester.pumpWidget(
@@ -178,6 +274,7 @@ class _ScopeChecker extends StatelessWidget {
 class _MockLogic extends NanoLogic<dynamic> {
   bool onInitCalled = false;
   int count = 0;
+  bool isDisposed = false;
 
   @override
   void onInit(dynamic params) {
@@ -187,5 +284,11 @@ class _MockLogic extends NanoLogic<dynamic> {
   void increment() {
     count++;
     notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    isDisposed = true;
+    super.dispose();
   }
 }
