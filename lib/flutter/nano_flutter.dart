@@ -99,6 +99,10 @@ class NanoView<T extends NanoLogic<P>, P> extends StatefulWidget {
   /// Optional builder for empty state
   final Widget Function(BuildContext context)? empty;
 
+  /// Whether to automatically dispose the logic when the view is disposed.
+  /// Defaults to true.
+  final bool autoDispose;
+
   const NanoView({
     super.key,
     required this.create,
@@ -107,6 +111,7 @@ class NanoView<T extends NanoLogic<P>, P> extends StatefulWidget {
     this.loading,
     this.error,
     this.empty,
+    this.autoDispose = true,
   });
 
   @override
@@ -141,7 +146,7 @@ class _NanoViewState<T extends NanoLogic<P>, P> extends State<NanoView<T, P>> {
       // We force cast params to P because if P is non-nullable,
       // the user MUST have provided params (checked statically or runtime failure).
       // But if P is dynamic/void/nullable, null is fine.
-      _logic!.onInit(widget.params as P);
+      _logic!.initialize(widget.params as P);
     } catch (e, s) {
       Nano.observer.onError('NanoViewInit<${T.toString()}>', e, s);
       rethrow;
@@ -149,7 +154,9 @@ class _NanoViewState<T extends NanoLogic<P>, P> extends State<NanoView<T, P>> {
   }
 
   void _disposeLogic() {
-    _logic?.dispose();
+    if (widget.autoDispose) {
+      _logic?.dispose();
+    }
     _logic = null;
   }
 
@@ -290,5 +297,25 @@ extension NanoTuple3Extension<T1, T2, T3> on (
       builder: (context) =>
           builder(context, this.$1.value, this.$2.value, this.$3.value),
     );
+  }
+}
+
+/// Ergonomic extensions for [ValueListenable] of [AsyncState].
+extension AsyncAtomWidgetExtension<T> on ValueListenable<AsyncState<T>> {
+  /// Watches the [AsyncState] and builds widgets based on the state.
+  Widget when({
+    required Widget Function(BuildContext context, T data) data,
+    required Widget Function(BuildContext context, Object error) error,
+    required Widget Function(BuildContext context) loading,
+    Widget Function(BuildContext context)? idle,
+  }) {
+    return watch((context, state) {
+      return state.map(
+        data: (d) => data(context, d),
+        error: (e) => error(context, e),
+        loading: () => loading(context),
+        idle: () => idle?.call(context) ?? loading(context),
+      );
+    });
   }
 }

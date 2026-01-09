@@ -1,5 +1,7 @@
 # Nano 🪐
 
+![Coverage](https://img.shields.io/badge/coverage-90%25-brightgreen)
+
 **The invisible state management library for Flutter.**
 
 Nano is designed to be **minimalist**, **atomic**, and **testable**. It combines the simplicity of `ValueNotifier` with a clean Dependency Injection system and surgical rebuilds.
