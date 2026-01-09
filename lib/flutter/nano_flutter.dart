@@ -217,11 +217,30 @@ class Watch<T> extends StatelessWidget {
   }
 }
 
+/// Batched rebuilds for multiple atoms.
+class WatchMany extends StatelessWidget {
+  /// The list of [ValueListenable] (atoms) to watch.
+  final List<ValueListenable> atoms;
+
+  /// The UI Builder.
+  final Widget Function(BuildContext context) builder;
+
+  const WatchMany(this.atoms, {super.key, required this.builder});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListenableBuilder(
+      listenable: Listenable.merge(atoms),
+      builder: (context, _) => builder(context),
+    );
+  }
+}
+
 /// Ergonomic extensions for [BuildContext].
 extension NanoContextExtension on BuildContext {
   /// Reads a dependency of type [T] from the nearest [Scope].
   ///
-  /// Short for `Scope.of(context).get<T>()`.
+  /// Short for `Scope.of(this).get<T>()`.
   T read<T>() => Scope.of(this).get<T>();
 }
 
