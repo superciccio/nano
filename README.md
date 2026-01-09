@@ -9,23 +9,33 @@ Nano is designed to be **minimalist**, **atomic**, and **testable**. It combines
 ## ✨ Why Nano?
 
 - **Atomic**: State is broken down into small, independent `Atom`s.
-- **Surgical**: `Watch` only rebuilds what changed.
+- **Surgical**: `.watch()` extension rebuilds only what changed.
 - **Smart**: `NanoView` handles Loading/Error/Empty states automatically.
 - **Clean**: Dependency Injection via `Scope` and `Registry` is built-in.
+- **Action-Based**: Optional `Action`s provide a structured way to manage state changes.
+- **Time-Travel Debugging**: The DevTools extension allows you to inspect and revert state changes.
 - **Magic**: Syntactic sugar makes code concise (`count()`, `count(5)`, `count.increment()`).
 
 ## 🚀 Quick Start
 
 ### 1. The Logic (`NanoLogic`)
-Create your business logic. Use `Atom` for state.
+Create your business logic. Use `Atom` for state and `Action`s for events.
 
 ```dart
+// 1. Define your actions
+class Increment extends NanoAction {}
+
+// 2. Create your logic
 class CounterLogic extends NanoLogic<void> {
   // Sugar: .toAtom() creates an Atom<int>
   final count = 0.toAtom('count');
 
-  // Magic: .increment() is an extension on Atom<int>
-  void increment() => count.increment();
+  @override
+  void onAction(NanoAction action) {
+    if (action is Increment) {
+      count.increment();
+    }
+  }
 }
 ```
 
@@ -58,11 +68,11 @@ class CounterPage extends StatelessWidget {
       builder: (context, logic) {
         return Scaffold(
           // Surgical: Only this Text rebuilds!
-          body: Watch(logic.count, builder: (context, value) {
+          body: logic.count.watch((context, value) {
             return Text('Count: $value');
           }),
           floatingActionButton: FloatingActionButton(
-            onPressed: logic.increment, // Call logic
+            onPressed: () => logic.dispatch(Increment()), // Dispatch an action
             child: Icon(Icons.add),
           ),
         );
@@ -82,8 +92,17 @@ Nano loves clean code.
 | **Get** | `atom.value` | `atom()` |
 | **Set** | `atom.set(5)` | `atom(5)` |
 | **Update** | `atom.update((x) => x + 1)` | `atom((x) => x + 1)` |
+| **Watch** | `Watch(atom, builder: ...)` | `atom.watch(...)` |
 | **Math** | `atom.value++` | `atom.increment()` |
 | **Bool** | `atom.value = !atom.value` | `atom.toggle()` |
+
+## 🛠️ DevTools Extension
+
+Nano comes with a powerful DevTools extension to make debugging a breeze.
+
+- **Atoms View**: Inspect the live state of all registered `Atom`s in your application.
+- **History View**: See a timeline of all state changes.
+- **Time-Travel**: Revert to any previous state by clicking the "Revert" button next to a state change in the history view.
 
 ## 🤖 AI / LLM Usage
 

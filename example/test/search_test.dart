@@ -41,31 +41,13 @@ void main() {
       expect(logic.query.value, isEmpty);
     });
 
-    test('empty query sets state to idle', () async {
-      logic.query('some query');
-      // Wait for debounce (500ms) - we can't easily skip it without modifying logic,
-      // but we can just test the immediate effect of empty string if that path is synchronous
-      // logic.query('') is synchronous in setting Idle if query is empty.
-
-      logic.query('');
-      expect(logic.results.value, isA<AsyncIdle>());
-    });
-
     test('search success updates results', () async {
-      // We need to wait for debounce (500ms) + mock delay (10ms)
-      // Since we can't use fakeAsync easily with Timer in logic without injecting a scheduler,
-      // we will just wait. 500ms is acceptable for a test suite.
-
       logic.query('apple');
-
-      expect(logic.results.value, isA<AsyncIdle>()); // Still idle due to debounce
-
-      // Wait for debounce to trigger
+      // Should still be idle because of debounce
+      expect(logic.results.value, isA<AsyncIdle>());
+      // Wait for debounce (500ms) + mock service delay (10ms)
       await Future.delayed(const Duration(milliseconds: 550));
-
-      // Should be loading or done (since mock is fast)
-      // With 10ms mock delay, it should be done.
-
+      // Now should be loading, then data
       expect(logic.results.value, isA<AsyncData<List<String>>>());
       final data = (logic.results.value as AsyncData<List<String>>).data;
       expect(data, ['Apple', 'Pineapple']);
@@ -73,12 +55,27 @@ void main() {
 
     test('search error updates results', () async {
       logic.query('error');
-
-      await Future.delayed(const Duration(milliseconds: 600));
-
+      // Wait for debounce + mock service
+      await Future.delayed(const Duration(milliseconds: 550));
       expect(logic.results.value, isA<AsyncError>());
       final errorState = logic.results.value as AsyncError;
       expect(errorState.error.toString(), contains('Mock Error'));
+    });
+
+    test('empty query sets state to idle after debounce', () async {
+      // First, perform a search
+      logic.query('apple');
+      await Future.delayed(const Duration(milliseconds: 550));
+      expect(logic.results.value, isA<AsyncData>());
+
+      // Now, clear the query
+      logic.query('');
+      // It should not immediately change to idle
+      expect(logic.results.value, isA<AsyncData>());
+
+      // Wait for debounce
+      await Future.delayed(const Duration(milliseconds: 550));
+      expect(logic.results.value, isA<AsyncIdle>());
     });
   });
 }

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:nano/core/debug_service.dart';
 
@@ -56,10 +58,16 @@ class Atom<T> extends ValueNotifier<T> with Diagnosticable {
   Atom(super.value, {this.label}) {
     NanoDebugService.registerAtom(this);
   }
+
+  @override
+  set value(T newValue) {
+    set(newValue);
+  }
+
   void set(T newValue) {
     if (value == newValue) return;
     Nano.observer.onChange(label ?? 'Atom<${T.toString()}>', value, newValue);
-    value = newValue;
+    super.value = newValue;
   }
 
   void update(T Function(T current) fn) {
@@ -100,6 +108,20 @@ class Atom<T> extends ValueNotifier<T> with Diagnosticable {
   }
 }
 
+/// A read-only [Atom] that computes its value from other [Atom]s.
+///
+/// The `ComputedAtom` automatically listens to its dependencies and updates
+/// its own value when any of them change.
+///
+/// Example:
+/// ```dart
+/// final count = Atom(10);
+/// final doubleCount = ComputedAtom([count], () => count.value * 2);
+///
+/// print(doubleCount.value); // 20
+/// count.set(20);
+/// print(doubleCount.value); // 40
+/// ```
 class ComputedAtom<T> extends ValueNotifier<T> with Diagnosticable {
   final String? label;
   final T Function() selector;
@@ -137,6 +159,7 @@ class ComputedAtom<T> extends ValueNotifier<T> with Diagnosticable {
   }
 }
 
+/// Represents the state of an asynchronous operation.
 sealed class AsyncState<T> with Diagnosticable {
   const AsyncState();
   bool get isLoading => this is AsyncLoading;
@@ -155,14 +178,17 @@ sealed class AsyncState<T> with Diagnosticable {
   }
 }
 
+/// The initial state before any operation has started.
 class AsyncIdle<T> extends AsyncState<T> {
   const AsyncIdle();
 }
 
+/// The state while the asynchronous operation is in progress.
 class AsyncLoading<T> extends AsyncState<T> {
   const AsyncLoading();
 }
 
+/// The state when the asynchronous operation has completed successfully.
 class AsyncData<T> extends AsyncState<T> {
   final T data;
   const AsyncData(this.data);
@@ -173,6 +199,7 @@ class AsyncData<T> extends AsyncState<T> {
   }
 }
 
+/// The state when the asynchronous operation has failed.
 class AsyncError<T> extends AsyncState<T> {
   final Object error;
   final StackTrace stackTrace;
@@ -184,11 +211,27 @@ class AsyncError<T> extends AsyncState<T> {
   }
 }
 
+/// An [Atom] that manages the state of an asynchronous operation.
+///
+/// It automatically handles loading, data, and error states.
+/// Use the `track` method to wrap a `Future`.
+///
+/// Example:
+/// ```dart
+/// final searchResults = AsyncAtom<List<String>>();
+///
+/// void search(String query) {
+///   searchResults.track(api.search(query));
+/// }
+///
+/// // In the UI, you can use a switch statement on `searchResults.value`
+/// // to display the appropriate widget for each state (loading, data, error).
+/// ```
 class AsyncAtom<T> extends Atom<AsyncState<T>> {
   int _session = 0;
 
   AsyncAtom({AsyncState<T> initial = const AsyncIdle(), String? label})
-    : super(initial, label: label);
+      : super(initial, label: label);
 
   Future<void> track(Future<T> future) async {
     final currentSession = ++_session;
@@ -209,6 +252,31 @@ class AsyncAtom<T> extends Atom<AsyncState<T>> {
   }
 }
 
+/// An [Atom] that automatically debounces its value.
+///
+/// When the value is set, it will wait for the specified [duration] before
+/// actually updating the value and notifying listeners. If the value is set
+/// again within the duration, the timer will be reset.
+class DebouncedAtom<T> extends Atom<T> {
+  final Duration duration;
+  Timer? _debounce;
+
+  DebouncedAtom(super.value, {required this.duration, super.label});
+
+  @override
+  void set(T newValue) {
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+    _debounce = Timer(duration, () {
+      super.set(newValue);
+    });
+  }
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    super.dispose();
+  }
+}
 /// A specialized Atom that selects a part of another Atom's state.
 ///
 /// It only notifies listeners when the selected value changes.
@@ -262,16 +330,16 @@ extension AtomSelectorExtension<T> on Atom<T> {
 /// Ergonomic extensions for [Atom] of type [int].
 extension AtomIntExtension on Atom<int> {
   /// Increments the value by [amount].
-  void increment([int amount = 1]) => value += amount;
+  void increment([int amount = 1]) => set(value + amount);
 
   /// Decrements the value by [amount].
-  void decrement([int amount = 1]) => value -= amount;
+  void decrement([int amount = 1]) => set(value - amount);
 }
 
 /// Ergonomic extensions for [Atom] of type [bool].
 extension AtomBoolExtension on Atom<bool> {
   /// Toggles the boolean value.
-  void toggle() => value = !value;
+  void toggle() => set(!value);
 }
 
 /// Ergonomic extensions for any object to create an Atom.

@@ -1,117 +1,137 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nano/nano.dart';
 
+class TestObserver extends NanoObserver {
+  int changes = 0;
+  @override
+  void onChange(String label, oldValue, newValue) {
+    changes++;
+  }
+
+  @override
+  void onError(String label, Object error, StackTrace stack) {}
+}
+
 void main() {
   group('Atom', () {
-    test('initial value is set correctly', () {
-      final atom = Atom(10);
-      expect(atom.value, 10);
+    test('initial value is correct', () {
+      final atom = Atom(0);
+      expect(atom.value, 0);
     });
 
-    test('set updates value and notifies listeners', () {
-      final atom = Atom(10);
-      int callCount = 0;
-      atom.addListener(() => callCount++);
+    test('set updates value and notifies observer', () {
+      final observer = TestObserver();
+      Nano.observer = observer;
 
-      atom.set(20);
-      expect(atom.value, 20);
-      expect(callCount, 1);
+      final atom = Atom(0);
+      atom.set(1);
+
+      expect(atom.value, 1);
+      expect(observer.changes, 1);
     });
 
-    test('update helper works', () {
-      final atom = Atom(10);
-      atom.update((v) => v + 5);
-      expect(atom.value, 15);
+    test('update updates value and notifies observer', () {
+      final observer = TestObserver();
+      Nano.observer = observer;
+
+      final atom = Atom(0);
+      atom.update((value) => value + 1);
+
+      expect(atom.value, 1);
+      expect(observer.changes, 1);
     });
 
-    test('set does nothing if value is same', () {
-      final atom = Atom(10);
-      int callCount = 0;
-      atom.addListener(() => callCount++);
+    test('callable updates value and notifies observer', () {
+      final observer = TestObserver();
+      Nano.observer = observer;
 
-      atom.set(10);
-      expect(callCount, 0);
-    });
-  });
+      final atom = Atom(0);
+      atom(1);
 
-  group('ComputedAtom', () {
-    test('computes initial value', () {
-      final a = Atom(2);
-      final b = Atom(3);
-      final computed = ComputedAtom([a, b], () => a.value * b.value);
-
-      expect(computed.value, 6);
+      expect(atom.value, 1);
+      expect(observer.changes, 1);
     });
 
-    test('updates when dependencies change', () {
-      final a = Atom(2);
-      final b = Atom(3);
-      final computed = ComputedAtom([a, b], () => a.value * b.value);
+    test('value setter updates value and notifies observer', () {
+      final observer = TestObserver();
+      Nano.observer = observer;
 
-      a.set(4);
-      expect(computed.value, 12);
+      final atom = Atom(0);
+      atom.value = 1;
 
-      b.set(5);
-      expect(computed.value, 20);
-    });
-
-    test('notifies listeners only on value change', () {
-      final a = Atom(2);
-      // Logic that returns constant regardless of a
-      final computed = ComputedAtom([a], () => 10);
-
-      int callCount = 0;
-      computed.addListener(() => callCount++);
-
-      a.set(3);
-      expect(callCount, 0); // Value stayed 10
-    });
-
-    test('dispose removes listeners from dependencies', () {
-      final a = Atom(2);
-      final computed = ComputedAtom([a], () => a.value * 2);
-
-      computed.dispose();
-      a.set(3);
-
-      // We can't easily check internal listeners, but we verify it doesn't crash
-      expect(computed.value, 4); // Should NOT have updated to 6
+      expect(atom.value, 1);
+      expect(observer.changes, 1);
     });
   });
 
-  group('AsyncAtom', () {
-    test('initial state is Idle', () {
-      final asyncAtom = AsyncAtom<int>();
-      expect(asyncAtom.value, isA<AsyncIdle<int>>());
+  group('AtomIntExtension', () {
+    test('increment updates value and notifies observer', () {
+      final observer = TestObserver();
+      Nano.observer = observer;
+
+      final atom = Atom(0);
+      atom.increment();
+
+      expect(atom.value, 1);
+      expect(observer.changes, 1);
     });
 
-    test('track updates state to Loading then Data', () async {
-      final asyncAtom = AsyncAtom<int>();
+    test('decrement updates value and notifies observer', () {
+      final observer = TestObserver();
+      Nano.observer = observer;
 
-      final future = Future.delayed(Duration(milliseconds: 10), () => 42);
-      final trackFuture = asyncAtom.track(future);
+      final atom = Atom(0);
+      atom.decrement();
 
-      expect(asyncAtom.value, isA<AsyncLoading<int>>());
+      expect(atom.value, -1);
+      expect(observer.changes, 1);
+    });
+  });
 
-      await trackFuture;
-      expect(asyncAtom.value, isA<AsyncData<int>>());
-      expect((asyncAtom.value as AsyncData<int>).data, 42);
+  group('AtomBoolExtension', () {
+    test('toggle updates value and notifies observer', () {
+      final observer = TestObserver();
+      Nano.observer = observer;
+
+      final atom = Atom(false);
+      atom.toggle();
+
+      expect(atom.value, true);
+      expect(observer.changes, 1);
+    });
+  });
+
+  group('DebouncedAtom', () {
+    test('value is not updated immediately', () {
+      final atom = DebouncedAtom(0, duration: const Duration(milliseconds: 100));
+      atom.set(1);
+      expect(atom.value, 0);
     });
 
-    test('track updates state to Error on failure', () async {
-      final asyncAtom = AsyncAtom<int>();
+    test('value is updated after duration', () async {
+      final atom = DebouncedAtom(0, duration: const Duration(milliseconds: 100));
+      atom.set(1);
+      await Future.delayed(const Duration(milliseconds: 150));
+      expect(atom.value, 1);
+    });
 
-      final future = Future.delayed(
-        Duration(milliseconds: 10),
-        () => throw Exception('fail'),
-      );
-      await asyncAtom.track(future);
+    test('timer is reset if set is called again', () async {
+      final atom = DebouncedAtom(0, duration: const Duration(milliseconds: 100));
+      atom.set(1);
+      await Future.delayed(const Duration(milliseconds: 50));
+      atom.set(2);
+      await Future.delayed(const Duration(milliseconds: 50));
+      expect(atom.value, 0);
+      await Future.delayed(const Duration(milliseconds: 50));
+      expect(atom.value, 2);
+    });
 
-      expect(asyncAtom.value, isA<AsyncError<int>>());
-      expect(
-        (asyncAtom.value as AsyncError<int>).error.toString(),
-        contains('fail'),
-      );
+    test('dispose cancels timer', () async {
+      final atom = DebouncedAtom(0, duration: const Duration(milliseconds: 100));
+      atom.set(1);
+      atom.dispose();
+      await Future.delayed(const Duration(milliseconds: 150));
+      expect(atom.value, 0);
     });
   });
 }

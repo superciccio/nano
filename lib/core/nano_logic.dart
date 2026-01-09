@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
+import 'package:nano/core/nano_action.dart';
 import 'package:nano/core/nano_core.dart' show Nano, Atom;
 
 /// Possible states for a [NanoLogic].
@@ -8,15 +9,33 @@ enum NanoStatus { loading, success, error, empty }
 
 /// Base class for your Business Logic (ViewModel).
 ///
-/// Extends [ChangeNotifier] so you can use `notifyListeners()` if you prefer
-/// coarse-grained updates over Atoms.
+/// It can be used in two ways:
+/// 1. With methods that can be called directly from the UI.
+/// 2. With Actions that can be dispatched from the UI.
 ///
-/// Example:
+/// Using Actions can help to create a more structured and testable codebase.
+///
+/// Example with methods:
 /// ```dart
 /// class CounterLogic extends NanoLogic<void> {
 ///   final counter = Atom(0);
-///
 ///   void increment() => counter.update((v) => v + 1);
+/// }
+/// ```
+///
+/// Example with Actions:
+/// ```dart
+/// class IncrementAction extends NanoAction {}
+///
+/// class CounterLogic extends NanoLogic<void> {
+///   final counter = Atom(0);
+///
+///   @override
+///   void onAction(NanoAction action) {
+///     if (action is IncrementAction) {
+///       counter.update((v) => v + 1);
+///     }
+///   }
 /// }
 /// ```
 abstract class NanoLogic<P> extends ChangeNotifier with DiagnosticableTreeMixin {
@@ -31,6 +50,14 @@ abstract class NanoLogic<P> extends ChangeNotifier with DiagnosticableTreeMixin 
   /// Called immediately after the Logic is created.
   /// Use this for async initialization (fetching data, etc).
   void onInit(P params) {}
+
+  /// Called when an [NanoAction] is dispatched from the UI.
+  void onAction(NanoAction action) {}
+
+  /// Dispatches an [NanoAction] to the logic.
+  void dispatch(NanoAction action) {
+    onAction(action);
+  }
 
   /// Helper to bind a [Stream] (e.g., from Drift or Firebase) to an [Atom].
   ///

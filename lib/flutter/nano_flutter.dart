@@ -66,7 +66,6 @@ class Scope extends InheritedWidget {
 ///
 /// 1. Creates your [NanoLogic] using the [Registry].
 /// 2. Manages Lifecycle (`onInit`, `dispose`).
-/// 3. Rebuilds automatically if [keys] change.
 ///
 /// By default, it listens to the entire [NanoLogic] (via `notifyListeners`).
 /// For surgical rebuilds, use [Watch].
@@ -90,7 +89,8 @@ class NanoView<T extends NanoLogic<P>, P> extends StatefulWidget {
   /// Parameters to pass to logic.onInit
   final P? params;
 
-  /// Optional builder for loading state
+  /// Optional builder for loading state. If not provided, the main [builder]
+  /// will be used during the loading state.
   final Widget Function(BuildContext context)? loading;
 
   /// Optional builder for error state
@@ -223,4 +223,19 @@ extension NanoContextExtension on BuildContext {
   ///
   /// Short for `Scope.of(context).get<T>()`.
   T read<T>() => Scope.of(this).get<T>();
+}
+
+/// Ergonomic extensions for any [ValueListenable] to create a [Watch] widget.
+extension ValueListenableWatcher<T> on ValueListenable<T> {
+  /// Creates a [Watch] widget from this [ValueListenable].
+  ///
+  /// Example:
+  /// ```dart
+  /// logic.counter.watch((context, value) {
+  ///   return Text('$value');
+  /// })
+  /// ```
+  Widget watch(Widget Function(BuildContext context, T value) builder) {
+    return Watch<T>(this, builder: builder);
+  }
 }

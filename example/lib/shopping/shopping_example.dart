@@ -106,7 +106,7 @@ class ShoppingPage extends StatelessWidget {
             title: const Text('Shopping Cart'),
             actions: [
               // Watch specific value for badge
-              Watch(logic.totalItems, builder: (context, count) {
+              logic.totalItems.watch((context, count) {
                 return Center(
                   child: Padding(
                     padding: const EdgeInsets.only(right: 16.0),
@@ -145,11 +145,13 @@ class ShoppingPage extends StatelessWidget {
               const Divider(thickness: 2),
               const Padding(
                 padding: EdgeInsets.all(8.0),
-                child: Text('Your Cart', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                child: Text('Your Cart',
+                    style:
+                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
               ),
               Expanded(
                 flex: 3,
-                child: Watch(logic.cartItems, builder: (context, items) {
+                child: logic.cartItems.watch((context, items) {
                   // Use the SelectorAtom to check for empty state efficiently
                   // (Though here we already have the items list, this is for showcase)
                   if (logic.isCartEmpty.value) {
@@ -162,13 +164,15 @@ class ShoppingPage extends StatelessWidget {
                       final item = items[index];
                       return ListTile(
                         title: Text(item.product.name),
-                        subtitle: Text('${item.quantity} x \$${item.product.price} = \$${item.total}'),
+                        subtitle: Text(
+                            '${item.quantity} x \$${item.product.price} = \$${item.total}'),
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             IconButton(
                               icon: const Icon(Icons.remove),
-                              onPressed: () => logic.removeFromCart(item.product),
+                              onPressed: () =>
+                                  logic.removeFromCart(item.product),
                             ),
                             Text('${item.quantity}'),
                             IconButton(
@@ -188,7 +192,7 @@ class ShoppingPage extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Watch(logic.totalPrice, builder: (context, total) {
+                    logic.totalPrice.watch((context, total) {
                       return Text(
                         'Total: \$${total.toStringAsFixed(2)}',
                         style: const TextStyle(
