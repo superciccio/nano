@@ -97,19 +97,39 @@ void main() {
       final controller = StreamController<int>();
       final atom = controller.stream.toStreamAtom();
 
+      // Use expectLater with atom.stream for robust async testing
       expect(atom.value, isA<AsyncLoading>());
 
-      controller.add(1);
-      await Future.delayed(const Duration(milliseconds: 50)); // Increased buffer
-      expect(atom.value, isA<AsyncData>());
-      expect(atom.value.dataOrNull, 1);
+      final streamExpectation = expectLater(
+        atom.stream,
+        emitsInOrder([
+          isA<AsyncLoading>(), // Initial value from stream getter
+          isA<AsyncData>().having((s) => s.value, 'value', 1),
+          isA<AsyncError>().having((s) => s.error, 'error', 'fail'),
+        ]),
+      );
 
+      controller.add(1);
       controller.addError('fail');
-      await Future.delayed(const Duration(milliseconds: 50)); // Increased buffer
-      expect(atom.value, isA<AsyncError>());
+
+      await streamExpectation;
 
       atom.dispose();
       await controller.close();
+    });
+
+    test('Atom stream extension emits updates', () async {
+      final atom = Atom(0);
+
+      final expectation = expectLater(
+        atom.stream,
+        emitsInOrder([0, 1, 2]),
+      );
+
+      atom.set(1);
+      atom.set(2);
+
+      await expectation;
     });
 
     test('DebouncedAtom delays updates', () async {
