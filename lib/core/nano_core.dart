@@ -178,9 +178,11 @@ sealed class AsyncState<T> with Diagnosticable {
     required R Function(T data) data,
     required R Function() loading,
     required R Function(Object error) error,
+    required R Function() idle,
   }) {
     if (this is AsyncData<T>) return data((this as AsyncData<T>).data);
     if (this is AsyncError<T>) return error((this as AsyncError<T>).error);
+    if (this is AsyncIdle<T>) return idle();
     return loading();
   }
 

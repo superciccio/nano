@@ -72,34 +72,29 @@ class SearchPage extends StatelessWidget {
                 ),
               ),
               Expanded(
-                child: logic.results.watch((context, state) {
-                  // Exhaustive state handling
-                  return switch (state) {
-                    AsyncIdle() => const Center(
-                        child: Text('Type to search...'),
-                      ),
-                    AsyncLoading() => const Center(
-                        child: CircularProgressIndicator(),
-                      ),
-                    AsyncError(error: final e) => Center(
-                        child: Text(
-                          'Error: $e',
-                          style: const TextStyle(color: Colors.red),
+                child: logic.results.when(
+                  idle: (context) =>
+                      const Center(child: Text('Type to search...')),
+                  loading: (context) =>
+                      const Center(child: CircularProgressIndicator()),
+                  error: (context, e) => Center(
+                    child: Text(
+                      'Error: $e',
+                      style: const TextStyle(color: Colors.red),
+                    ),
+                  ),
+                  data: (context, items) => items.isEmpty
+                      ? const Center(child: Text('No results found.'))
+                      : ListView.builder(
+                          itemCount: items.length,
+                          itemBuilder: (context, index) {
+                            return ListTile(
+                              title: Text(items[index]),
+                              leading: const Icon(Icons.fastfood),
+                            );
+                          },
                         ),
-                      ),
-                    AsyncData(data: final items) => items.isEmpty
-                        ? const Center(child: Text('No results found.'))
-                        : ListView.builder(
-                            itemCount: items.length,
-                            itemBuilder: (context, index) {
-                              return ListTile(
-                                title: Text(items[index]),
-                                leading: const Icon(Icons.fastfood),
-                              );
-                            },
-                          ),
-                  };
-                }),
+                ),
               ),
             ],
           ),
