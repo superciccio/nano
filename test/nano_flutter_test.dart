@@ -80,6 +80,20 @@ void main() {
       await tester.pump();
       expect(find.text('count: 1'), findsOneWidget);
     });
+
+    testWidgets('throws exception when Scope is missing', (tester) async {
+      // Build a test app that our exception should bubble up through
+      await tester.pumpWidget(Directionality(
+        textDirection: TextDirection.ltr,
+        child: NanoView<_MockLogic, void>(
+          create: (_) => _MockLogic(),
+          builder: (_, _) => const Text('Success'),
+        ),
+      ));
+
+      // The exception should be a NanoException
+      expect(tester.takeException(), isA<NanoException>());
+    });
   });
 
   group('Watch', () {
@@ -91,6 +105,28 @@ void main() {
         Watch(
           atom,
           builder: (context, value) {
+            buildCount++;
+            return Text('value: $value', textDirection: TextDirection.ltr);
+          },
+        ),
+      );
+
+      expect(find.text('value: 0'), findsOneWidget);
+      expect(buildCount, 1);
+
+      atom.set(1);
+      await tester.pump();
+      expect(find.text('value: 1'), findsOneWidget);
+      expect(buildCount, 2);
+    });
+
+    testWidgets('.watch() extension rebuilds surgically', (tester) async {
+      final atom = Atom(0);
+      int buildCount = 0;
+
+      await tester.pumpWidget(
+        atom.watch(
+          (context, value) {
             buildCount++;
             return Text('value: $value', textDirection: TextDirection.ltr);
           },

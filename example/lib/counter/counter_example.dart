@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:nano/nano.dart';
 
+// Actions
+class Increment extends NanoAction {}
+
+class Decrement extends NanoAction {}
+
+class Reset extends NanoAction {}
+
 // Logic
 class CounterLogic extends NanoLogic<dynamic> {
   // Use .toAtom() extension sugar
@@ -21,22 +28,16 @@ class CounterLogic extends NanoLogic<dynamic> {
     label: 'doubleCount',
   );
 
-  void increment() {
-    // Save to history before updating
+  @override
+  void onAction(NanoAction action) {
     history.update((list) => [...list, count.value]);
-
-    // Use .increment() extension sugar
-    count.increment();
-  }
-
-  void decrement() {
-    history.update((list) => [...list, count.value]);
-    count.decrement();
-  }
-
-  void reset() {
-    history.update((list) => [...list, count.value]);
-    count(0); // Using call operator to set
+    if (action is Increment) {
+      count.increment();
+    } else if (action is Decrement) {
+      count.decrement();
+    } else if (action is Reset) {
+      count(0);
+    }
   }
 }
 
@@ -58,7 +59,7 @@ class CounterPage extends StatelessWidget {
                 const Text('You have pushed the button this many times:'),
 
                 // Watch count
-                Watch(logic.count, builder: (context, val) {
+                logic.count.watch((context, val) {
                   return Text(
                     '$val',
                     style: Theme.of(context).textTheme.displayLarge,
@@ -68,7 +69,7 @@ class CounterPage extends StatelessWidget {
                 const SizedBox(height: 20),
 
                 // Watch computed
-                Watch(logic.isEven, builder: (context, even) {
+                logic.isEven.watch((context, even) {
                   return Text(
                     even ? 'EVEN' : 'ODD',
                     style: TextStyle(
@@ -81,14 +82,14 @@ class CounterPage extends StatelessWidget {
 
                 const SizedBox(height: 10),
 
-                Watch(logic.doubleCount, builder: (context, doubleVal) {
+                logic.doubleCount.watch((context, doubleVal) {
                   return Text('Doubled: $doubleVal');
                 }),
 
                 const SizedBox(height: 20),
 
                 // Watch complex object (List)
-                Watch(logic.history, builder: (context, hist) {
+                logic.history.watch((context, hist) {
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Text(
@@ -106,19 +107,19 @@ class CounterPage extends StatelessWidget {
             children: [
               FloatingActionButton(
                 heroTag: 'reset',
-                onPressed: logic.reset,
+                onPressed: () => logic.dispatch(Reset()),
                 child: const Icon(Icons.refresh),
               ),
               const SizedBox(height: 10),
               FloatingActionButton(
                 heroTag: 'decrement',
-                onPressed: logic.decrement,
+                onPressed: () => logic.dispatch(Decrement()),
                 child: const Icon(Icons.remove),
               ),
               const SizedBox(height: 10),
               FloatingActionButton(
                 heroTag: 'increment',
-                onPressed: logic.increment,
+                onPressed: () => logic.dispatch(Increment()),
                 child: const Icon(Icons.add),
               ),
             ],

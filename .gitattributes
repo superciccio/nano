@@ -1,0 +1,2 @@
+# Force all text files to use Linux (LF) line endings
+* text=auto eol=lf

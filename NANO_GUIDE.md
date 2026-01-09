@@ -35,6 +35,64 @@ class Atom<T> extends ValueNotifier<T> {
 - `.toggle()`: For `Atom<bool>`.
 - `.select<R>(selector)`: Creates a `SelectorAtom` derived from the parent.
 
+## 1.1 Creating Custom Atoms
+
+You can create your own specialized `Atom`s by extending the base `Atom` class. This is useful for adding custom logic to the state update process.
+
+The most important method to override is `set(T newValue)`. When overriding `set`, make sure to call `super.set(newValue)` to trigger the actual state update and notify listeners.
+
+**Example: A `DebouncedAtom`**
+
+Here is the implementation of `DebouncedAtom`, which is included in the library. It delays updates by a given duration, which is useful for features like search-as-you-type.
+
+```dart
+import 'dart:async';
+
+class DebouncedAtom<T> extends Atom<T> {
+  final Duration duration;
+  Timer? _debounce;
+
+  DebouncedAtom(T value, {required this.duration, String? label})
+      : super(value, label: label);
+
+  @override
+  void set(T newValue) {
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+    _debounce = Timer(duration, () {
+      super.set(newValue); // The actual update happens here
+    });
+  }
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    super.dispose();
+  }
+}
+```
+
+### A Note on Safety: The `value` Setter
+
+The base `Atom` class overrides the standard `ValueNotifier.value` setter to ensure that all state changes, whether through `atom.value = ...` or `atom.set(...)`, are routed through our custom logic. This guarantees that the `NanoObserver` is always notified.
+
+```dart
+class Atom<T> extends ValueNotifier<T> {
+  // ...
+  @override
+  set value(T newValue) {
+    // Ensures our custom logic is always called
+    set(newValue);
+  }
+
+  void set(T newValue) {
+    if (value == newValue) return;
+    Nano.observer.onChange(label, value, newValue);
+    super.value = newValue; // Calls the original ValueNotifier setter
+  }
+  // ...
+}
+```
+
 ### `ComputedAtom<T>`
 Derived state that automatically updates when dependencies change.
 
