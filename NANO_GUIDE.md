@@ -164,6 +164,7 @@ Smart widget that binds `NanoLogic` to the UI.
 - **Auto-Injection**: Uses `create` factory to inject Logic.
 - **Auto-Lifecycle**: Calls `onInit` and `dispose`.
 - **State Switching**: Automatically switches UI based on `logic.status` if `loading`, `error`, or `empty` builders are provided.
+- **Auto-Dispose**: Controls logic disposal via `autoDispose` parameter (defaults to `true`).
 
 **Signature:**
 ```dart
@@ -173,6 +174,7 @@ NanoView<MyLogic, MyParams>(
   builder: (context, logic) => MyWidget(),
   loading: (context) => Loader(), // Optional
   error: (context, err) => ErrorView(err), // Optional
+  autoDispose: false, // Optional: Keep logic alive after view disposal
 )
 ```
 
@@ -205,7 +207,7 @@ Watch(logic.count, builder: (context, value) => Text('$value'))
 
 **Rule 5: Async Safety**
 - **Do:** Use `AsyncAtom.track(future)` to automatically handle loading/error states and race conditions.
-- **Do:** Use Dart Pattern Matching (switch) on `AsyncState` subclasses.
+- **Do:** Use Dart Pattern Matching (switch) on `AsyncState` subclasses OR use the `.when()` extension.
 
 ## 5. Example Snippet
 
@@ -227,14 +229,12 @@ class UserPage extends StatelessWidget {
       params: 'user_123',
       create: (r) => UserLogic(),
       builder: (context, logic) {
-        // Surgical watch on async state
-        return Watch(logic.user, builder: (context, state) {
-          return switch (state) {
-            AsyncIdle() || AsyncLoading() => CircularProgressIndicator(),
-            AsyncError(:final error) => Text('Error: $error'),
-            AsyncData(:final data) => Text('User: ${data.name}'),
-          };
-        });
+        // Surgical watch on async state using .when()
+        return logic.user.when(
+          loading: (context) => CircularProgressIndicator(),
+          error: (context, error) => Text('Error: $error'),
+          data: (context, data) => Text('User: ${data.name}'),
+        );
       },
     );
   }
