@@ -258,6 +258,128 @@ void main() {
 
     expect(find.text('found: _MockLogic'), findsOneWidget);
   });
+
+  group('WatchMany', () {
+    testWidgets('tuple 2 watches rebuild when either changes', (tester) async {
+      final a1 = Atom(1);
+      final a2 = Atom(2);
+
+      await tester.pumpWidget(
+        (a1, a2).watch((context, v1, v2) {
+          return Text('$v1-$v2', textDirection: TextDirection.ltr);
+        }),
+      );
+
+      expect(find.text('1-2'), findsOneWidget);
+
+      a1.set(10);
+      await tester.pump();
+      expect(find.text('10-2'), findsOneWidget);
+
+      a2.set(20);
+      await tester.pump();
+      expect(find.text('10-20'), findsOneWidget);
+    });
+
+    testWidgets('tuple 3 watches rebuild when any changes', (tester) async {
+      final a1 = Atom(1);
+      final a2 = Atom(2);
+      final a3 = Atom(3);
+
+      await tester.pumpWidget(
+        (a1, a2, a3).watch((context, v1, v2, v3) {
+          return Text('$v1-$v2-$v3', textDirection: TextDirection.ltr);
+        }),
+      );
+
+      expect(find.text('1-2-3'), findsOneWidget);
+
+      a3.set(30);
+      await tester.pump();
+      expect(find.text('1-2-30'), findsOneWidget);
+    });
+  });
+
+  group('NanoView builders', () {
+    testWidgets('shows loading builder when status is loading', (tester) async {
+      final logic = _MockLogic();
+      logic.status.set(NanoStatus.loading);
+
+      await tester.pumpWidget(
+        Scope(
+          modules: [],
+          child: NanoView<_MockLogic, dynamic>(
+            create: (reg) => logic,
+            loading: (context) => const Text('Loading...', textDirection: TextDirection.ltr),
+            builder: (context, logic) => const Text('Content', textDirection: TextDirection.ltr),
+          ),
+        ),
+      );
+
+      expect(find.text('Loading...'), findsOneWidget);
+      expect(find.text('Content'), findsNothing);
+    });
+
+    testWidgets('shows empty builder when status is empty', (tester) async {
+      final logic = _MockLogic();
+      logic.status.set(NanoStatus.empty);
+
+      await tester.pumpWidget(
+        Scope(
+          modules: [],
+          child: NanoView<_MockLogic, dynamic>(
+            create: (reg) => logic,
+            empty: (context) => const Text('Empty', textDirection: TextDirection.ltr),
+            builder: (context, logic) => const Text('Content', textDirection: TextDirection.ltr),
+          ),
+        ),
+      );
+
+      expect(find.text('Empty'), findsOneWidget);
+    });
+
+    testWidgets('shows error builder when status is error', (tester) async {
+      final logic = _MockLogic();
+      logic.status.set(NanoStatus.error);
+      logic.error.set('Something wrong');
+
+      await tester.pumpWidget(
+        Scope(
+          modules: [],
+          child: NanoView<_MockLogic, dynamic>(
+            create: (reg) => logic,
+            error: (context, err) => Text('Error: $err', textDirection: TextDirection.ltr),
+            builder: (context, logic) => const Text('Content', textDirection: TextDirection.ltr),
+          ),
+        ),
+      );
+
+      expect(find.text('Error: Something wrong'), findsOneWidget);
+    });
+
+    testWidgets('NanoView create is called once', (tester) async {
+      int createCount = 0;
+      final logic = _MockLogic();
+
+      await tester.pumpWidget(
+        Scope(
+          modules: [],
+          child: NanoView<_MockLogic, dynamic>(
+            create: (reg) {
+              createCount++;
+              return logic;
+            },
+            builder: (context, logic) => const SizedBox(),
+          ),
+        ),
+      );
+
+      expect(createCount, 1);
+
+      await tester.pump();
+      expect(createCount, 1);
+    });
+  });
 }
 
 class MockService {}
