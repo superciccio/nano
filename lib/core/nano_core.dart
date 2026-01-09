@@ -265,7 +265,6 @@ class AsyncAtom<T> extends Atom<AsyncState<T>> {
       }
     }
   }
-  }
 }
 
 /// An [Atom] that manages the state of a [Stream].
