@@ -1,4 +1,6 @@
 import 'package:analyzer/dart/ast/ast.dart';
+import 'package:analyzer/error/error.dart' as analyzer;
+import 'package:analyzer/diagnostic/diagnostic.dart' as analyzer;
 import 'package:analyzer/error/listener.dart';
 import 'package:custom_lint_builder/custom_lint_builder.dart';
 
@@ -36,10 +38,11 @@ class _RefactorToNanoFix extends DartFix {
     CustomLintResolver resolver,
     ChangeReporter reporter,
     CustomLintContext context,
-    AnalysisError analysisError,
+    analyzer.Diagnostic diagnostic,
+    List<analyzer.Diagnostic> others,
   ) {
     context.registry.addClassDeclaration((node) {
-      if (!analysisError.sourceRange.intersects(node.sourceRange)) return;
+      if (!diagnostic.sourceRange.intersects(node.sourceRange)) return;
 
       final className = node.name.lexeme;
       final logicClassName = '${className}Logic';
