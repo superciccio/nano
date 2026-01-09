@@ -4,6 +4,7 @@ import 'lints/logic_naming_convention.dart';
 import 'lints/refactor_to_nano.dart';
 import 'lints/migrate_from_provider.dart';
 import 'lints/migrate_from_signals.dart';
+import 'lints/avoid_nested_watch.dart';
 
 class NanoLints extends PluginBase {
   @override
@@ -13,5 +14,6 @@ class NanoLints extends PluginBase {
         RefactorToNano(),
         MigrateFromProvider(),
         MigrateFromSignals(),
+        AvoidNestedWatch(),
       ];
 }
