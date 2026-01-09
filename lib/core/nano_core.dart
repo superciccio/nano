@@ -169,6 +169,21 @@ sealed class AsyncState<T> with Diagnosticable {
       this is AsyncData<T> ? (this as AsyncData<T>).data : null;
   Object? get errorOrNull =>
       this is AsyncError<T> ? (this as AsyncError<T>).error : null;
+
+  Object? get error => errorOrNull;
+  T? get value => dataOrNull;
+
+  /// Ergonomic mapping of async states.
+  R map<R>({
+    required R Function(T data) data,
+    required R Function() loading,
+    required R Function(Object error) error,
+  }) {
+    if (this is AsyncData<T>) return data((this as AsyncData<T>).data);
+    if (this is AsyncError<T>) return error((this as AsyncError<T>).error);
+    return loading();
+  }
+
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
@@ -250,6 +265,32 @@ class AsyncAtom<T> extends Atom<AsyncState<T>> {
       }
     }
   }
+  }
+}
+
+/// An [Atom] that manages the state of a [Stream].
+class StreamAtom<T> extends Atom<AsyncState<T>> {
+  StreamSubscription<T>? _subscription;
+
+  StreamAtom(
+    Stream<T> stream, {
+    AsyncState<T> initial = const AsyncLoading(),
+    String? label,
+  }) : super(initial, label: label) {
+    _subscription = stream.listen(
+      (data) => set(AsyncData<T>(data)),
+      onError: (e, s) {
+        set(AsyncError<T>(e, s));
+        Nano.observer.onError(label ?? 'StreamAtom<$T>', e, s);
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    _subscription?.cancel();
+    super.dispose();
+  }
 }
 
 /// An [Atom] that automatically debounces its value.
@@ -325,6 +366,11 @@ extension AtomSelectorExtension<T> on Atom<T> {
   Atom<R> select<R>(R Function(T) selector, {String? label}) {
     return SelectorAtom<T, R>(this, selector, label: label);
   }
+}
+extension StreamNanoExtension<T> on Stream<T> {
+  /// Converts a [Stream] into a [StreamAtom].
+  StreamAtom<T> toStreamAtom({AsyncState<T> initial = const AsyncLoading(), String? label}) =>
+      StreamAtom<T>(this, initial: initial, label: label);
 }
 
 /// Ergonomic extensions for [Atom] of type [int].
