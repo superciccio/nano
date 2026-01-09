@@ -9,7 +9,7 @@ class MigrateFromSignals extends DartLintRule {
 
   static const _code = LintCode(
     name: 'migrate_from_signals',
-    problemMessage: 'This Signal-based pattern can be migrated to Nano Atoms.',
+    problemMessage: 'This Signal/Computed-based pattern can be migrated to Nano Atoms.',
   );
 
   @override
@@ -21,6 +21,13 @@ class MigrateFromSignals extends DartLintRule {
     // Detect signal<T>(...) creation
     context.registry.addMethodInvocation((node) {
       if (node.methodName.name == 'signal' && node.target == null) {
+        reporter.atNode(node, _code);
+      }
+    });
+
+    // Detect computed(() => ...) creation
+    context.registry.addMethodInvocation((node) {
+      if (node.methodName.name == 'computed' && node.target == null) {
         reporter.atNode(node, _code);
       }
     });
@@ -68,6 +75,18 @@ class _MigrateFromSignalsFix extends DartFix {
         changeBuilder.addDartFileEdit((builder) {
           final arg = node.argumentList.arguments.first.toSource();
           builder.addSimpleReplacement(node.sourceRange, '$arg.toAtom()');
+        });
+      }
+
+      if (node.methodName.name == 'computed') {
+        final changeBuilder = reporter.createChangeBuilder(
+          message: 'Migrate computed to ComputedAtom',
+          priority: 1,
+        );
+
+        changeBuilder.addDartFileEdit((builder) {
+          final arg = node.argumentList.arguments.first.toSource();
+          builder.addSimpleReplacement(node.sourceRange, 'ComputedAtom([], $arg)');
         });
       }
     });
