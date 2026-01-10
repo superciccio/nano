@@ -1,0 +1,246 @@
+# Nano State Management Library - AI Agent Rules
+
+You are working with **Nano**, a minimalist atomic state management library for Flutter.
+
+## CRITICAL RULES - ALWAYS FOLLOW
+
+### 1. State Management Patterns
+
+**ALWAYS:**
+- Use `Atom<T>` for individual state fields (never plain variables in Logic classes)
+- Use `ComputedAtom` for derived state that depends on other atoms
+- Use `AsyncAtom<T>` for async operations (API calls, database queries)
+- Use `Watch` widget for surgical rebuilds of specific atoms
+- Use `.toAtom()` extension to convert values: `final count = 0.toAtom('count');`
+- Use extensions: `.increment()`, `.decrement()`, `.toggle()` where applicable
+- Call `atom.track(future)` for `AsyncAtom` to handle loading/error states automatically
+
+**NEVER:**
+- Don't use `setState()` in StatefulWidgets when Logic is available
+- Don't manually manage loading/error states when `AsyncAtom` can do it
+- Don't create nested `Watch` widgets (triggers `avoid_nested_watch` lint)
+- Don't put complex UI logic directly in widgets (use `NanoAction` or Logic methods)
+- Don't forget to use `super.set(newValue)` when extending Atom classes
+
+### 2. NanoLogic Patterns
+
+**Structure:**
+```dart
+class MyLogic extends NanoLogic<ParamsType> {
+  // State atoms
+  final myData = AsyncAtom<Data>();
+  final count = 0.toAtom('count');
+  
+  // Computed state
+  late final isValid = ComputedAtom(
+    [count],
+    () => count() > 0,
+    label: 'isValid',
+  );
+  
+  @override
+  void onInit(ParamsType params) {
+    // Initialize async data here
+    myData.track(fetchData(params));
+    
+    // Bind streams to avoid leaks
+    bindStream(myStream, myAtom);
+  }
+  
+  // Actions
+  void increment() => count.increment();
+  
+  // Async actions
+  Future<void> save() async {
+    status.set(NanoStatus.loading);
+    try {
+      await saveData();
+      status.set(NanoStatus.success);
+    } catch (e) {
+      error.set(e);
+      status.set(NanoStatus.error);
+    }
+  }
+}
+```
+
+### 3. NanoView Usage
+
+**ALWAYS:**
+```dart
+NanoView<MyLogic, MyParams>(
+  params: myParams,
+  create: (reg) => reg.get<MyLogic>(), // Use DI
+  builder: (context, logic) {
+    return Watch(logic.count, builder: (context, value) {
+      return Text('$value');
+    });
+  },
+  loading: (context) => CircularProgressIndicator(), // Optional
+  error: (context, err) => ErrorWidget(err), // Optional
+)
+```
+
+**Auto-dispose control:**
+- Default: `autoDispose: true` (Logic disposed when view unmounts)
+- Set `autoDispose: false` for persistent logic (e.g., app-level state)
+
+### 4. AsyncAtom Patterns
+
+**ALWAYS use pattern matching or `.when()`:**
+```dart
+// Option 1: Pattern matching
+switch (logic.user()) {
+  case AsyncLoading():
+    return CircularProgressIndicator();
+  case AsyncError(:final error):
+    return Text('Error: $error');
+  case AsyncData(:final data):
+    return Text('User: ${data.name}');
+  default:
+    return SizedBox();
+}
+
+// Option 2: .when() extension
+return logic.user.when(
+  loading: (context) => CircularProgressIndicator(),
+  error: (context, error) => Text('Error: $error'),
+  data: (context, data) => Text('User: ${data.name}'),
+);
+```
+
+### 5. Dependency Injection
+
+**Setup in main:**
+```dart
+Scope(
+  modules: [
+    ApiService(), // Eager singleton
+    NanoLazy((r) => Database()), // Lazy singleton
+    NanoFactory((r) => MyLogic()), // New instance each time
+  ],
+  child: MyApp(),
+)
+```
+
+**Access in NanoView:**
+```dart
+create: (reg) => MyLogic(api: reg.get<ApiService>())
+```
+
+### 6. Testing Patterns
+
+**ALWAYS:**
+- Mock dependencies using `Scope` with test modules
+- Test Logic classes independently of UI
+- Use `pumpWidget` with `Scope` for widget tests
+
+```dart
+testWidgets('test', (tester) async {
+  await tester.pumpWidget(
+    Scope(
+      modules: [MockApiService()],
+      child: MaterialApp(home: MyPage()),
+    ),
+  );
+});
+```
+
+### 7. Tuple Watch (Multi-Atom Observation)
+
+**Use for watching multiple atoms efficiently:**
+```dart
+// Instead of nested Watch widgets
+(atom1, atom2).watch((context, val1, val2) {
+  return Text('$val1 - $val2');
+});
+
+// Available: (a1, a2).watch(), (a1, a2, a3).watch()
+```
+
+### 8. Custom Atoms
+
+**When extending Atom, ALWAYS override `set()` and call `super.set()`:**
+```dart
+class DebouncedAtom<T> extends Atom<T> {
+  final Duration duration;
+  Timer? _debounce;
+  
+  DebouncedAtom(T value, {required this.duration, String? label})
+      : super(value, label: label);
+  
+  @override
+  void set(T newValue) {
+    _debounce?.cancel();
+    _debounce = Timer(duration, () {
+      super.set(newValue); // CRITICAL: Must call super.set()
+    });
+  }
+  
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    super.dispose();
+  }
+}
+```
+
+## Lint Rules (Custom Lints Active)
+
+1. **`avoid_nested_watch`**: Don't nest Watch widgets - use Watch2/3/4/5 instead
+2. **`suggest_nano_action`**: Complex UI logic should be in NanoAction or Logic methods
+
+## Code Generation Templates
+
+### New Feature with Logic
+```dart
+// 1. Logic class
+class FeatureLogic extends NanoLogic<FeatureParams> {
+  final data = AsyncAtom<Data>();
+  
+  @override
+  void onInit(FeatureParams params) {
+    data.track(fetchData(params.id));
+  }
+}
+
+// 2. View
+class FeaturePage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return NanoView<FeatureLogic, FeatureParams>(
+      params: FeatureParams(id: '123'),
+      create: (reg) => FeatureLogic(),
+      builder: (context, logic) {
+        return logic.data.when(
+          loading: (context) => CircularProgressIndicator(),
+          error: (context, err) => ErrorView(err),
+          data: (context, data) => FeatureContent(data),
+        );
+      },
+    );
+  }
+}
+```
+
+## Common Mistakes to Avoid
+
+❌ `final count = 0;` in Logic → ✅ `final count = 0.toAtom();`
+❌ Manual loading flags → ✅ Use `AsyncAtom` or `status` atom
+❌ Nested Watch widgets → ✅ Use tuple syntax `(a1, a2).watch()`
+❌ Complex logic in `onPressed: () { ... }` → ✅ Extract to Logic method or NanoAction
+❌ Forgetting `super.set()` in custom Atoms → ✅ Always call it
+
+## Performance Tips
+
+- Use `Watch` for high-frequency updates (timers, animations, text inputs)
+- Use `ComputedAtom` instead of rebuilding derived state manually
+- Use `const` constructors where possible
+- Prefer `Watch` over `ValueListenableBuilder` for consistency
+
+## Documentation References
+
+- Full guide: `NANO_GUIDE.md`
+- Migration guide: `MIGRATION_GUIDE.md`
+- Examples: `example/` directory
+- Lint examples: `lint_examples/` directory
