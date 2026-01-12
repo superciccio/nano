@@ -99,6 +99,11 @@ class Atom<T> extends ValueNotifier<T> with Diagnosticable {
     super.value = newValue;
   }
 
+  /// Internal setter to bypass the [set] method (and its overrides).
+  void _innerSet(T newValue) {
+    super.value = newValue;
+  }
+
   void update(T Function(T current) fn) {
     set(fn(value));
   }
@@ -160,7 +165,7 @@ class ComputedAtom<T> extends Atom<T> {
     final newValue = selector();
     if (value == newValue) return;
     Nano.observer.onChange(this, value, newValue);
-    super.value = newValue;
+    _innerSet(newValue);
   }
 
   @override
