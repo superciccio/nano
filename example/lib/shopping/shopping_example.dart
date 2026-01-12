@@ -66,29 +66,23 @@ class ShoppingLogic extends NanoLogic<dynamic> {
   late final isCartEmpty = _cart.select((map) => map.isEmpty, label: 'isCartEmpty');
 
   void addToCart(Product product) {
-    _cart.update((map) {
-      final newMap = Map<int, int>.from(map);
-      newMap[product.id] = (newMap[product.id] ?? 0) + 1;
-      return newMap;
-    });
+    final currentQty = _cart.value[product.id] ?? 0;
+    _cart.put(product.id, currentQty + 1);
   }
 
   void removeFromCart(Product product) {
-    _cart.update((map) {
-      final newMap = Map<int, int>.from(map);
-      if (!newMap.containsKey(product.id)) return map;
+    if (!_cart.value.containsKey(product.id)) return;
+    final currentQty = _cart.value[product.id]!;
 
-      if (newMap[product.id]! > 1) {
-        newMap[product.id] = newMap[product.id]! - 1;
-      } else {
-        newMap.remove(product.id);
-      }
-      return newMap;
-    });
+    if (currentQty > 1) {
+      _cart.put(product.id, currentQty - 1);
+    } else {
+      _cart.remove(product.id);
+    }
   }
 
   void clearCart() {
-    _cart(<int, int>{});
+    _cart.clear();
   }
 }
 

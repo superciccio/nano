@@ -427,3 +427,48 @@ extension ValueListenableStreamExtension<T> on ValueListenable<T> {
     return controller.stream;
   }
 }
+
+/// Ergonomic extensions for [Atom] of type [List].
+extension AtomListExtension<E> on Atom<List<E>> {
+  /// Adds [element] to the list.
+  void add(E element) => set([...value, element]);
+
+  /// Adds all [elements] to the list.
+  void addAll(Iterable<E> elements) => set([...value, ...elements]);
+
+  /// Removes [element] from the list.
+  void remove(E element) => set([...value]..remove(element));
+
+  /// Clears the list.
+  void clear() => set([]);
+}
+
+/// Ergonomic extensions for [Atom] of type [Set].
+extension AtomSetExtension<E> on Atom<Set<E>> {
+  /// Adds [element] to the set.
+  void add(E element) => set({...value, element});
+
+  /// Adds all [elements] to the set.
+  void addAll(Iterable<E> elements) => set({...value, ...elements});
+
+  /// Removes [element] from the set.
+  void remove(E element) => set({...value}..remove(element));
+
+  /// Clears the set.
+  void clear() => set({});
+}
+
+/// Ergonomic extensions for [Atom] of type [Map].
+extension AtomMapExtension<K, V> on Atom<Map<K, V>> {
+  /// Adds [key]:[val] to the map.
+  void put(K key, V val) => set({...value, key: val});
+
+  /// Adds all entries from [other] to the map.
+  void putAll(Map<K, V> other) => set({...value, ...other});
+
+  /// Removes [key] from the map.
+  void remove(K key) => set({...value}..remove(key));
+
+  /// Clears the map.
+  void clear() => set({});
+}

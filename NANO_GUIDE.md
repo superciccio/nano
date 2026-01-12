@@ -33,6 +33,10 @@ class Atom<T> extends ValueNotifier<T> {
 - `.increment([amount])`: For `Atom<int>`.
 - `.decrement([amount])`: For `Atom<int>`.
 - `.toggle()`: For `Atom<bool>`.
+- `.add(item)`: For `Atom<List>` and `Atom<Set>` (immutable update).
+- `.remove(item)`: For `Atom<List>`, `Atom<Set>`, and `Atom<Map>` (immutable update).
+- `.clear()`: For `Atom<List>`, `Atom<Set>`, and `Atom<Map>` (immutable update).
+- `.put(key, value)`: For `Atom<Map>` (immutable update).
 - `.select<R>(selector)`: Creates a `SelectorAtom` derived from the parent.
 - `.stream`: Converts the Atom (or any `ValueListenable`) into a `Stream<T>` that emits current value and subsequent updates.
 
