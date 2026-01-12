@@ -72,11 +72,11 @@ class _MockObserver implements NanoObserver {
   Object? lastError;
 
   @override
-  void onChange(String label, oldValue, newValue) {}
+  void onChange(Atom atom, oldValue, newValue) {}
 
   @override
-  void onError(String label, Object error, StackTrace stack) {
-    lastErrorLabel = label;
+  void onError(Atom atom, Object error, StackTrace stack) {
+    lastErrorLabel = atom.label;
     lastError = error;
   }
 }

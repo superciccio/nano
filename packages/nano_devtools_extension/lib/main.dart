@@ -135,6 +135,7 @@ class _NanoExtensionBodyState extends State<NanoExtensionBody>
                     DataColumn(label: Text('Type')),
                     DataColumn(label: Text('Value')),
                     DataColumn(label: Text('State')),
+                    DataColumn(label: Text('Meta')),
                     DataColumn(label: Text('Last Update')),
                   ],
                   rows: _atoms.map((atom) {
@@ -169,6 +170,21 @@ class _NanoExtensionBodyState extends State<NanoExtensionBody>
                                 )
                               : const Text(''),
                         ),
+                        DataCell(
+                          atom.meta.isEmpty
+                              ? const Text('')
+                              : Tooltip(
+                                  message: atom.meta.toString(),
+                                  child: Text(
+                                    atom.meta.keys.join(', '),
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      fontStyle: FontStyle.italic,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                ),
+                        ),
                         DataCell(Text(atom.lastUpdate)),
                       ],
                     );
@@ -196,6 +212,7 @@ class _AtomDetails {
   final String type;
   final String value;
   final String? state;
+  final Map<String, String> meta;
   final String lastUpdate;
 
   _AtomDetails({
@@ -203,6 +220,7 @@ class _AtomDetails {
     required this.type,
     required this.value,
     this.state,
+    required this.meta,
     required this.lastUpdate,
   });
 
@@ -212,6 +230,7 @@ class _AtomDetails {
       type: json['type'],
       value: json['value'] ?? '',
       state: json['state'],
+      meta: Map<String, String>.from(json['meta'] ?? {}),
       lastUpdate: json['timestamp'] ?? DateTime.now().toIso8601String(),
     );
   }

@@ -2,11 +2,36 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:nano/core/debug_service.dart';
+import 'package:nano/core/nano_persistence.dart';
 
 /// Global configuration for Nano.
 class Nano {
   /// Set this in your main() to capture logs (e.g., NanoObserver()).
   static NanoObserver observer = _DefaultObserver();
+
+  /// Global storage backend for [PersistedAtom].
+  static NanoStorage storage = InMemoryStorage();
+
+  /// [Internal] Stack of currently executing derivations (reactions/computeds)
+  /// that want to track dependencies.
+  static final List<NanoDerivation> _derivationStack = [];
+
+  /// [Internal] Reports an atom read to the current derivation.
+  static void reportRead(Atom atom) {
+    if (_derivationStack.isNotEmpty) {
+      _derivationStack.last.addDependency(atom);
+    }
+  }
+
+  /// [Internal] Runs [fn] inside a tracking context.
+  static T track<T>(NanoDerivation derivation, T Function() fn) {
+    _derivationStack.add(derivation);
+    try {
+      return fn();
+    } finally {
+      _derivationStack.removeLast();
+    }
+  }
 
   /// Initialize Nano for debugging. Usually called by Scope.
   static void init() {
@@ -14,30 +39,62 @@ class Nano {
   }
 }
 
+/// Interface for anything that depends on Atoms (Computed, Reaction).
+abstract class NanoDerivation {
+  void addDependency(Atom atom);
+}
+
 /// Interface for intercepting state changes and errors.
 /// Useful for logging to Console, Sentry, Crashlytics, etc.
 abstract class NanoObserver {
   /// Called whenever an [Atom] or [ComputedAtom] changes its value.
-  void onChange(String label, dynamic oldValue, dynamic newValue);
+  void onChange(Atom atom, dynamic oldValue, dynamic newValue);
 
   /// Called whenever an error occurs (e.g., in [AsyncAtom] or [NanoLogic.bindStream]).
-  void onError(String label, Object error, StackTrace stack);
+  void onError(Atom atom, Object error, StackTrace stack);
 }
 
 /// Default observer that prints to console in debug mode.
 class _DefaultObserver implements NanoObserver {
   @override
-  void onChange(String label, dynamic oldValue, dynamic newValue) {
+  void onChange(Atom atom, dynamic oldValue, dynamic newValue) {
     if (kDebugMode) {
-      debugPrint('?? NANO [$label]: $oldValue -> $newValue');
+      debugPrint('?? NANO [${atom.label ?? atom.runtimeType}]: $oldValue -> $newValue');
     }
   }
 
   @override
-  void onError(String label, Object error, StackTrace stack) {
-    debugPrint('?? NANO ERROR [$label]: $error');
+  void onError(Atom atom, Object error, StackTrace stack) {
+    debugPrint('?? NANO ERROR [${atom.label ?? atom.runtimeType}]: $error');
     if (kDebugMode) debugPrint(stack.toString());
   }
+}
+
+/// A composite observer that delegates to multiple observers.
+class CompositeObserver implements NanoObserver {
+  final List<NanoObserver> observers;
+
+  CompositeObserver(this.observers);
+
+  @override
+  void onChange(Atom atom, dynamic oldValue, dynamic newValue) {
+    for (final observer in observers) {
+      observer.onChange(atom, oldValue, newValue);
+    }
+  }
+
+  @override
+  void onError(Atom atom, Object error, StackTrace stack) {
+    for (final observer in observers) {
+      observer.onError(atom, error, stack);
+    }
+  }
+
+  /// Adds an observer to the list.
+  void addObserver(NanoObserver observer) => observers.add(observer);
+
+  /// Removes an observer from the list.
+  void removeObserver(NanoObserver observer) => observers.remove(observer);
 }
 
 /// The atomic unit of state.
@@ -55,8 +112,16 @@ class Atom<T> extends ValueNotifier<T> with Diagnosticable {
   static const _sentinel = Object();
 
   final String? label;
-  Atom(super.value, {this.label}) {
+  final Map<String, dynamic> meta;
+
+  Atom(super.value, {this.label, this.meta = const {}}) {
     NanoDebugService.registerAtom(this);
+  }
+
+  @override
+  T get value {
+    Nano.reportRead(this);
+    return super.value;
   }
 
   @override
@@ -66,7 +131,12 @@ class Atom<T> extends ValueNotifier<T> with Diagnosticable {
 
   void set(T newValue) {
     if (value == newValue) return;
-    Nano.observer.onChange(label ?? 'Atom<${T.toString()}>', value, newValue);
+    Nano.observer.onChange(this, value, newValue);
+    super.value = newValue;
+  }
+
+  /// Internal setter to bypass the [set] method (and its overrides).
+  void _innerSet(T newValue) {
     super.value = newValue;
   }
 
@@ -112,42 +182,31 @@ class Atom<T> extends ValueNotifier<T> with Diagnosticable {
 ///
 /// The `ComputedAtom` automatically listens to its dependencies and updates
 /// its own value when any of them change.
-///
-/// Example:
-/// ```dart
-/// final count = Atom(10);
-/// final doubleCount = ComputedAtom([count], () => count.value * 2);
-///
-/// print(doubleCount.value); // 20
-/// count.set(20);
-/// print(doubleCount.value); // 40
-/// ```
-class ComputedAtom<T> extends ValueNotifier<T> with Diagnosticable {
-  final String? label;
+class ComputedAtom<T> extends Atom<T> {
   final T Function() selector;
   final List<ValueListenable> dependencies;
-  ComputedAtom(this.dependencies, this.selector, {this.label})
-    : super(selector()) {
+
+  ComputedAtom(
+    this.dependencies,
+    this.selector, {
+    super.label,
+    super.meta,
+  }) : super(selector()) {
     for (final dep in dependencies) {
       dep.addListener(_update);
     }
   }
+
   void _update() {
     final newValue = selector();
     if (value == newValue) return;
-    Nano.observer.onChange(
-      label ?? 'ComputedAtom<${T.toString()}>',
-      value,
-      newValue,
-    );
-    value = newValue;
+    Nano.observer.onChange(this, value, newValue);
+    _innerSet(newValue);
   }
 
   @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty('label', label, defaultValue: null));
-    properties.add(DiagnosticsProperty('value', value));
+  void set(T newValue) {
+    throw UnsupportedError('ComputedAtom is read-only');
   }
 
   @override
@@ -263,7 +322,7 @@ class AsyncAtom<T> extends Atom<AsyncState<T>> {
     } catch (e, s) {
       if (_session == currentSession) {
         set(AsyncError<T>(e, s));
-        Nano.observer.onError(label ?? 'AsyncAtom<${T.toString()}>', e, s);
+        Nano.observer.onError(this, e, s);
       }
     }
   }
@@ -282,7 +341,7 @@ class StreamAtom<T> extends Atom<AsyncState<T>> {
       (data) => set(AsyncData<T>(data)),
       onError: (e, s) {
         set(AsyncError<T>(e, s));
-        Nano.observer.onError(label ?? 'StreamAtom<$T>', e, s);
+        Nano.observer.onError(this, e, s);
       },
     );
   }
@@ -319,6 +378,76 @@ class DebouncedAtom<T> extends Atom<T> {
     super.dispose();
   }
 }
+
+/// An [Atom] that persists its value to storage.
+///
+/// It requires a [key] to identify the value in storage.
+/// By default, it uses [Nano.storage] (InMemoryStorage), but you can
+/// configure it to use SharedPreferences, Hive, etc.
+///
+/// Only supports basic types (int, double, bool, String) or objects that
+/// can be serialized to/from String.
+class PersistedAtom<T> extends Atom<T> {
+  final String key;
+  final T Function(String)? fromString;
+  final String Function(T)? toStringEncoder;
+
+  PersistedAtom(
+    super.value, {
+    required this.key,
+    this.fromString,
+    this.toStringEncoder,
+    super.label,
+    super.meta,
+  }) {
+    _load();
+  }
+
+  Future<void> _load() async {
+    try {
+      final stored = await Nano.storage.read(key);
+      if (stored != null) {
+        final val = _decode(stored);
+        if (val != value) {
+          _innerSet(val);
+        }
+      }
+    } catch (e, s) {
+      Nano.observer.onError(this, e, s);
+    }
+  }
+
+  @override
+  void set(T newValue) {
+    super.set(newValue);
+    _save(newValue);
+  }
+
+  Future<void> _save(T val) async {
+    try {
+      await Nano.storage.write(key, _encode(val));
+    } catch (e, s) {
+      Nano.observer.onError(this, e, s);
+    }
+  }
+
+  T _decode(String stored) {
+    if (fromString != null) return fromString!(stored);
+    if (T == int) return int.parse(stored) as T;
+    if (T == double) return double.parse(stored) as T;
+    if (T == bool) return (stored == 'true') as T;
+    if (T == String) return stored as T;
+    throw UnimplementedError(
+      'PersistedAtom<$T> requires `fromString` for complex types.',
+    );
+  }
+
+  String _encode(T val) {
+    if (toStringEncoder != null) return toStringEncoder!(val);
+    return val.toString();
+  }
+}
+
 /// A specialized Atom that selects a part of another Atom's state.
 ///
 /// It only notifies listeners when the selected value changes.
@@ -397,7 +526,8 @@ extension NanoObjectExtension<T> on T {
   /// ```dart
   /// final count = 0.toAtom('count');
   /// ```
-  Atom<T> toAtom([String? label]) => Atom<T>(this, label: label);
+  Atom<T> toAtom([String? label, Map<String, dynamic> meta = const {}]) =>
+      Atom<T>(this, label: label, meta: meta);
 }
 
 /// Extension to convert a [ValueListenable] into a [Stream].
@@ -426,4 +556,49 @@ extension ValueListenableStreamExtension<T> on ValueListenable<T> {
     );
     return controller.stream;
   }
+}
+
+/// Ergonomic extensions for [Atom] of type [List].
+extension AtomListExtension<E> on Atom<List<E>> {
+  /// Adds [element] to the list.
+  void add(E element) => set([...value, element]);
+
+  /// Adds all [elements] to the list.
+  void addAll(Iterable<E> elements) => set([...value, ...elements]);
+
+  /// Removes [element] from the list.
+  void remove(E element) => set([...value]..remove(element));
+
+  /// Clears the list.
+  void clear() => set([]);
+}
+
+/// Ergonomic extensions for [Atom] of type [Set].
+extension AtomSetExtension<E> on Atom<Set<E>> {
+  /// Adds [element] to the set.
+  void add(E element) => set({...value, element});
+
+  /// Adds all [elements] to the set.
+  void addAll(Iterable<E> elements) => set({...value, ...elements});
+
+  /// Removes [element] from the set.
+  void remove(E element) => set({...value}..remove(element));
+
+  /// Clears the set.
+  void clear() => set({});
+}
+
+/// Ergonomic extensions for [Atom] of type [Map].
+extension AtomMapExtension<K, V> on Atom<Map<K, V>> {
+  /// Adds [key]:[val] to the map.
+  void put(K key, V val) => set({...value, key: val});
+
+  /// Adds all entries from [other] to the map.
+  void putAll(Map<K, V> other) => set({...value, ...other});
+
+  /// Removes [key] from the map.
+  void remove(K key) => set({...value}..remove(key));
+
+  /// Clears the map.
+  void clear() => set({});
 }
