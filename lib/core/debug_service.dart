@@ -35,6 +35,7 @@ class NanoDebugService {
           'value': atom.value.toString(),
           'type': atom.runtimeType.toString(),
           'state': _getAsyncState(atom),
+          'meta': atom.meta.map((k, v) => MapEntry(k, v.toString())),
         };
       }).toList();
 

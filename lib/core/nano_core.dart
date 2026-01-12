@@ -2,16 +2,46 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:nano/core/debug_service.dart';
+import 'package:nano/core/nano_persistence.dart';
 
 /// Global configuration for Nano.
 class Nano {
   /// Set this in your main() to capture logs (e.g., NanoObserver()).
   static NanoObserver observer = _DefaultObserver();
 
+  /// Global storage backend for [PersistedAtom].
+  static NanoStorage storage = InMemoryStorage();
+
+  /// [Internal] Stack of currently executing derivations (reactions/computeds)
+  /// that want to track dependencies.
+  static final List<NanoDerivation> _derivationStack = [];
+
+  /// [Internal] Reports an atom read to the current derivation.
+  static void reportRead(Atom atom) {
+    if (_derivationStack.isNotEmpty) {
+      _derivationStack.last.addDependency(atom);
+    }
+  }
+
+  /// [Internal] Runs [fn] inside a tracking context.
+  static T track<T>(NanoDerivation derivation, T Function() fn) {
+    _derivationStack.add(derivation);
+    try {
+      return fn();
+    } finally {
+      _derivationStack.removeLast();
+    }
+  }
+
   /// Initialize Nano for debugging. Usually called by Scope.
   static void init() {
     NanoDebugService.init();
   }
+}
+
+/// Interface for anything that depends on Atoms (Computed, Reaction).
+abstract class NanoDerivation {
+  void addDependency(Atom atom);
 }
 
 /// Interface for intercepting state changes and errors.
@@ -86,6 +116,12 @@ class Atom<T> extends ValueNotifier<T> with Diagnosticable {
 
   Atom(super.value, {this.label, this.meta = const {}}) {
     NanoDebugService.registerAtom(this);
+  }
+
+  @override
+  T get value {
+    Nano.reportRead(this);
+    return super.value;
   }
 
   @override
@@ -342,6 +378,76 @@ class DebouncedAtom<T> extends Atom<T> {
     super.dispose();
   }
 }
+
+/// An [Atom] that persists its value to storage.
+///
+/// It requires a [key] to identify the value in storage.
+/// By default, it uses [Nano.storage] (InMemoryStorage), but you can
+/// configure it to use SharedPreferences, Hive, etc.
+///
+/// Only supports basic types (int, double, bool, String) or objects that
+/// can be serialized to/from String.
+class PersistedAtom<T> extends Atom<T> {
+  final String key;
+  final T Function(String)? fromString;
+  final String Function(T)? toStringEncoder;
+
+  PersistedAtom(
+    super.value, {
+    required this.key,
+    this.fromString,
+    this.toStringEncoder,
+    super.label,
+    super.meta,
+  }) {
+    _load();
+  }
+
+  Future<void> _load() async {
+    try {
+      final stored = await Nano.storage.read(key);
+      if (stored != null) {
+        final val = _decode(stored);
+        if (val != value) {
+          _innerSet(val);
+        }
+      }
+    } catch (e, s) {
+      Nano.observer.onError(this, e, s);
+    }
+  }
+
+  @override
+  void set(T newValue) {
+    super.set(newValue);
+    _save(newValue);
+  }
+
+  Future<void> _save(T val) async {
+    try {
+      await Nano.storage.write(key, _encode(val));
+    } catch (e, s) {
+      Nano.observer.onError(this, e, s);
+    }
+  }
+
+  T _decode(String stored) {
+    if (fromString != null) return fromString!(stored);
+    if (T == int) return int.parse(stored) as T;
+    if (T == double) return double.parse(stored) as T;
+    if (T == bool) return (stored == 'true') as T;
+    if (T == String) return stored as T;
+    throw UnimplementedError(
+      'PersistedAtom<$T> requires `fromString` for complex types.',
+    );
+  }
+
+  String _encode(T val) {
+    if (toStringEncoder != null) return toStringEncoder!(val);
+    return val.toString();
+  }
+}
+
 /// A specialized Atom that selects a part of another Atom's state.
 ///
 /// It only notifies listeners when the selected value changes.
