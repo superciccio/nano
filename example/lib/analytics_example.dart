@@ -7,21 +7,21 @@ class AnalyticsObserver extends NanoObserver {
   void onChange(Atom atom, dynamic oldValue, dynamic newValue) {
     if (atom.meta.containsKey('analytics')) {
       final eventName = atom.meta['analytics'] as String;
-      print('ANALYTICS: Sending event "$eventName" with value: $newValue');
+      debugPrint('ANALYTICS: Sending event "$eventName" with value: $newValue');
       // In real app: FirebaseAnalytics.instance.logEvent(name: eventName, parameters: {'value': newValue});
     }
   }
 
   @override
   void onError(Atom atom, Object error, StackTrace stack) {
-    print('ANALYTICS: Error in ${atom.label}: $error');
+    debugPrint('ANALYTICS: Error in ${atom.label}: $error');
   }
 }
 
 // --- Logic ---
 class AnalyticsExampleLogic extends NanoLogic<void> {
   // Atom with analytics metadata
-  final counter = 0.toAtom('counter', meta: {'analytics': 'counter_changed'});
+  final counter = 0.toAtom('counter', {'analytics': 'counter_changed'});
 
   // Async atom
   final data = AsyncAtom<String>(label: 'dataLoader');
