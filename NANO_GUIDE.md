@@ -12,7 +12,7 @@ The fundamental unit of state. Wraps a `ValueNotifier` with logging and helper m
 **Signature:**
 ```dart
 class Atom<T> extends ValueNotifier<T> {
-  Atom(T value, {String? label});
+  Atom(T value, {String? label, Map<String, dynamic> meta = const {}});
 
   // Get value
   T call();
@@ -29,7 +29,7 @@ class Atom<T> extends ValueNotifier<T> {
 ```
 
 **Extensions (Syntactic Sugar):**
-- `.toAtom([label])`: Converts any value to an Atom.
+- `.toAtom([label, meta])`: Converts any value to an Atom.
 - `.increment([amount])`: For `Atom<int>`.
 - `.decrement([amount])`: For `Atom<int>`.
 - `.toggle()`: For `Atom<bool>`.
@@ -183,12 +183,25 @@ NanoView<MyLogic, MyParams>(
 )
 ```
 
-### `Watch<T>`
-Surgical rebuild widget. Only rebuilds its child when the specific atom changes.
+### `Watch<T>` / `AtomBuilder<T>`
+Surgical rebuild widget. Only rebuilds its child when the specific atom changes. `AtomBuilder` is an alias for `Watch` with a more standard Flutter builder name.
 
 **Usage:**
 ```dart
-Watch(logic.count, builder: (context, value) => Text('$value'))
+AtomBuilder(atom: logic.count, builder: (context, value) => Text('$value'))
+```
+
+### `AsyncAtomBuilder<T>`
+Specialized widget for `AsyncAtom` that simplifies state handling.
+
+**Usage:**
+```dart
+AsyncAtomBuilder(
+  atom: logic.user,
+  loading: (context) => Loader(),
+  error: (context, error) => ErrorText(error),
+  data: (context, user) => UserProfile(user),
+)
 ```
 
 ## 4. Coding Rules & Patterns

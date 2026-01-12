@@ -86,7 +86,7 @@ abstract class NanoLogic<P> extends ChangeNotifier with DiagnosticableTreeMixin 
     final sub = stream.listen(
       (data) => atom.set(data),
       onError: (e, s) {
-        Nano.observer.onError(atom.label ?? 'StreamBinding', e, s);
+        Nano.observer.onError(atom, e, s);
       },
     );
     _subscriptions.add(sub);

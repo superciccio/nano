@@ -148,7 +148,11 @@ class _NanoViewState<T extends NanoLogic<P>, P> extends State<NanoView<T, P>> {
       // But if P is dynamic/void/nullable, null is fine.
       _logic!.initialize(widget.params as P);
     } catch (e, s) {
-      Nano.observer.onError('NanoViewInit<${T.toString()}>', e, s);
+      Nano.observer.onError(
+        Atom(null, label: 'NanoViewInit<${T.toString()}>'),
+        e,
+        s,
+      );
       rethrow;
     }
   }
@@ -317,5 +321,67 @@ extension AsyncAtomWidgetExtension<T> on ValueListenable<AsyncState<T>> {
         idle: () => idle?.call(context) ?? loading(context),
       );
     });
+  }
+}
+
+/// A simplified builder for [Atom]s. Alias for [Watch].
+///
+/// Example:
+/// ```dart
+/// AtomBuilder(
+///   atom: count,
+///   builder: (context, value) => Text('$value'),
+/// )
+/// ```
+class AtomBuilder<T> extends Watch<T> {
+  const AtomBuilder({
+    super.key,
+    required ValueListenable<T> atom,
+    required super.builder,
+  }) : super(atom);
+}
+
+/// A specialized builder for [AsyncAtom] (or any `ValueListenable<AsyncState<T>>`).
+///
+/// Simplifies handling of loading, error, and data states without nested maps.
+///
+/// Example:
+/// ```dart
+/// AsyncAtomBuilder(
+///   atom: userAtom,
+///   data: (context, user) => UserProfile(user),
+///   loading: (context) => const CircularProgressIndicator(),
+///   error: (context, error) => ErrorText(error),
+/// )
+/// ```
+class AsyncAtomBuilder<T> extends StatelessWidget {
+  final ValueListenable<AsyncState<T>> atom;
+  final Widget Function(BuildContext context, T data) data;
+  final Widget Function(BuildContext context, Object error) error;
+  final Widget Function(BuildContext context) loading;
+  final Widget Function(BuildContext context)? idle;
+
+  const AsyncAtomBuilder({
+    super.key,
+    required this.atom,
+    required this.data,
+    required this.error,
+    required this.loading,
+    this.idle,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Watch<AsyncState<T>>(
+      atom,
+      builder: (context, state) {
+        return state.map(
+          data: (d) => data(context, d),
+          error: (e) => error(context, e),
+          loading: () => loading(context),
+          idle: () => idle?.call(context) ?? loading(context),
+        );
+      },
+    );
   }
 }

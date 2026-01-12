@@ -18,26 +18,53 @@ class Nano {
 /// Useful for logging to Console, Sentry, Crashlytics, etc.
 abstract class NanoObserver {
   /// Called whenever an [Atom] or [ComputedAtom] changes its value.
-  void onChange(String label, dynamic oldValue, dynamic newValue);
+  void onChange(Atom atom, dynamic oldValue, dynamic newValue);
 
   /// Called whenever an error occurs (e.g., in [AsyncAtom] or [NanoLogic.bindStream]).
-  void onError(String label, Object error, StackTrace stack);
+  void onError(Atom atom, Object error, StackTrace stack);
 }
 
 /// Default observer that prints to console in debug mode.
 class _DefaultObserver implements NanoObserver {
   @override
-  void onChange(String label, dynamic oldValue, dynamic newValue) {
+  void onChange(Atom atom, dynamic oldValue, dynamic newValue) {
     if (kDebugMode) {
-      debugPrint('?? NANO [$label]: $oldValue -> $newValue');
+      debugPrint('?? NANO [${atom.label ?? atom.runtimeType}]: $oldValue -> $newValue');
     }
   }
 
   @override
-  void onError(String label, Object error, StackTrace stack) {
-    debugPrint('?? NANO ERROR [$label]: $error');
+  void onError(Atom atom, Object error, StackTrace stack) {
+    debugPrint('?? NANO ERROR [${atom.label ?? atom.runtimeType}]: $error');
     if (kDebugMode) debugPrint(stack.toString());
   }
+}
+
+/// A composite observer that delegates to multiple observers.
+class CompositeObserver implements NanoObserver {
+  final List<NanoObserver> observers;
+
+  CompositeObserver(this.observers);
+
+  @override
+  void onChange(Atom atom, dynamic oldValue, dynamic newValue) {
+    for (final observer in observers) {
+      observer.onChange(atom, oldValue, newValue);
+    }
+  }
+
+  @override
+  void onError(Atom atom, Object error, StackTrace stack) {
+    for (final observer in observers) {
+      observer.onError(atom, error, stack);
+    }
+  }
+
+  /// Adds an observer to the list.
+  void addObserver(NanoObserver observer) => observers.add(observer);
+
+  /// Removes an observer from the list.
+  void removeObserver(NanoObserver observer) => observers.remove(observer);
 }
 
 /// The atomic unit of state.
@@ -55,7 +82,9 @@ class Atom<T> extends ValueNotifier<T> with Diagnosticable {
   static const _sentinel = Object();
 
   final String? label;
-  Atom(super.value, {this.label}) {
+  final Map<String, dynamic> meta;
+
+  Atom(super.value, {this.label, this.meta = const {}}) {
     NanoDebugService.registerAtom(this);
   }
 
@@ -66,7 +95,7 @@ class Atom<T> extends ValueNotifier<T> with Diagnosticable {
 
   void set(T newValue) {
     if (value == newValue) return;
-    Nano.observer.onChange(label ?? 'Atom<${T.toString()}>', value, newValue);
+    Nano.observer.onChange(this, value, newValue);
     super.value = newValue;
   }
 
@@ -112,42 +141,31 @@ class Atom<T> extends ValueNotifier<T> with Diagnosticable {
 ///
 /// The `ComputedAtom` automatically listens to its dependencies and updates
 /// its own value when any of them change.
-///
-/// Example:
-/// ```dart
-/// final count = Atom(10);
-/// final doubleCount = ComputedAtom([count], () => count.value * 2);
-///
-/// print(doubleCount.value); // 20
-/// count.set(20);
-/// print(doubleCount.value); // 40
-/// ```
-class ComputedAtom<T> extends ValueNotifier<T> with Diagnosticable {
-  final String? label;
+class ComputedAtom<T> extends Atom<T> {
   final T Function() selector;
   final List<ValueListenable> dependencies;
-  ComputedAtom(this.dependencies, this.selector, {this.label})
-    : super(selector()) {
+
+  ComputedAtom(
+    this.dependencies,
+    this.selector, {
+    super.label,
+    super.meta,
+  }) : super(selector()) {
     for (final dep in dependencies) {
       dep.addListener(_update);
     }
   }
+
   void _update() {
     final newValue = selector();
     if (value == newValue) return;
-    Nano.observer.onChange(
-      label ?? 'ComputedAtom<${T.toString()}>',
-      value,
-      newValue,
-    );
-    value = newValue;
+    Nano.observer.onChange(this, value, newValue);
+    super.value = newValue;
   }
 
   @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty('label', label, defaultValue: null));
-    properties.add(DiagnosticsProperty('value', value));
+  void set(T newValue) {
+    throw UnsupportedError('ComputedAtom is read-only');
   }
 
   @override
@@ -263,7 +281,7 @@ class AsyncAtom<T> extends Atom<AsyncState<T>> {
     } catch (e, s) {
       if (_session == currentSession) {
         set(AsyncError<T>(e, s));
-        Nano.observer.onError(label ?? 'AsyncAtom<${T.toString()}>', e, s);
+        Nano.observer.onError(this, e, s);
       }
     }
   }
@@ -282,7 +300,7 @@ class StreamAtom<T> extends Atom<AsyncState<T>> {
       (data) => set(AsyncData<T>(data)),
       onError: (e, s) {
         set(AsyncError<T>(e, s));
-        Nano.observer.onError(label ?? 'StreamAtom<$T>', e, s);
+        Nano.observer.onError(this, e, s);
       },
     );
   }
@@ -397,7 +415,8 @@ extension NanoObjectExtension<T> on T {
   /// ```dart
   /// final count = 0.toAtom('count');
   /// ```
-  Atom<T> toAtom([String? label]) => Atom<T>(this, label: label);
+  Atom<T> toAtom([String? label, Map<String, dynamic> meta = const {}]) =>
+      Atom<T>(this, label: label, meta: meta);
 }
 
 /// Extension to convert a [ValueListenable] into a [Stream].
