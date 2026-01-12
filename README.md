@@ -98,6 +98,7 @@ Nano loves clean code.
 | **Watch Many** | Nested `Watch` widgets | `(atom1, atom2).watch(...)` |
 | **Math** | `atom.value++` | `atom.increment()` |
 | **Bool** | `atom.value = !atom.value` | `atom.toggle()` |
+| **Collections** | `atom.set([...atom.value, item])` | `atom.add(item)` |
 
 ## 🛠️ DevTools Extension
 

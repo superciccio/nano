@@ -63,11 +63,11 @@ class _CapturingObserver extends NanoObserver {
   Object? lastError;
 
   @override
-  void onChange(String label, dynamic oldValue, dynamic newValue) {}
+  void onChange(Atom atom, dynamic oldValue, dynamic newValue) {}
 
   @override
-  void onError(String label, Object error, StackTrace stack) {
-    lastErrorLabel = label;
+  void onError(Atom atom, Object error, StackTrace stack) {
+    lastErrorLabel = atom.label;
     lastError = error;
   }
 }

@@ -5,9 +5,9 @@ import 'package:nano/nano.dart';
 
 class MockObserver implements NanoObserver {
   @override
-  void onChange(String label, oldValue, newValue) {}
+  void onChange(Atom atom, oldValue, newValue) {}
   @override
-  void onError(String label, Object error, StackTrace stack) {}
+  void onError(Atom atom, Object error, StackTrace stack) {}
 }
 
 void main() {

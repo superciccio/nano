@@ -20,10 +20,10 @@ class HistoryObserver extends NanoObserver {
   final List<StateChangeEvent> events = [];
 
   @override
-  void onChange(String label, oldValue, newValue) {
+  void onChange(Atom atom, oldValue, newValue) {
     events.add(
       StateChangeEvent(
-        label: label,
+        label: atom.label ?? atom.runtimeType.toString(),
         oldValue: oldValue,
         newValue: newValue,
         timestamp: DateTime.now(),
@@ -32,7 +32,7 @@ class HistoryObserver extends NanoObserver {
   }
 
   @override
-  void onError(String label, Object error, StackTrace stack) {
+  void onError(Atom atom, Object error, StackTrace stack) {
     // For now, we don't store errors in the history.
   }
 }
