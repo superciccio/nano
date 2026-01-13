@@ -123,3 +123,46 @@ final theme = PersistAtom('theme_key', ThemeMode.system);
         return list.where((i) => heavyCheck(i)).toList();
     });
     ```
+
+### 4. Precision Selectors (.select)
+- **Problem**: Widget rebuilds when *any* part of a large object changes (e.g., `User`), even if you only display `user.name`.
+- **Solution**: `atom.select()` returns a derived atom that checks equality on the sub-field.
+    ```dart
+    final user = Atom(User(name: 'Andrea', age: 30));
+    // ONLY updates when name changes, ignores age
+    final nameAtom = user.select((u) => u.name);
+    ```
+
+### 5. Scope Overrides (Testing & Previews)
+- **Problem**: Testing a Widget in isolation (Storybook) often requires mocking global state.
+- **Solution**: `NanoScope` widget that intercepts atom lookups.
+    ```dart
+    NanoScope(
+      overrides: [
+        userAtom.overrideWithValue(MockUser()),
+      ],
+      child: UserProfile(),
+    );
+    ```
+
+### 6. Smart Refresh (Async Retries)
+- **Problem**: "Pull to Refresh" usually requires manually re-calling the repository method.
+- **Solution**: `AsyncAtom` remembers the last `track`'s future generator.
+    ```dart
+    // In UI
+    RefreshIndicator(
+      onRefresh: () => myData.refresh(), // Re-runs the last tracking logic
+      child: ...
+    )
+    ```
+
+### 7. Resource Atoms (Auto-Dispose)
+- **Problem**: Managing StreamSubscriptions or WebSockets that need to close when the Atom is no longer needed.
+- **Solution**: `ResourceAtom` with a `ref.onDispose` hook.
+    ```dart
+    final streamAtom = ResourceAtom((addDisposer) {
+        final sub = stream.listen(...);
+        addDisposer(() => sub.cancel()); // Auto-closes
+        return sub;
+    });
+    ```
