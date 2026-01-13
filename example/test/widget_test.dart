@@ -6,6 +6,6 @@ void main() {
     await tester.pumpWidget(const MyApp());
     await tester.pumpAndSettle();
     expect(find.text('Nano Examples Showcase'), findsOneWidget);
-    expect(find.text('Counter & Computed'), findsOneWidget);
+    expect(find.text('Live Crypto Ticker'), findsOneWidget);
   });
 }

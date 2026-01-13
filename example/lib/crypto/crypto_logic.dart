@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:nano/nano.dart';
 import 'crypto_service.dart';
 
@@ -40,14 +41,14 @@ class CryptoLogic extends NanoLogic<void> {
     auto(() {
       final gainer = topGainer.value;
       if (gainer != null) {
-        print('?? [Showcase] New Top Gainer: ${gainer.name} (\$${gainer.price})');
+        debugPrint('?? [Showcase] New Top Gainer: ${gainer.name} (\$${gainer.price})');
       }
     });
 
     // Showcase: Named Actions for DevTools Performance Timeline
     Nano.action(
+      'Crypto: Start Price Stream',
       () => bindStream(_service.pricesStream, coins),
-      name: 'Crypto: Start Price Stream',
     );
   }
 }
