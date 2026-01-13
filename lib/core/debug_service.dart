@@ -9,6 +9,9 @@ class NanoDebugService {
   static final List<Atom> _registeredAtoms = [];
   static final List<NanoDerivation> _registeredDerivations = [];
 
+  /// [Internal] Returns all registered atoms.
+  static List<Atom> get registeredAtoms => List.unmodifiable(_registeredAtoms);
+
   /// [Internal] Returns the number of registered atoms. Used for testing.
   @visibleForTesting
   static int get registeredAtomCount => _registeredAtoms.length;
@@ -76,8 +79,10 @@ class NanoDebugService {
 
         return {
           'label': event.label,
-          'oldValue': oldVal is NanoSerializable ? oldVal.toJson() : oldVal.toString(),
-          'newValue': newVal is NanoSerializable ? newVal.toJson() : newVal.toString(),
+          'oldValue':
+              oldVal is NanoSerializable ? oldVal.toJson() : oldVal.toString(),
+          'newValue':
+              newVal is NanoSerializable ? newVal.toJson() : newVal.toString(),
           'timestamp': event.timestamp.toIso8601String(),
         };
       }).toList();
@@ -167,7 +172,8 @@ class NanoDebugService {
       return valueToParse;
     }
     // For complex types, we can't parse from string.
-    throw Exception('Unsupported type for time travel: ${originalValue.runtimeType}');
+    throw Exception(
+        'Unsupported type for time travel: ${originalValue.runtimeType}');
   }
 
   static String? _getAsyncState(Atom atom) {

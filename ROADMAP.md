@@ -125,6 +125,7 @@ final theme = PersistAtom('theme_key', ThemeMode.system);
     ```
 
 ### 4. Precision Selectors (.select)
+- **Status**: [x] COMPLETED
 - **Problem**: Widget rebuilds when *any* part of a large object changes (e.g., `User`), even if you only display `user.name`.
 - **Solution**: `atom.select()` returns a derived atom that checks equality on the sub-field.
     ```dart
@@ -176,9 +177,11 @@ final theme = PersistAtom('theme_key', ThemeMode.system);
     ```
 
 ### 9. State Replay (Hot Restart Persistence)
+- **Status**: [x] COMPLETED
 - **Problem**: Hot Restart kills all state. Iterating on complex deep-link flows is painful.
 - **Solution**: A dev-only hook that serializes the *entire atomic graph* to a temp file before shutdown and rehydrates it on startup.
     - Result: **Hot Restart feels like Hot Reload** but for Logic.
+    - API: `Nano.backupState()` and `Nano.restoreState()`.
 
 ### 10. Remote Inspector (WebSocket Server)
 - **Problem**: Debugging a bug that only happens on a physical device in the field (no USB).
