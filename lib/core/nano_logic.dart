@@ -118,8 +118,8 @@ abstract class NanoLogic<P> extends ChangeNotifier
 
   /// Runs [effect] immediately and whenever any [Atom] accessed within it changes.
   /// The reaction is automatically disposed when this [NanoLogic] is disposed.
-  void auto(void Function() effect) {
-    _disposers.add(autorun(effect));
+  void auto(void Function() effect, {String? label}) {
+    _disposers.add(autorun(effect, label: label));
   }
 
   /// Runs [sideEffect] whenever the value returned by [tracker] changes.

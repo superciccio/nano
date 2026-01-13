@@ -1,6 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
+import 'package:meta/meta.dart';
+import 'package:nano/core/nano_action.dart';
+import 'package:nano/core/nano_reaction.dart';
 import 'package:nano/core/debug_service.dart';
 import 'package:nano/core/nano_config.dart';
 import 'package:nano/core/nano_middleware.dart';
@@ -76,7 +79,7 @@ class Nano {
 
     _actionStart(name);
     try {
-      actualFn();
+      untracked(actualFn);
     } finally {
       _actionEnd(name);
     }
@@ -100,6 +103,18 @@ class Nano {
       return fn();
     } finally {
       _derivationStack.removeLast();
+    }
+  }
+
+  /// Runs [fn] without tracking any dependencies.
+  static T untracked<T>(T Function() fn) {
+    if (_derivationStack.isEmpty) return fn();
+    final prevStack = List<NanoDerivation>.from(_derivationStack);
+    _derivationStack.clear();
+    try {
+      return fn();
+    } finally {
+      _derivationStack.addAll(prevStack);
     }
   }
 
@@ -181,6 +196,8 @@ class Nano {
 
 /// Interface for anything that depends on Atoms (Computed, Reaction).
 abstract class NanoDerivation {
+  String get debugLabel;
+  Iterable<Atom> get dependencies;
   void addDependency(Atom atom);
 }
 
@@ -286,7 +303,7 @@ class Atom<T> extends ValueNotifier<T> with Diagnosticable {
   }
 
   void set(T newValue) {
-    if (value == newValue) return;
+    if (super.value == newValue) return;
 
     if (Nano.logic?.isInitializing == true) {
       throw '''
@@ -405,6 +422,12 @@ atom.value++;
 /// The `ComputedAtom` automatically listens to its dependencies and updates
 /// its own value when any of them change.
 class ComputedAtom<T> extends Atom<T> implements NanoDerivation {
+  @override
+  String get debugLabel => label ?? 'ComputedAtom';
+
+  @override
+  Iterable<Atom> get dependencies => _observing;
+
   final T Function() _selector;
   Set<Atom> _observing = {};
   Set<Atom>? _newObserving;
@@ -415,6 +438,7 @@ class ComputedAtom<T> extends Atom<T> implements NanoDerivation {
   ComputedAtom(this._selector, {super.label, super.meta})
     : super(_selector()) {
     _lastVersion = Nano.version;
+    NanoDebugService.registerDerivation(this);
   }
 
   @override
@@ -531,6 +555,7 @@ class ComputedAtom<T> extends Atom<T> implements NanoDerivation {
 
   @override
   void dispose() {
+    NanoDebugService.unregisterDerivation(this);
     _stopObserving();
     super.dispose();
   }

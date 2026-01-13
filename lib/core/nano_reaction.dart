@@ -1,4 +1,5 @@
 import 'package:nano/core/nano_core.dart';
+import 'package:nano/core/debug_service.dart';
 
 /// Disposes a reaction.
 typedef ReactionDisposer = void Function();
@@ -13,8 +14,8 @@ typedef ReactionDisposer = void Function();
 ///   print(count.value);
 /// });
 /// ```
-ReactionDisposer autorun(void Function() effect) {
-  final reaction = _Reaction(effect);
+ReactionDisposer autorun(void Function() effect, {String? label}) {
+  final reaction = _Reaction(effect, label: label);
   reaction.schedule();
   return reaction.dispose;
 }
@@ -34,6 +35,7 @@ ReactionDisposer reaction<T>(
   T Function() tracker,
   void Function(T value) sideEffect, {
   bool fireImmediately = false,
+  String? label,
 }) {
   // Actually, reaction is different from autorun.
   // It tracks `tracker`, and executes `sideEffect` when `tracker` result changes.
@@ -60,11 +62,21 @@ ReactionDisposer reaction<T>(
 
 class _Reaction implements NanoDerivation {
   final void Function() _onInvalidate;
+  final String? label;
+
+  @override
+  String get debugLabel => label ?? 'Reaction';
+
+  @override
+  Iterable<Atom> get dependencies => _observing;
+
   Set<Atom> _observing = {};
   Set<Atom>? _newObserving; // Temporary set for new run
   bool _disposed = false;
 
-  _Reaction(this._onInvalidate);
+  _Reaction(this._onInvalidate, {this.label}) {
+    NanoDebugService.registerDerivation(this);
+  }
 
   void schedule() {
     if (_disposed) return;
@@ -119,6 +131,7 @@ class _Reaction implements NanoDerivation {
 
   void dispose() {
     _disposed = true;
+    NanoDebugService.unregisterDerivation(this);
     for (final atom in _observing) {
       atom.removeListener(schedule);
     }
