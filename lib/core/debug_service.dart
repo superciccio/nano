@@ -7,6 +7,7 @@ import 'package:nano/core/nano_core.dart';
 /// Handles communication between the running app and DevTools.
 class NanoDebugService {
   static final List<Atom> _registeredAtoms = [];
+  static final List<NanoDerivation> _registeredDerivations = [];
 
   /// [Internal] Returns the number of registered atoms. Used for testing.
   @visibleForTesting
@@ -23,6 +24,19 @@ class NanoDebugService {
   /// Unregisters an [Atom].
   static void unregisterAtom(Atom atom) {
     _registeredAtoms.remove(atom);
+  }
+
+  /// Registers a [NanoDerivation] (Computed/Reaction) to be tracked.
+  static void registerDerivation(NanoDerivation derivation) {
+    if (!kDebugMode) return;
+    if (!_registeredDerivations.contains(derivation)) {
+      _registeredDerivations.add(derivation);
+    }
+  }
+
+  /// Unregisters a [NanoDerivation].
+  static void unregisterDerivation(NanoDerivation derivation) {
+    _registeredDerivations.remove(derivation);
   }
 
   static bool _initialized = false;
@@ -91,6 +105,34 @@ class NanoDebugService {
         );
       }
     });
+
+    dev.registerExtension('ext.nano.getGraph', (method, parameters) async {
+      return dev.ServiceExtensionResponse.result(
+        json.encode(getGraphData()),
+      );
+    });
+  }
+
+  /// Returns the current dependency graph as a Map.
+  static Map<String, dynamic> getGraphData() {
+    final derivationsJson = _registeredDerivations.map((node) {
+      return {
+        'label': node.debugLabel,
+        'type': node.runtimeType.toString(),
+        'dependencies': node.dependencies.map((dep) {
+          return {
+            'label': dep.label ?? 'Atom',
+            'type': dep.runtimeType.toString(),
+            'value': dep.value.toString(),
+          };
+        }).toList(),
+      };
+    }).toList();
+
+    return {
+      'timestamp': DateTime.now().toIso8601String(),
+      'nodes': derivationsJson,
+    };
   }
 
   static dynamic _parseValue(dynamic originalValue, String valueToParse) {
@@ -117,5 +159,29 @@ class NanoDebugService {
       return 'idle';
     }
     return null;
+  }
+
+  /// Dumps the current dependency graph to the console.
+  static void dumpGraph() {
+    debugPrint('\n📊 NANO DEPENDENCY GRAPH 📊');
+    debugPrint('===========================');
+    if (_registeredDerivations.isEmpty) {
+      debugPrint('No active derivations found.');
+      return;
+    }
+
+    for (final node in _registeredDerivations) {
+      final deps = node.dependencies;
+      debugPrint('${node.debugLabel} depends on:');
+      if (deps.isEmpty) {
+        debugPrint('  - (none)');
+      } else {
+        for (final dep in deps) {
+          debugPrint('  - ${dep.label ?? dep.runtimeType} (${dep.value})');
+        }
+      }
+      debugPrint('');
+    }
+    debugPrint('===========================\n');
   }
 }
