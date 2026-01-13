@@ -37,7 +37,7 @@ class Nano {
   static int _batchDepth = 0;
 
   /// [Internal] Pending atoms to notify.
-  static final Set<Atom> _pendingNotifications = {};
+  static final List<Atom> _pendingNotifications = [];
 
   /// Batches notifications for state updates.
   ///
@@ -62,15 +62,17 @@ class Nano {
     } finally {
       _batchDepth--;
       if (_batchDepth == 0) {
-        final pending = _pendingNotifications.toList();
+        final pending = List<Atom>.from(_pendingNotifications);
         _pendingNotifications.clear();
+
+        // Reset flags first to ensure consistency
         for (final atom in pending) {
-          // We must manually call the listener notification logic.
-          // Since we overrode notifyListeners to be suppressed, we need a way
-          // to force it or bypass the check.
-          //
-          // However, since `_batchDepth` is now 0, calling `notifyListeners`
-          // on the atom will work normally!
+          atom._isPending = false;
+        }
+
+        // Then notify
+        for (final atom in pending) {
+          // Since `_batchDepth` is 0, this will trigger actual listeners.
           atom.notifyListeners();
         }
       }
@@ -158,6 +160,9 @@ class Atom<T> extends ValueNotifier<T> with Diagnosticable {
   final String? label;
   final Map<String, dynamic> meta;
 
+  /// [Internal] Flag to track if this atom is already pending notification in the current batch.
+  bool _isPending = false;
+
   Atom(super.value, {this.label, this.meta = const {}}) {
     NanoDebugService.registerAtom(this);
   }
@@ -187,7 +192,10 @@ class Atom<T> extends ValueNotifier<T> with Diagnosticable {
   @override
   void notifyListeners() {
     if (Nano._batchDepth > 0) {
-      Nano._pendingNotifications.add(this);
+      if (!_isPending) {
+        _isPending = true;
+        Nano._pendingNotifications.add(this);
+      }
     } else {
       super.notifyListeners();
     }
