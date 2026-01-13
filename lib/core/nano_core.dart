@@ -39,6 +39,15 @@ class Nano {
   /// [Internal] Pending atoms to notify.
   static final List<Atom> _pendingNotifications = [];
 
+  /// [Internal] Set of atoms currently flushing in the batch.
+  static final Set<Atom> _flushingAtoms = {};
+
+  /// [Internal] Returns true if Nano is currently flushing a batch.
+  static bool get isFlushing => _flushingAtoms.isNotEmpty;
+
+  /// [Internal] Returns true if the given atom is currently in the flush queue.
+  static bool isFlushingAtom(Atom atom) => _flushingAtoms.contains(atom);
+
   /// Batches notifications for state updates.
   ///
   /// Changes to [Atom]s inside the [fn] will not trigger listeners immediately.
@@ -70,10 +79,20 @@ class Nano {
           atom._isPending = false;
         }
 
-        // Then notify
-        for (final atom in pending) {
-          // Since `_batchDepth` is 0, this will trigger actual listeners.
-          atom.notifyListeners();
+        // Add to flushing set for glitch prevention checks
+        _flushingAtoms.addAll(pending);
+
+        try {
+          // Then notify
+          for (final atom in pending) {
+            // Remove current from flushing set so dependents don't wait on it
+            _flushingAtoms.remove(atom);
+
+            // Since `_batchDepth` is 0, this will trigger actual listeners.
+            atom.notifyListeners();
+          }
+        } finally {
+          _flushingAtoms.clear();
         }
       }
     }
@@ -259,6 +278,18 @@ class ComputedAtom<T> extends Atom<T> {
   }
 
   void _update() {
+    // Optimization: Glitch Prevention.
+    // If we are in a batch flush, and any OTHER dependency is still waiting to be flushed,
+    // we defer our update. The last dependency to flush will trigger us.
+    if (Nano.isFlushing) {
+      for (final dep in dependencies) {
+        // Dependencies are ValueListenable, but we need to check if they are Atoms in the flush set.
+        if (dep is Atom && Nano.isFlushingAtom(dep)) {
+          return;
+        }
+      }
+    }
+
     final newValue = selector();
     if (value == newValue) return;
     Nano.observer.onChange(this, value, newValue);
