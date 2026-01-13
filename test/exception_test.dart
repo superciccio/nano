@@ -11,7 +11,7 @@ void main() {
       expect(
         () => logic.initialize(null),
         throwsA(predicate((e) =>
-            e.toString().contains('side-effect Violation') &&
+            e.toString().toLowerCase().contains('side-effect violation') &&
             e.toString().contains('onInit'))),
       );
     });

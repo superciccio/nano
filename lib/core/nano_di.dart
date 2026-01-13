@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:nano/core/nano_core.dart' show Nano, NanoInitContext;
 
 /// A simple registry to hold your dependencies.
 ///
@@ -75,6 +76,15 @@ class Registry with Diagnosticable {
   ///
   /// Throws [NanoException] if the type is not registered.
   T get<T>() {
+    final initContext = Nano.initContext;
+    if (initContext != null && !initContext.isValid) {
+      debugPrint(
+        '⚠️ [Nano] DI Warning: You are resolving ${T.toString()} after an await in onInit.\n'
+        'This is dangerous as the Scope/Registry might have changed between awaits.\n'
+        '👉 Fix: Resolve all dependencies synchronously at the start of onInit.',
+      );
+    }
+
     if (_lookupStack.contains(T)) {
       throw NanoException(
         "Circular dependency detected while resolving '${T.toString()}'.\n"
