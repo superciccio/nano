@@ -23,24 +23,35 @@ class Registry with Diagnosticable {
 
   Registry({Registry? parent}) : _parent = parent;
 
+  /// [Internal] Clears any existing registration for [type].
+  void _clearType(Type type) {
+    _services.remove(type);
+    _factories.remove(type);
+    _lazySingletons.remove(type);
+  }
+
   /// Registers an [instance] of type [T].
   void register<T>(T instance) {
     final type = T != dynamic && T != Object ? T : instance.runtimeType;
+    _clearType(type);
     _services[type] = instance as Object;
   }
 
   /// Registers a factory that creates a new instance of [T] every time.
   void registerFactory<T>(T Function(Registry) factory) {
+    _clearType(T);
     _factories[T] = (r) => factory(r) as Object;
   }
 
   /// Registers a factory with explicit [type].
   void registerFactoryDynamic(Type type, Object Function(Registry) factory) {
+    _clearType(type);
     _factories[type] = factory;
   }
 
   /// Registers a lazy singleton that is created on first read.
   void registerLazySingleton<T>(T Function(Registry) factory) {
+    _clearType(T);
     _lazySingletons[T] = (r) => factory(r) as Object;
   }
 
@@ -49,7 +60,15 @@ class Registry with Diagnosticable {
     Type type,
     Object Function(Registry) factory,
   ) {
+    _clearType(type);
     _lazySingletons[type] = factory;
+  }
+
+  /// Removes all local registrations.
+  void clear() {
+    _services.clear();
+    _factories.clear();
+    _lazySingletons.clear();
   }
 
   /// Retrieves the registered instance of type [T].

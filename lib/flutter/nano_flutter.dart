@@ -99,6 +99,15 @@ class _ScopeState extends State<Scope> {
     }
   }
 
+  @override
+  void didUpdateWidget(Scope oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!listEquals(oldWidget.modules, widget.modules) ||
+        oldWidget.config != widget.config) {
+      _registry.clear();
+      _registerModules();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
