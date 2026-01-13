@@ -1,12 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
-import 'package:meta/meta.dart';
-import 'package:nano/core/nano_action.dart';
-import 'package:nano/core/nano_reaction.dart';
 import 'package:nano/core/debug_service.dart';
 import 'package:nano/core/nano_config.dart';
-import 'package:nano/core/nano_middleware.dart';
 import 'package:nano/core/nano_persistence.dart';
 
 abstract class NanoLogicBase {
@@ -16,15 +12,34 @@ abstract class NanoLogicBase {
 /// Global configuration for Nano.
 class Nano {
   /// Set this in your main() to capture logs (e.g., NanoObserver()).
-  static NanoObserver observer = _DefaultObserver();
+  /// The default observer used when no configuration is found in the Zone.
+  static final NanoObserver _defaultObserver = _DefaultObserver();
 
-  /// List of active middlewares.
-  static final List<NanoMiddleware> middlewares = [];
+  /// Returns the current [NanoObserver].
+  ///
+  /// It looks for a [NanoConfig] in the current [Zone].
+  /// If not found, it returns the default observer.
+  static NanoObserver get observer {
+    final config = Zone.current[#nanoConfig] as NanoConfig?;
+    return config?.observer ?? _defaultObserver;
+  }
+
+  /// Returns the list of active middlewares.
+  static List<NanoMiddleware> get middlewares {
+    final config = Zone.current[#nanoConfig] as NanoConfig?;
+    return config?.middlewares ?? [];
+  }
 
   static NanoLogicBase? get logic => Zone.current[#nanoLogic] as NanoLogicBase?;
 
-  /// Global storage backend for [PersistedAtom].
-  static NanoStorage storage = InMemoryStorage();
+  /// The default storage used when no configuration is found.
+  static final NanoStorage _defaultStorage = InMemoryStorage();
+
+  /// Returns the current [NanoStorage].
+  static NanoStorage get storage {
+    final config = Zone.current[#nanoConfig] as NanoConfig?;
+    return config?.storage ?? _defaultStorage;
+  }
 
   /// [Internal] A flag to check if an action is running.
   static bool _isInAction = false;
@@ -42,9 +57,9 @@ class Nano {
   @visibleForTesting
   static void reset() {
     _version = 0;
-    observer = _DefaultObserver();
     _isInAction = false;
-    middlewares.clear();
+    // observer and middlewares are now derived from Zone or default immutable instances.
+    // We cannot "clear" them globally.
   }
 
   /// [Internal] Starts an action.
@@ -185,11 +200,7 @@ class Nano {
 
   /// Initialize Nano for debugging. Usually called by Scope.
   static void init() {
-    if (kDebugMode) {
-      if (!middlewares.any((m) => m is TimelineMiddleware)) {
-        middlewares.add(TimelineMiddleware());
-      }
-    }
+    // Middleware injection is now handled by Scope and NanoConfig.
     NanoDebugService.init();
   }
 }

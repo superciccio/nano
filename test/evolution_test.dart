@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nano/nano.dart';
+import 'dart:async';
 
 void main() {
   group('Evolution: Smart Computeds', () {
@@ -67,14 +68,15 @@ void main() {
     test('Named actions and middleware integration', () {
       final logs = <String>[];
       final middleware = _TestMiddleware((s) => logs.add(s));
-      Nano.middlewares.add(middleware);
+      final config = NanoConfig(middlewares: [middleware]);
 
-      Nano.action('UpdateProfile', () {
-        // ...
-      });
+      runZoned(() {
+        Nano.action('UpdateProfile', () {
+          // ...
+        });
+      }, zoneValues: {#nanoConfig: config});
 
       expect(logs, ['start:UpdateProfile', 'end:UpdateProfile']);
-      Nano.middlewares.remove(middleware);
     });
   });
 

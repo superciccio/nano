@@ -4,9 +4,6 @@ import 'crypto/crypto_service.dart';
 import 'main_menu.dart';
 
 void main() {
-  // Initialize Nano for debugging
-  Nano.init();
-  Nano.observer = _DefaultObserver(); // Reset to default for simplicity
   runApp(const MyApp());
 }
 
@@ -33,6 +30,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scope(
+      config: NanoConfig(observer: _DefaultObserver()),
       modules: [
         // Register the CryptoService as a lazy singleton
         NanoLazy((r) => CryptoService()),

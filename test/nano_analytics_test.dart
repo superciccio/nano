@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nano/nano.dart';
@@ -22,27 +23,19 @@ class MockObserver implements NanoObserver {
 
 void main() {
   group('Analytics & Observer', () {
-    late MockObserver mockObserver;
-    late NanoObserver originalObserver;
-
-    setUp(() {
-      mockObserver = MockObserver();
-      originalObserver = Nano.observer;
-      Nano.observer = mockObserver;
-    });
-
-    tearDown(() {
-      Nano.observer = originalObserver;
-    });
-
     test('Atom transmits meta data to observer', () {
+      final mockObserver = MockObserver();
+      final config = NanoConfig(observer: mockObserver);
+      
       final atom = Atom(
         0,
         label: 'counter',
         meta: {'analytics_event': 'counter_update'},
       );
 
-      atom.value = 1;
+      runZoned(() {
+        atom.value = 1;
+      }, zoneValues: {#nanoConfig: config});
 
       expect(mockObserver.logs, contains('onChange: counter (0 -> 1)'));
       expect(mockObserver.logs, contains('Analytics: counter_update'));
@@ -52,11 +45,13 @@ void main() {
       final observer1 = MockObserver();
       final observer2 = MockObserver();
       final composite = CompositeObserver([observer1, observer2]);
-
-      Nano.observer = composite;
+      final config = NanoConfig(observer: composite);
 
       final atom = Atom(0, label: 'test');
-      atom.value = 1;
+      
+      runZoned(() {
+        atom.value = 1;
+      }, zoneValues: {#nanoConfig: config});
 
       expect(observer1.logs, contains('onChange: test (0 -> 1)'));
       expect(observer2.logs, contains('onChange: test (0 -> 1)'));

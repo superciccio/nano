@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nano/nano.dart';
+import 'dart:async';
 
 // --- Shared Components ---
 
@@ -93,147 +94,150 @@ class SilentObserver implements NanoObserver {
 }
 
 void main() {
-  setUp(() {
-    Nano.reset();
-    Nano.observer = const SilentObserver();
-  });
+
 
   testWidgets('Benchmark: Coarse vs Surgical (10,000 Widgets)', (tester) async {
-    tester.view.physicalSize = const Size(2000, 300000);
-    addTearDown(() => tester.view.resetPhysicalSize());
+    final config = NanoConfig(observer: const SilentObserver());
     
-    final logic = GridLogic();
-    logic.initialize(null);
+    await runZoned(() async {
+      Nano.reset();
+      
+      tester.view.physicalSize = const Size(2000, 300000);
+      addTearDown(() => tester.view.resetPhysicalSize());
+      
+      final logic = GridLogic();
+      logic.initialize(null);
 
-    int rootBuilds = 0;
-    final sw = Stopwatch();
+      int rootBuilds = 0;
+      final sw = Stopwatch();
 
-    debugPrint('\n--- SCENARIO A: COARSE (rebuildOnUpdate: true) ---');
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: Scope(
-            modules: [],
-            child: NanoView<GridLogic, void>(
-              create: (_) => logic,
-              autoDispose: false,
-              rebuildOnUpdate: true,
-              builder: (context, l) => CoarseGrid(logic: l, onBuild: () => rootBuilds++),
+      debugPrint('\n--- SCENARIO A: COARSE (rebuildOnUpdate: true) ---');
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Scope(
+              modules: [],
+              child: NanoView<GridLogic, void>(
+                create: (_) => logic,
+                autoDispose: false,
+                rebuildOnUpdate: true,
+                builder: (context, l) => CoarseGrid(logic: l, onBuild: () => rootBuilds++),
+              ),
             ),
           ),
         ),
-      ),
-    );
-    await tester.pumpAndSettle();
-    debugPrint('Initial rootBuilds: $rootBuilds');
+      );
+      await tester.pumpAndSettle();
+      debugPrint('Initial rootBuilds: $rootBuilds');
 
-    rootBuilds = 0;
-    sw.start();
-    logic.updateAll();
-    debugPrint('Updated atoms. Version: ${Nano.version}');
-    await tester.pump();
-    sw.stop();
-    debugPrint('Coarse Global Update Time: ${sw.elapsedMilliseconds}ms');
-    debugPrint('Coarse Root Rebuilds: $rootBuilds');
-    expect(rootBuilds, 1); // Grid logic notifies once, root rebuilds once
+      rootBuilds = 0;
+      sw.start();
+      logic.updateAll();
+      debugPrint('Updated atoms. Version: ${Nano.version}');
+      await tester.pump();
+      sw.stop();
+      debugPrint('Coarse Global Update Time: ${sw.elapsedMilliseconds}ms');
+      debugPrint('Coarse Root Rebuilds: $rootBuilds');
+      expect(rootBuilds, 1); // Grid logic notifies once, root rebuilds once
 
-    debugPrint('\n--- SCENARIO B: SURGICAL (rebuildOnUpdate: false) ---');
-    rootBuilds = 0;
-    sw.reset();
+      debugPrint('\n--- SCENARIO B: SURGICAL (rebuildOnUpdate: false) ---');
+      rootBuilds = 0;
+      sw.reset();
 
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: Scope(
-            modules: [],
-            child: NanoView<GridLogic, void>(
-              create: (_) => logic,
-              autoDispose: false,
-              rebuildOnUpdate: false,
-              builder: (context, l) => SurgicalGrid(logic: l, onBuild: () => rootBuilds++),
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Scope(
+              modules: [],
+              child: NanoView<GridLogic, void>(
+                create: (_) => logic,
+                autoDispose: false,
+                rebuildOnUpdate: false,
+                builder: (context, l) => SurgicalGrid(logic: l, onBuild: () => rootBuilds++),
+              ),
             ),
           ),
         ),
-      ),
-    );
-    await tester.pumpAndSettle();
-    debugPrint('Initial rootBuilds (Surgical): $rootBuilds');
+      );
+      await tester.pumpAndSettle();
+      debugPrint('Initial rootBuilds (Surgical): $rootBuilds');
 
-    rootBuilds = 0;
-    sw.start();
-    logic.updateAll();
-    debugPrint('Updated atoms (Surgical). Version: ${Nano.version}');
-    await tester.pump();
-    sw.stop();
-    debugPrint('Surgical Global Update Time: ${sw.elapsedMilliseconds}ms');
-    debugPrint('Surgical Root Rebuilds: $rootBuilds');
-    expect(rootBuilds, 0); // Root should NOT rebuild
+      rootBuilds = 0;
+      sw.start();
+      logic.updateAll();
+      debugPrint('Updated atoms (Surgical). Version: ${Nano.version}');
+      await tester.pump();
+      sw.stop();
+      debugPrint('Surgical Global Update Time: ${sw.elapsedMilliseconds}ms');
+      debugPrint('Surgical Root Rebuilds: $rootBuilds');
+      expect(rootBuilds, 0); // Root should NOT rebuild
 
-    debugPrint('\n--- SCENARIO C: SURGICAL LISTVIEW (rebuildOnUpdate: false) ---');
-    rootBuilds = 0;
-    sw.reset();
+      debugPrint('\n--- SCENARIO C: SURGICAL LISTVIEW (rebuildOnUpdate: false) ---');
+      rootBuilds = 0;
+      sw.reset();
 
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: Scope(
-            modules: [],
-            child: NanoView<GridLogic, void>(
-              create: (_) => logic,
-              autoDispose: false,
-              rebuildOnUpdate: false,
-              builder: (context, l) => SurgicalListView(logic: l, onBuild: () => rootBuilds++),
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Scope(
+              modules: [],
+              child: NanoView<GridLogic, void>(
+                create: (_) => logic,
+                autoDispose: false,
+                rebuildOnUpdate: false,
+                builder: (context, l) => SurgicalListView(logic: l, onBuild: () => rootBuilds++),
+              ),
             ),
           ),
         ),
-      ),
-    );
-    await tester.pumpAndSettle();
-    debugPrint('Initial rootBuilds (ListView): $rootBuilds');
+      );
+      await tester.pumpAndSettle();
+      debugPrint('Initial rootBuilds (ListView): $rootBuilds');
 
-    rootBuilds = 0;
-    sw.start();
-    logic.updateAll();
-    debugPrint('Updated atoms (ListView). Version: ${Nano.version}');
-    await tester.pump();
-    sw.stop();
-    debugPrint('Surgical ListView Update Time: ${sw.elapsedMilliseconds}ms');
-    debugPrint('Surgical ListView Root Rebuilds: $rootBuilds');
-    expect(rootBuilds, 0);
+      rootBuilds = 0;
+      sw.start();
+      logic.updateAll();
+      debugPrint('Updated atoms (ListView). Version: ${Nano.version}');
+      await tester.pump();
+      sw.stop();
+      debugPrint('Surgical ListView Update Time: ${sw.elapsedMilliseconds}ms');
+      debugPrint('Surgical ListView Root Rebuilds: $rootBuilds');
+      expect(rootBuilds, 0);
 
-    debugPrint('\n--- SCENARIO D: SURGICAL LISTVIEW (Normal Viewport 800x600) ---');
-    tester.view.physicalSize = const Size(800, 600);
-    rootBuilds = 0;
-    sw.reset();
+      debugPrint('\n--- SCENARIO D: SURGICAL LISTVIEW (Normal Viewport 800x600) ---');
+      tester.view.physicalSize = const Size(800, 600);
+      rootBuilds = 0;
+      sw.reset();
 
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: Scope(
-            modules: [],
-            child: NanoView<GridLogic, void>(
-              create: (_) => logic,
-              autoDispose: false,
-              rebuildOnUpdate: false,
-              builder: (context, l) => SurgicalListView(logic: l, onBuild: () => rootBuilds++),
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Scope(
+              modules: [],
+              child: NanoView<GridLogic, void>(
+                create: (_) => logic,
+                autoDispose: false,
+                rebuildOnUpdate: false,
+                builder: (context, l) => SurgicalListView(logic: l, onBuild: () => rootBuilds++),
+              ),
             ),
           ),
         ),
-      ),
-    );
-    await tester.pumpAndSettle();
-    debugPrint('Initial rootBuilds (Normal ListView): $rootBuilds');
+      );
+      await tester.pumpAndSettle();
+      debugPrint('Initial rootBuilds (Normal ListView): $rootBuilds');
 
-    rootBuilds = 0;
-    sw.start();
-    logic.updateAll();
-    debugPrint('Updated atoms (Normal ListView). Version: ${Nano.version}');
-    await tester.pump();
-    sw.stop();
-    debugPrint('Surgical Normal ListView Update Time: ${sw.elapsedMilliseconds}ms');
-    debugPrint('Surgical Normal ListView Root Rebuilds: $rootBuilds');
-    expect(rootBuilds, 0);
+      rootBuilds = 0;
+      sw.start();
+      logic.updateAll();
+      debugPrint('Updated atoms (Normal ListView). Version: ${Nano.version}');
+      await tester.pump();
+      sw.stop();
+      debugPrint('Surgical Normal ListView Update Time: ${sw.elapsedMilliseconds}ms');
+      debugPrint('Surgical Normal ListView Root Rebuilds: $rootBuilds');
+      expect(rootBuilds, 0);
 
-    logic.dispose();
+      logic.dispose();
+    }, zoneValues: {#nanoConfig: config});
   }, timeout: const Timeout(Duration(minutes: 5)));
 }

@@ -40,10 +40,16 @@ void main() {
       final controller = StreamController<int>();
       final atom = Atom(0, label: 'error_atom');
       final logic = _MockLogic();
-      final observer = _MockObserver();
-      Nano.observer = observer;
 
-      logic.bindStream(controller.stream, atom);
+
+
+      final observer = _MockObserver();
+      final config = NanoConfig(observer: observer);
+
+      // Run bindStream in zoned context so it picks up the observer
+      runZoned(() {
+        logic.bindStream(controller.stream, atom);
+      }, zoneValues: {#nanoConfig: config});
 
       controller.addError('test error');
       await Future.delayed(Duration.zero);

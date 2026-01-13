@@ -1,5 +1,7 @@
+import 'dart:async'; // Add async import
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nano/nano.dart';
+
 
 class MockStorage implements NanoStorage {
   final Map<String, String> data = {};
@@ -16,50 +18,55 @@ class MockStorage implements NanoStorage {
 
 void main() {
   group('PersistedAtom', () {
-    late MockStorage storage;
 
-    setUp(() {
-      storage = MockStorage();
-      Nano.storage = storage;
-    });
+
+    // setUp removed
+
 
     test('loads from storage on init', () async {
+      final storage = MockStorage();
+      final config = NanoConfig(storage: storage);
       storage.data['test_key'] = '100';
 
-      final atom = PersistedAtom(0, key: 'test_key');
-
-      // Wait for async load
-      await Future.delayed(Duration.zero);
-
-      expect(atom.value, 100);
+      await runZoned(() async {
+        final atom = PersistedAtom(0, key: 'test_key');
+        await Future.delayed(Duration.zero);
+        expect(atom.value, 100);
+      }, zoneValues: {#nanoConfig: config});
     });
 
     test('saves to storage on set', () async {
-      final atom = PersistedAtom(0, key: 'test_key');
+      final storage = MockStorage();
+      final config = NanoConfig(storage: storage);
 
-      atom.value = 50;
-
-      await Future.delayed(Duration.zero);
-
-      expect(storage.data['test_key'], '50');
+      await runZoned(() async {
+        final atom = PersistedAtom(0, key: 'test_key');
+        atom.value = 50;
+        await Future.delayed(Duration.zero);
+        expect(storage.data['test_key'], '50');
+      }, zoneValues: {#nanoConfig: config});
     });
 
     test('handles complex types with codecs', () async {
+      final storage = MockStorage();
+      final config = NanoConfig(storage: storage);
       storage.data['bool_key'] = 'true';
 
-      final atom = PersistedAtom<bool>(
-        false,
-        key: 'bool_key',
-        fromString: (s) => s == 'true',
-        toStringEncoder: (b) => b.toString(),
-      );
+      await runZoned(() async {
+        final atom = PersistedAtom<bool>(
+          false,
+          key: 'bool_key',
+          fromString: (s) => s == 'true',
+          toStringEncoder: (b) => b.toString(),
+        );
 
-      await Future.delayed(Duration.zero);
-      expect(atom.value, true);
+        await Future.delayed(Duration.zero);
+        expect(atom.value, true);
 
-      atom.value = false;
-      await Future.delayed(Duration.zero);
-      expect(storage.data['bool_key'], 'false');
+        atom.value = false;
+        await Future.delayed(Duration.zero);
+        expect(storage.data['bool_key'], 'false');
+      }, zoneValues: {#nanoConfig: config});
     });
   });
 }

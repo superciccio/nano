@@ -11,9 +11,8 @@ class MockObserver implements NanoObserver {
 }
 
 void main() {
-  setUp(() {
-    Nano.observer = MockObserver();
-  });
+  // Setup removed as Nano.observer is no longer a setter.
+  // Tests will use default observer or runZoned where needed.
 
   group('Core Atoms', () {
     test('Atom extensions (int)', () {

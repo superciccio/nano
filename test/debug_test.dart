@@ -1,17 +1,21 @@
+import 'dart:async'; // Add async import
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nano/nano.dart';
 
 void main() {
   group('HistoryObserver', () {
+
+
     test('records state changes', () {
       final observer = HistoryObserver();
       final atom = Atom(0, label: 'test');
+      final config = NanoConfig(observer: observer);
 
-      // Hook up the observer
-      Nano.observer = observer;
-
-      atom.set(1);
-      atom.set(2);
+      // Hook up the observer via Zone
+      runZoned(() {
+        atom.set(1);
+        atom.set(2);
+      }, zoneValues: {#nanoConfig: config});
 
       expect(observer.events.length, 2);
       expect(observer.events[0].newValue, 1);
@@ -20,9 +24,13 @@ void main() {
 
     test('can clear history', () {
       final observer = HistoryObserver();
-      Nano.observer = observer;
+      final config = NanoConfig(observer: observer);
+      
       final atom = Atom(0);
-      atom.set(1);
+      
+      runZoned(() {
+        atom.set(1);
+      }, zoneValues: {#nanoConfig: config});
 
       expect(observer.events, isNotEmpty);
       observer.events.clear();
