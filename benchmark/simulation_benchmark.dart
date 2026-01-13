@@ -1,6 +1,5 @@
 import 'dart:math';
 import 'package:nano/nano.dart';
-import 'package:nano/core/nano_reaction.dart';
 
 // --- Primitives ---
 class Point {
