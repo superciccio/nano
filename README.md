@@ -30,7 +30,7 @@ class Increment extends NanoAction {}
 // 2. Create your logic
 class CounterLogic extends NanoLogic<void> {
   // Sugar: .toAtom() creates an Atom<int>
-  final count = 0.toAtom('count');
+  final count = 0.toAtom(label: 'count');
 
   @override
   void onAction(NanoAction action) {

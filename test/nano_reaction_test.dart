@@ -31,13 +31,10 @@ void main() {
       int sideEffectRuns = 0;
       int? lastEffectValue;
 
-      final disposer = reaction(
-        () => count.value,
-        (val) {
-          sideEffectRuns++;
-          lastEffectValue = val;
-        },
-      );
+      final disposer = reaction(() => count.value, (val) {
+        sideEffectRuns++;
+        lastEffectValue = val;
+      });
 
       // Does not run immediately by default
       expect(sideEffectRuns, 0);

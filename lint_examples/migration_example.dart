@@ -5,7 +5,7 @@ class MyProviderWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final _myValue = Provider.of<String>(context);
-    
+
     return Consumer<String>(
       builder: (context, value, child) {
         return Text('$value ${_myValue.hashCode}');
@@ -25,11 +25,13 @@ void testSignals() {
 class Provider {
   static T of<T>(BuildContext context) => throw UnimplementedError();
 }
+
 class Consumer<T> extends StatelessWidget {
   final Widget Function(BuildContext, T, Widget?) builder;
   Consumer({required this.builder});
   @override
   Widget build(BuildContext context) => throw UnimplementedError();
 }
+
 dynamic signal(dynamic val) => val;
 dynamic computed(dynamic fn) => fn;

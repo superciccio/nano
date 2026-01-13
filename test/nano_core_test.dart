@@ -70,11 +70,11 @@ void main() {
     });
 
     test('SelectorAtom debug properties', () {
-        final parent = Atom(0);
-        final selector = parent.select((i) => i.toString());
-        final builder = DiagnosticPropertiesBuilder();
-        selector.debugFillProperties(builder);
-        expect(builder.properties.any((p) => p.name == 'parentValue'), isTrue);
+      final parent = Atom(0);
+      final selector = parent.select((i) => i.toString());
+      final builder = DiagnosticPropertiesBuilder();
+      selector.debugFillProperties(builder);
+      expect(builder.properties.any((p) => p.name == 'parentValue'), isTrue);
     });
 
     test('ComputedAtom disposal removes listeners', () {
@@ -121,10 +121,7 @@ void main() {
     test('Atom stream extension emits updates', () async {
       final atom = Atom(0);
 
-      final expectation = expectLater(
-        atom.stream,
-        emitsInOrder([0, 1, 2]),
-      );
+      final expectation = expectLater(atom.stream, emitsInOrder([0, 1, 2]));
 
       atom.set(1);
       atom.set(2);
@@ -143,7 +140,9 @@ void main() {
       await Future.delayed(const Duration(milliseconds: 10));
       expect(atom.value, 0); // Still not updated
 
-      await Future.delayed(const Duration(milliseconds: 100)); // Increased buffer
+      await Future.delayed(
+        const Duration(milliseconds: 100),
+      ); // Increased buffer
       expect(atom.value, 2);
     });
 
@@ -159,27 +158,27 @@ void main() {
   });
 
   group('AsyncState', () {
-      test('properties work', () {
-          const idle = AsyncIdle<int>();
-          expect(idle.isLoading, false);
+    test('properties work', () {
+      const idle = AsyncIdle<int>();
+      expect(idle.isLoading, false);
 
-          const loading = AsyncLoading<int>();
-          expect(loading.isLoading, true);
+      const loading = AsyncLoading<int>();
+      expect(loading.isLoading, true);
 
-          const data = AsyncData<int>(1);
-          expect(data.hasData, true);
-          expect(data.value, 1);
+      const data = AsyncData<int>(1);
+      expect(data.hasData, true);
+      expect(data.value, 1);
 
-          const error = AsyncError<int>('err', StackTrace.empty);
-          expect(error.hasError, true);
-          expect(error.error, 'err');
-      });
+      const error = AsyncError<int>('err', StackTrace.empty);
+      expect(error.hasError, true);
+      expect(error.error, 'err');
+    });
 
-      test('debugFillProperties', () {
-          const data = AsyncData(1);
-          final builder = DiagnosticPropertiesBuilder();
-          data.debugFillProperties(builder);
-          expect(builder.properties.any((p) => p.name == 'data'), isTrue);
-      });
+    test('debugFillProperties', () {
+      const data = AsyncData(1);
+      final builder = DiagnosticPropertiesBuilder();
+      data.debugFillProperties(builder);
+      expect(builder.properties.any((p) => p.name == 'data'), isTrue);
+    });
   });
 }

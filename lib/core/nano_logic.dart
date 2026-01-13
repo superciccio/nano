@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:nano/core/nano_action.dart';
-import 'package:nano/core/nano_core.dart' show Nano, Atom;
+import 'package:nano/core/nano_core.dart' show Nano, Atom, NanoLogicBase;
 
 /// Possible states for a [NanoLogic].
 enum NanoStatus { loading, success, error, empty }
@@ -38,7 +38,9 @@ enum NanoStatus { loading, success, error, empty }
 ///   }
 /// }
 /// ```
-abstract class NanoLogic<P> extends ChangeNotifier with DiagnosticableTreeMixin {
+abstract class NanoLogic<P> extends ChangeNotifier
+    with DiagnosticableTreeMixin
+    implements NanoLogicBase {
   final List<StreamSubscription> _subscriptions = [];
 
   /// The current status of the logic (loading, success, error, empty).
@@ -53,11 +55,21 @@ abstract class NanoLogic<P> extends ChangeNotifier with DiagnosticableTreeMixin 
 
   bool _initialized = false;
 
+  bool _isInitializing = false;
+  bool get isInitializing => _isInitializing;
+
   /// Internal method to ensure onInit is called only once.
   void initialize(P params) {
     if (_initialized) return;
     _initialized = true;
-    onInit(params);
+    Future.microtask(() {
+      _isInitializing = true;
+      try {
+        runZoned(() => onInit(params), zoneValues: {#nanoLogic: this});
+      } finally {
+        _isInitializing = false;
+      }
+    });
   }
 
   /// Called when an [NanoAction] is dispatched from the UI.
@@ -65,7 +77,7 @@ abstract class NanoLogic<P> extends ChangeNotifier with DiagnosticableTreeMixin 
 
   /// Dispatches an [NanoAction] to the logic.
   void dispatch(NanoAction action) {
-    onAction(action);
+    Nano.action(() => onAction(action));
   }
 
   /// Helper to bind a [Stream] (e.g., from Drift or Firebase) to an [Atom].
@@ -84,19 +96,22 @@ abstract class NanoLogic<P> extends ChangeNotifier with DiagnosticableTreeMixin 
   /// ```
   void bindStream<T>(Stream<T> stream, Atom<T> atom) {
     final sub = stream.listen(
-      (data) => atom.set(data),
+      (data) => Nano.action(() => atom.set(data)),
       onError: (e, s) {
-        Nano.observer.onError(atom, e, s);
+        Nano.action(() => Nano.observer.onError(atom, e, s));
       },
     );
     _subscriptions.add(sub);
   }
 
   @override
+  @mustCallSuper
   void dispose() {
     for (var sub in _subscriptions) {
       sub.cancel();
     }
+    status.dispose();
+    error.dispose();
     super.dispose();
   }
 }

@@ -1,3 +1,17 @@
+## 0.5.0
+
+*   **Breaking Change: `toAtom()` Standardization**: Modified `toAtom()` extension to use named parameters (`label`, `meta`) instead of positional ones for consistency with other `Atom` constructors.
+*   **Improvement: Robust Strict Mode**:
+    *   Wrapped `StreamAtom`, `DebouncedAtom`, and `NanoLogic.bindStream` listeners in `Nano.action` to prevent strict mode violations in asynchronous callbacks.
+    *   Ensured DevTools state restoration is wrapped in an action.
+*   **Improvement: Memory Management**: `NanoLogic` now properly disposes its internal `status` and `error` atoms, preventing leaks in the debug registry.
+*   **Improvement: Scoped DI Delegation**: `Scope` now supports nested registries. A child `Scope` can resolve dependencies registered in its parent's `Scope`.
+*   **Improvement: Circular Dependency Detection**: `Registry.get<T>()` now detects circular dependencies and throws a `NanoException` with a clear chain of the conflicting types.
+*   **Improvement: DX & Errors**:
+    *   Significantly enhanced error messages for Strict Mode and `onInit` side-effect violations with "Good vs Bad" code examples.
+    *   Exported `NanoConfig` from the main `nano.dart` library.
+*   **Performance**: Optimized `Registry` to cache lazy singletons more efficiently after the first resolution.
+
 ## 0.1.0
 
 *   **New Feature: `Action`-Based Architecture**: Introduced `NanoAction` for a more structured way to manage state changes.

@@ -37,7 +37,7 @@ class _NanoExtensionBodyState extends State<NanoExtensionBody>
     _refreshAtoms();
     // Auto-refresh every 2 seconds if connected
     _refreshTimer = Timer.periodic(
-      const Duration(seconds: 2),
+      const Duration(seconds: 3),
       (_) => _refreshAtoms(),
     );
   }
@@ -66,9 +66,7 @@ class _NanoExtensionBodyState extends State<NanoExtensionBody>
       if (response.json != null && response.json!['atoms'] != null) {
         final List<dynamic> atomList = response.json!['atoms'];
         setState(() {
-          _atoms = atomList
-              .map((atom) => _AtomDetails.fromJson(atom))
-              .toList();
+          _atoms = atomList.map((atom) => _AtomDetails.fromJson(atom)).toList();
         });
       }
     } catch (e) {
@@ -106,10 +104,7 @@ class _NanoExtensionBodyState extends State<NanoExtensionBody>
             )
           : TabBarView(
               controller: _tabController,
-              children: [
-                _buildAtomsView(),
-                const HistoryView(),
-              ],
+              children: [_buildAtomsView(), const HistoryView()],
             ),
     );
   }
@@ -118,79 +113,80 @@ class _NanoExtensionBodyState extends State<NanoExtensionBody>
     return _isLoading && _atoms.isEmpty
         ? const Center(child: CircularProgressIndicator())
         : _atoms.isEmpty
-            ? const Center(
-                child: Padding(
-                  padding: EdgeInsets.all(32.0),
-                  child: Text(
-                    'No Atoms found.\n\nMake sure your app is running in debug mode and a Scope is initialized.',
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              )
-            : SingleChildScrollView(
-                scrollDirection: Axis.vertical,
-                child: DataTable(
-                  columns: const [
-                    DataColumn(label: Text('Label')),
-                    DataColumn(label: Text('Type')),
-                    DataColumn(label: Text('Value')),
-                    DataColumn(label: Text('State')),
-                    DataColumn(label: Text('Meta')),
-                    DataColumn(label: Text('Last Update')),
-                  ],
-                  rows: _atoms.map((atom) {
-                    return DataRow(
-                      cells: [
-                        DataCell(Text(atom.label)),
-                        DataCell(Text(atom.type)),
-                        DataCell(Text(atom.value)),
-                        DataCell(
-                          atom.state != null
-                              ? Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 6,
-                                    vertical: 2,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color:
-                                        _getStateColor(atom.state!).withAlpha(26),
-                                    borderRadius: BorderRadius.circular(4),
-                                    border: Border.all(
-                                      color: _getStateColor(atom.state!),
-                                    ),
-                                  ),
-                                  child: Text(
-                                    atom.state!.toUpperCase(),
-                                    style: TextStyle(
-                                      fontSize: 8,
-                                      fontWeight: FontWeight.bold,
-                                      color: _getStateColor(atom.state!),
-                                    ),
-                                  ),
-                                )
-                              : const Text(''),
-                        ),
-                        DataCell(
-                          atom.meta.isEmpty
-                              ? const Text('')
-                              : Tooltip(
-                                  message: atom.meta.toString(),
-                                  child: Text(
-                                    atom.meta.keys.join(', '),
-                                    overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(
-                                      fontStyle: FontStyle.italic,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
+        ? const Center(
+            child: Padding(
+              padding: EdgeInsets.all(32.0),
+              child: Text(
+                'No Atoms found.\n\nMake sure your app is running in debug mode and a Scope is initialized.',
+                textAlign: TextAlign.center,
+              ),
+            ),
+          )
+        : SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            child: DataTable(
+              columns: const [
+                DataColumn(label: Text('Label')),
+                DataColumn(label: Text('Type')),
+                DataColumn(label: Text('Value')),
+                DataColumn(label: Text('State')),
+                DataColumn(label: Text('Meta')),
+                DataColumn(label: Text('Last Update')),
+              ],
+              rows: _atoms.map((atom) {
+                return DataRow(
+                  cells: [
+                    DataCell(Text(atom.label)),
+                    DataCell(Text(atom.type)),
+                    DataCell(Text(atom.value)),
+                    DataCell(
+                      atom.state != null
+                          ? Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 6,
+                                vertical: 2,
+                              ),
+                              decoration: BoxDecoration(
+                                color: _getStateColor(
+                                  atom.state!,
+                                ).withAlpha(26),
+                                borderRadius: BorderRadius.circular(4),
+                                border: Border.all(
+                                  color: _getStateColor(atom.state!),
                                 ),
-                        ),
-                        DataCell(Text(atom.lastUpdate)),
-                      ],
-                    );
-                  }).toList(),
-                ),
-              );
+                              ),
+                              child: Text(
+                                atom.state!.toUpperCase(),
+                                style: TextStyle(
+                                  fontSize: 8,
+                                  fontWeight: FontWeight.bold,
+                                  color: _getStateColor(atom.state!),
+                                ),
+                              ),
+                            )
+                          : const Text(''),
+                    ),
+                    DataCell(
+                      atom.meta.isEmpty
+                          ? const Text('')
+                          : Tooltip(
+                              message: atom.meta.toString(),
+                              child: Text(
+                                atom.meta.keys.join(', '),
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  fontStyle: FontStyle.italic,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ),
+                    ),
+                    DataCell(Text(atom.lastUpdate)),
+                  ],
+                );
+              }).toList(),
+            ),
+          );
   }
 
   Color _getStateColor(String state) {

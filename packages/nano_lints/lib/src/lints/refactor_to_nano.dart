@@ -1,27 +1,38 @@
 import 'package:analyzer/dart/ast/ast.dart';
+import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/diagnostic/diagnostic.dart' as analyzer;
-import 'package:analyzer/error/listener.dart';
 import 'package:custom_lint_builder/custom_lint_builder.dart';
+import '../lint_utils.dart';
 
 class RefactorToNano extends DartLintRule {
   const RefactorToNano() : super(code: _code);
 
   static const _code = LintCode(
     name: 'refactor_to_nano',
-    problemMessage: 'This StatefulWidget can be refactored to a Nano-powered widget.',
+    problemMessage:
+        'This StatefulWidget can be refactored to a Nano-powered widget.',
   );
 
   @override
   void run(
     CustomLintResolver resolver,
-    DiagnosticReporter reporter,
+    dynamic reporter,
     CustomLintContext context,
   ) {
     context.registry.addMethodInvocation((node) {
       if (node.methodName.name == 'setState') {
-        final classDeclaration = node.thisOrAncestorOfType<ClassDeclaration>();
-        if (classDeclaration != null) {
-          reporter.atNode(classDeclaration, _code);
+        final element = node.methodName.element;
+        if (element == null) return;
+
+        // Check if it's the State.setState method
+        final enclosing = element.enclosingElement;
+        if (enclosing is InterfaceElement &&
+            TypeCheckers.state.isSuperOf(enclosing)) {
+          final classDeclaration =
+              node.thisOrAncestorOfType<ClassDeclaration>();
+          if (classDeclaration != null) {
+            reporter.atNode(classDeclaration, _code);
+          }
         }
       }
     });
@@ -85,11 +96,14 @@ class _RefactorToNanoFix extends DartFix {
 
         for (final member in stateClass.members) {
           if (member is FieldDeclaration) {
-            fields += '  final ${member.fields.variables.first.name.lexeme.replaceAll('_', '')} = ${member.fields.variables.first.initializer?.toSource()}.toAtom();\n';
-            counterName = member.fields.variables.first.name.lexeme.replaceAll('_', '');
+            fields +=
+                '  final ${member.fields.variables.first.name.lexeme.replaceAll('_', '')} = ${member.fields.variables.first.initializer?.toSource()}.toAtom();\n';
+            counterName =
+                member.fields.variables.first.name.lexeme.replaceAll('_', '');
           }
-          if (member is MethodDeclaration && member.name.lexeme.contains('increment')) {
-             methods += '  void increment() => $counterName.increment();\n';
+          if (member is MethodDeclaration &&
+              member.name.lexeme.contains('increment')) {
+            methods += '  void increment() => $counterName.increment();\n';
           }
         }
 

@@ -2,15 +2,46 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:nano/core/debug_service.dart';
+import 'package:nano/core/nano_config.dart';
 import 'package:nano/core/nano_persistence.dart';
+
+abstract class NanoLogicBase {
+  bool get isInitializing;
+}
 
 /// Global configuration for Nano.
 class Nano {
   /// Set this in your main() to capture logs (e.g., NanoObserver()).
   static NanoObserver observer = _DefaultObserver();
+  static NanoLogicBase? get logic => Zone.current[#nanoLogic] as NanoLogicBase?;
 
   /// Global storage backend for [PersistedAtom].
   static NanoStorage storage = InMemoryStorage();
+
+  /// [Internal] A flag to check if an action is running.
+  static bool _isInAction = false;
+
+  /// [Internal] Returns true if an action is running.
+  static bool get isInAction => _isInAction;
+
+  /// [Internal] Starts an action.
+  static void _actionStart() {
+    _isInAction = true;
+  }
+
+  /// [Internal] Ends an action.
+  static void _actionEnd() {
+    _isInAction = false;
+  }
+
+  static void action(void Function() fn) {
+    _actionStart();
+    try {
+      fn();
+    } finally {
+      _actionEnd();
+    }
+  }
 
   /// [Internal] Stack of currently executing derivations (reactions/computeds)
   /// that want to track dependencies.
@@ -124,7 +155,9 @@ class _DefaultObserver implements NanoObserver {
   @override
   void onChange(Atom atom, dynamic oldValue, dynamic newValue) {
     if (kDebugMode) {
-      debugPrint('?? NANO [${atom.label ?? atom.runtimeType}]: $oldValue -> $newValue');
+      debugPrint(
+        '?? NANO [${atom.label ?? atom.runtimeType}]: $oldValue -> $newValue',
+      );
     }
   }
 
@@ -199,6 +232,37 @@ class Atom<T> extends ValueNotifier<T> with Diagnosticable {
 
   void set(T newValue) {
     if (value == newValue) return;
+
+    if (NanoConfig.strictMode && !Nano.isInAction) {
+      throw '''
+[Nano] Strict Mode Violation
+---------------------------
+You are updating an Atom (${label ?? runtimeType}) outside of an action.
+Actions are required in strict mode to ensure state traceability.
+
+✅ Good (Dispatching an Action):
+// 1. Define an Action
+class Increment extends NanoAction {}
+
+// 2. Handle it in your Logic
+@override
+void onAction(NanoAction action) {
+  if (action is Increment) counter.value++;
+}
+
+// 3. Dispatch from UI
+logic.dispatch(Increment());
+
+✅ Use Nano.action (for one-off logic):
+Nano.action(() {
+  atom.value++;
+});
+
+❌ Bad:
+atom.value++;
+''';
+    }
+
     Nano.observer.onChange(this, value, newValue);
     super.value = newValue;
   }
@@ -266,12 +330,8 @@ class ComputedAtom<T> extends Atom<T> {
   final T Function() selector;
   final List<ValueListenable> dependencies;
 
-  ComputedAtom(
-    this.dependencies,
-    this.selector, {
-    super.label,
-    super.meta,
-  }) : super(selector()) {
+  ComputedAtom(this.dependencies, this.selector, {super.label, super.meta})
+    : super(selector()) {
     for (final dep in dependencies) {
       dep.addListener(_update);
     }
@@ -399,24 +459,26 @@ class AsyncAtom<T> extends Atom<AsyncState<T>> {
   int _session = 0;
 
   AsyncAtom({AsyncState<T> initial = const AsyncIdle(), String? label})
-      : super(initial, label: label);
+    : super(initial, label: label);
 
-  Future<void> track(Future<T> future) async {
+  Future<void> track(Future<T> future) {
     final currentSession = ++_session;
-    set(AsyncLoading<T>());
+    Nano.action(() => set(AsyncLoading<T>()));
 
-    try {
-      final data = await future;
-      // Race Condition Check: Only update if we are still the latest session.
-      if (_session == currentSession) {
-        set(AsyncData<T>(data));
-      }
-    } catch (e, s) {
-      if (_session == currentSession) {
-        set(AsyncError<T>(e, s));
-        Nano.observer.onError(this, e, s);
-      }
-    }
+    return future
+        .then((data) {
+          if (_session == currentSession) {
+            Nano.action(() => set(AsyncData<T>(data)));
+          }
+        })
+        .catchError((e, s) {
+          if (_session == currentSession) {
+            Nano.action(() {
+              set(AsyncError<T>(e, s));
+              Nano.observer.onError(this, e, s);
+            });
+          }
+        });
   }
 }
 
@@ -430,10 +492,12 @@ class StreamAtom<T> extends Atom<AsyncState<T>> {
     String? label,
   }) : super(initial, label: label) {
     _subscription = stream.listen(
-      (data) => set(AsyncData<T>(data)),
+      (data) => Nano.action(() => set(AsyncData<T>(data))),
       onError: (e, s) {
-        set(AsyncError<T>(e, s));
-        Nano.observer.onError(this, e, s);
+        Nano.action(() {
+          set(AsyncError<T>(e, s));
+          Nano.observer.onError(this, e, s);
+        });
       },
     );
   }
@@ -460,7 +524,7 @@ class DebouncedAtom<T> extends Atom<T> {
   void set(T newValue) {
     if (_debounce?.isActive ?? false) _debounce!.cancel();
     _debounce = Timer(duration, () {
-      super.set(newValue);
+      Nano.action(() => super.set(newValue));
     });
   }
 
@@ -589,10 +653,13 @@ extension AtomSelectorExtension<T> on Atom<T> {
     return SelectorAtom<T, R>(this, selector, label: label);
   }
 }
+
 extension StreamNanoExtension<T> on Stream<T> {
   /// Converts a [Stream] into a [StreamAtom].
-  StreamAtom<T> toStreamAtom({AsyncState<T> initial = const AsyncLoading(), String? label}) =>
-      StreamAtom<T>(this, initial: initial, label: label);
+  StreamAtom<T> toStreamAtom({
+    AsyncState<T> initial = const AsyncLoading(),
+    String? label,
+  }) => StreamAtom<T>(this, initial: initial, label: label);
 }
 
 /// Ergonomic extensions for [Atom] of type [int].
@@ -612,13 +679,13 @@ extension AtomBoolExtension on Atom<bool> {
 
 /// Ergonomic extensions for any object to create an Atom.
 extension NanoObjectExtension<T> on T {
-  /// Creates an [Atom] from this value.
+  /// Converts any value to an [Atom].
   ///
   /// Example:
   /// ```dart
-  /// final count = 0.toAtom('count');
+  /// final count = 0.toAtom(label: 'count');
   /// ```
-  Atom<T> toAtom([String? label, Map<String, dynamic> meta = const {}]) =>
+  Atom<T> toAtom({String? label, Map<String, dynamic> meta = const {}}) =>
       Atom<T>(this, label: label, meta: meta);
 }
 

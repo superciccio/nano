@@ -19,12 +19,56 @@ import 'package:nano/core/nano_logic.dart' show NanoLogic, NanoStatus;
 ///   child: MyApp(),
 /// )
 /// ```
-class Scope extends InheritedWidget {
-  final Registry _registry = Registry();
+class Scope extends StatefulWidget {
+  final List<Object> modules;
+  final Widget child;
 
-  Scope({super.key, required List<Object> modules, required super.child}) {
+  const Scope({super.key, required this.modules, required this.child});
+
+  @override
+  State<Scope> createState() => _ScopeState();
+
+  /// Explicit lookup for dependencies from the given [context].
+  static Registry of(BuildContext context) {
+    final scope = context.dependOnInheritedWidgetOfExactType<_InheritedScope>();
+    if (scope == null) {
+      throw NanoException(
+        "No Scope found in the widget tree.\n"
+        "👉 Fix: Wrap your MaterialApp or Feature in a Scope(modules: [...], child: ...)",
+      );
+    }
+    return scope.registry;
+  }
+}
+
+class _ScopeState extends State<Scope> {
+  late Registry _registry;
+  bool _initialized = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    // Find parent scope
+    Registry? parentRegistry;
+    try {
+      final parentScope = context
+          .dependOnInheritedWidgetOfExactType<_InheritedScope>();
+      parentRegistry = parentScope?.registry;
+    } catch (_) {}
+
+    if (!_initialized) {
+      _registry = Registry(parent: parentRegistry);
+      _registerModules();
+      _initialized = true;
+    } else {
+      _registry.parent = parentRegistry;
+    }
+  }
+
+  void _registerModules() {
     Nano.init();
-    for (var m in modules) {
+    for (var m in widget.modules) {
       if (m is NanoFactory) {
         _registry.registerFactoryDynamic(m.type, (r) => m.create(r) as Object);
       } else if (m is NanoLazy) {
@@ -38,28 +82,30 @@ class Scope extends InheritedWidget {
     }
   }
 
-  /// Explicit lookup for dependencies from the given [context].
-  ///
-  /// Throws [NanoException] if no [Scope] is found in the widget tree.
-  static Registry of(BuildContext context) {
-    final scope = context.dependOnInheritedWidgetOfExactType<Scope>();
-    if (scope == null) {
-      throw NanoException(
-        "No Scope found in the widget tree.\n"
-        "👉 Fix: Wrap your MaterialApp or Feature in a Scope(modules: [...], child: ...)",
-      );
-    }
-    return scope._registry;
+  @override
+  void didUpdateWidget(Scope oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // If modules changed, we might need to re-register?
+    // In many DI libs, changing modules on the fly is not supported or creates a new registry.
+    // For now, let's assume modules are static for the lifetime of the scope
+    // or at least that we don't support dynamic module updates without a new state.
   }
 
   @override
-  bool updateShouldNotify(Scope oldWidget) => true;
+  Widget build(BuildContext context) {
+    if (!_initialized) return const SizedBox.shrink();
+    return _InheritedScope(registry: _registry, child: widget.child);
+  }
+}
+
+class _InheritedScope extends InheritedWidget {
+  final Registry registry;
+
+  const _InheritedScope({required this.registry, required super.child});
 
   @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty('registry', _registry));
-  }
+  bool updateShouldNotify(_InheritedScope oldWidget) =>
+      registry != oldWidget.registry;
 }
 
 /// The Smart View Widget.
@@ -271,7 +317,8 @@ extension ValueListenableWatcher<T> on ValueListenable<T> {
 }
 
 /// Ergonomic extensions for Tuple (Record) of 2 [ValueListenable]s.
-extension NanoTuple2Extension<T1, T2> on (ValueListenable<T1>, ValueListenable<T2>) {
+extension NanoTuple2Extension<T1, T2>
+    on (ValueListenable<T1>, ValueListenable<T2>) {
   /// Watches both atoms and rebuilds when either changes.
   ///
   /// Example:
@@ -281,21 +328,20 @@ extension NanoTuple2Extension<T1, T2> on (ValueListenable<T1>, ValueListenable<T
   /// })
   /// ```
   Widget watch(Widget Function(BuildContext context, T1 v1, T2 v2) builder) {
-    return WatchMany(
-      [this.$1, this.$2],
-      builder: (context) => builder(context, this.$1.value, this.$2.value),
-    );
+    return WatchMany([
+      this.$1,
+      this.$2,
+    ], builder: (context) => builder(context, this.$1.value, this.$2.value));
   }
 }
 
 /// Ergonomic extensions for Tuple (Record) of 3 [ValueListenable]s.
-extension NanoTuple3Extension<T1, T2, T3> on (
-  ValueListenable<T1>,
-  ValueListenable<T2>,
-  ValueListenable<T3>
-) {
+extension NanoTuple3Extension<T1, T2, T3>
+    on (ValueListenable<T1>, ValueListenable<T2>, ValueListenable<T3>) {
   /// Watches all 3 atoms and rebuilds when any changes.
-  Widget watch(Widget Function(BuildContext context, T1 v1, T2 v2, T3 v3) builder) {
+  Widget watch(
+    Widget Function(BuildContext context, T1 v1, T2 v2, T3 v3) builder,
+  ) {
     return WatchMany(
       [this.$1, this.$2, this.$3],
       builder: (context) =>

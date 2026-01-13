@@ -8,6 +8,10 @@ import 'package:nano/core/nano_core.dart';
 class NanoDebugService {
   static final List<Atom> _registeredAtoms = [];
 
+  /// [Internal] Returns the number of registered atoms. Used for testing.
+  @visibleForTesting
+  static int get registeredAtomCount => _registeredAtoms.length;
+
   /// Registers an [Atom] to be visible in DevTools.
   static void registerAtom(Atom atom) {
     if (!kDebugMode) return;
@@ -58,9 +62,7 @@ class NanoDebugService {
       }).toList();
 
       return dev.ServiceExtensionResponse.result(
-        json.encode({
-          'history': historyJson,
-        }),
+        json.encode({'history': historyJson}),
       );
     });
 
@@ -77,9 +79,11 @@ class NanoDebugService {
 
         final atom = _registeredAtoms.firstWhere((a) => a.label == label);
         final parsedValue = _parseValue(atom.value, value);
-        atom.value = parsedValue;
+        Nano.action(() => atom.value = parsedValue);
 
-        return dev.ServiceExtensionResponse.result(json.encode({'status': 'ok'}));
+        return dev.ServiceExtensionResponse.result(
+          json.encode({'status': 'ok'}),
+        );
       } catch (e) {
         return dev.ServiceExtensionResponse.error(
           dev.ServiceExtensionResponse.extensionError,

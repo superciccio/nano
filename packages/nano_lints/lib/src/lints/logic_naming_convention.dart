@@ -1,5 +1,5 @@
-import 'package:analyzer/error/listener.dart';
 import 'package:custom_lint_builder/custom_lint_builder.dart';
+import '../lint_utils.dart';
 
 class LogicNamingConvention extends DartLintRule {
   const LogicNamingConvention() : super(code: _code);
@@ -12,19 +12,16 @@ class LogicNamingConvention extends DartLintRule {
   @override
   void run(
     CustomLintResolver resolver,
-    DiagnosticReporter reporter,
+    dynamic reporter,
     CustomLintContext context,
   ) {
     context.registry.addClassDeclaration((node) {
-      final extendsClause = node.extendsClause;
-      if (extendsClause == null) return;
+      final element = node.declaredFragment?.element;
+      if (element == null) return;
 
-      // Simple check for now: if it extends something named NanoLogic
-      // A more robust check would involve checking the element type.
-      final superclass = extendsClause.superclass;
-      if (superclass.name.lexeme == 'NanoLogic') {
+      if (TypeCheckers.nanoLogic.isSuperOf(element)) {
         final className = node.name.lexeme;
-        if (!className.endsWith('Logic')) {
+        if (!className.endsWith('Logic') && className != 'NanoLogic') {
           reporter.atToken(node.name, _code);
         }
       }

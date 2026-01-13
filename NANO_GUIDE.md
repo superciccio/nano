@@ -218,6 +218,7 @@ AsyncAtomBuilder(
 **Rule 3: Logic Lifecycle**
 - **Do:** Initialize async data in `onInit()`.
 - **Do:** Use `bindStream` for streams to avoid memory leaks.
+- **Don't:** Update atoms directly in `onInit()`. `onInit` should be free of side-effects. Schedule a microtask to update state after `onInit` has completed.
 
 **Rule 4: DI & Testing**
 - **Do:** Use `Registry` (via `reg.get<T>()`) in `NanoView.create`.
@@ -232,11 +233,20 @@ AsyncAtomBuilder(
 ```dart
 class UserLogic extends NanoLogic<String> {
   final user = AsyncAtom<User>();
+  final title = Atom('');
 
   @override
   void onInit(String userId) {
-    // Auto-handles loading, error, and race conditions
+    // Good: Fetch initial data.
     user.track(fetchUser(userId));
+
+    // Bad: Don't update state directly.
+    // title.value = 'User Profile'; // This will throw an error.
+
+    // Good: Schedule a microtask to update state after onInit.
+    Future.microtask(() {
+      title.value = 'User Profile';
+    });
   }
 }
 
@@ -257,4 +267,45 @@ class UserPage extends StatelessWidget {
     );
   }
 }
+
+## 6. Strict Mode
+
+To help you write more robust and predictable code, Nano provides a "Strict Mode". When enabled, it enforces that all state modifications are made inside an `NanoAction`. This helps to prevent accidental state changes and makes your code easier to debug.
+
+**Enabling Strict Mode**
+
+To enable strict mode, set the `strictMode` flag in your `main` function:
+
+```dart
+void main() {
+  NanoConfig.strictMode = true;
+  runApp(MyApp());
+}
+```
+
+**How it works**
+
+When strict mode is enabled, any attempt to modify an `Atom` outside of an `NanoAction` will throw a runtime exception. This also includes updating an atom inside `onInit`. This helps you to identify and fix potential issues early in the development process.
+
+**Correct Usage with Strict Mode**
+
+When strict mode is enabled, you should use `NanoAction` to modify your state.
+
+```dart
+class IncrementAction extends NanoAction {}
+
+class CounterLogic extends NanoLogic<void> {
+  final counter = Atom(0);
+
+  @override
+  void onAction(NanoAction action) {
+    if (action is IncrementAction) {
+      counter.update((v) => v + 1);
+    }
+  }
+}
+
+// In your UI:
+logic.dispatch(IncrementAction());
+```
 ```

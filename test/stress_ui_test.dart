@@ -14,10 +14,7 @@ class GridController extends NanoLogic<void> {
   void onInit(void params) {
     grid = List.generate(
       rows,
-      (r) => List.generate(
-        cols,
-        (c) => 0.toAtom('Cell-$r-$c'),
-      ),
+      (r) => List.generate(cols, (c) => 0.toAtom(label: 'Cell-$r-$c')),
     );
   }
 
@@ -49,7 +46,7 @@ class CellWidget extends StatelessWidget {
   final VoidCallback onBuild;
 
   const CellWidget({Key? key, required this.atom, required this.onBuild})
-      : super(key: key);
+    : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -74,30 +71,33 @@ class SilentObserver implements NanoObserver {
 }
 
 void main() {
-  testWidgets('UI Stress Test: 10,000 Reactive Widgets', (tester) async {
-    Nano.observer = SilentObserver();
+  testWidgets(
+    'UI Stress Test: 10,000 Reactive Widgets',
+    (tester) async {
+      Nano.observer = SilentObserver();
 
-    // 1. Setup
-    final controller = GridController();
-    controller.initialize(null);
+      // 1. Setup
+      final controller = GridController();
+      controller.initialize(null);
 
-    int buildCount = 0;
+      int buildCount = 0;
 
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: SingleChildScrollView(
-            child: Column(
-              children: List.generate(
-                controller.rows,
-                (r) => SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: List.generate(
-                      controller.cols,
-                      (c) => CellWidget(
-                        atom: controller.grid[r][c],
-                        onBuild: () => buildCount++,
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SingleChildScrollView(
+              child: Column(
+                children: List.generate(
+                  controller.rows,
+                  (r) => SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: List.generate(
+                        controller.cols,
+                        (c) => CellWidget(
+                          atom: controller.grid[r][c],
+                          onBuild: () => buildCount++,
+                        ),
                       ),
                     ),
                   ),
@@ -106,50 +106,53 @@ void main() {
             ),
           ),
         ),
-      ),
-    );
+      );
 
-    // Allow initial build to settle
-    await tester.pumpAndSettle();
-    print('Initial Build Complete. Total Builds: $buildCount');
-    expect(buildCount, equals(10000)); // 100x100
-    buildCount = 0; // Reset counter
+      // Allow initial build to settle
+      await tester.pumpAndSettle();
+      print('Initial Build Complete. Total Builds: $buildCount');
+      expect(buildCount, equals(10000)); // 100x100
+      buildCount = 0; // Reset counter
 
-    final stopwatch = Stopwatch();
+      final stopwatch = Stopwatch();
 
-    // 2. Single Cell Update
-    stopwatch.start();
-    controller.updateCell(50, 50);
-    await tester.pump(); // Trigger frame
-    stopwatch.stop();
+      // 2. Single Cell Update
+      stopwatch.start();
+      controller.updateCell(50, 50);
+      await tester.pump(); // Trigger frame
+      stopwatch.stop();
 
-    print('Single Cell Update Time: ${stopwatch.elapsedMilliseconds}ms');
-    expect(buildCount, equals(1)); // Only 1 widget should rebuild
-    buildCount = 0;
-    stopwatch.reset();
+      print('Single Cell Update Time: ${stopwatch.elapsedMilliseconds}ms');
+      expect(buildCount, equals(1)); // Only 1 widget should rebuild
+      buildCount = 0;
+      stopwatch.reset();
 
-    // 3. Row Update (100 cells)
-    stopwatch.start();
-    controller.updateRow(50);
-    await tester.pump();
-    stopwatch.stop();
+      // 3. Row Update (100 cells)
+      stopwatch.start();
+      controller.updateRow(50);
+      await tester.pump();
+      stopwatch.stop();
 
-    print('Row Update (100 cells) Time: ${stopwatch.elapsedMilliseconds}ms');
-    expect(buildCount, equals(100));
-    buildCount = 0;
-    stopwatch.reset();
+      print('Row Update (100 cells) Time: ${stopwatch.elapsedMilliseconds}ms');
+      expect(buildCount, equals(100));
+      buildCount = 0;
+      stopwatch.reset();
 
-    // 4. Global Update (10,000 cells)
-    // This is the heavy one.
-    stopwatch.start();
-    controller.updateAll();
-    await tester.pump();
-    stopwatch.stop();
+      // 4. Global Update (10,000 cells)
+      // This is the heavy one.
+      stopwatch.start();
+      controller.updateAll();
+      await tester.pump();
+      stopwatch.stop();
 
-    print('Full Grid Update (10,000 cells) Time: ${stopwatch.elapsedMilliseconds}ms');
-    expect(buildCount, equals(10000));
+      print(
+        'Full Grid Update (10,000 cells) Time: ${stopwatch.elapsedMilliseconds}ms',
+      );
+      expect(buildCount, equals(10000));
 
-    // Cleanup
-    controller.dispose();
-  }, timeout: const Timeout(Duration(minutes: 5)));
+      // Cleanup
+      controller.dispose();
+    },
+    timeout: const Timeout(Duration(minutes: 5)),
+  );
 }

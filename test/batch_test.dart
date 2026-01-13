@@ -3,8 +3,8 @@ import 'package:nano/nano.dart';
 
 void main() {
   test('Nano.batch defers notifications', () {
-    final atom1 = 0.toAtom('atom1');
-    final atom2 = 0.toAtom('atom2');
+    final atom1 = 0.toAtom(label: 'atom1');
+    final atom2 = 0.toAtom(label: 'atom2');
 
     int callCount1 = 0;
     int callCount2 = 0;
