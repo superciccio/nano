@@ -69,17 +69,17 @@ void main() {
       parent.set({'a': 20, 'b': 3});
     });
 
-    test('SelectorAtom debug properties', () {
-      final parent = Atom(0);
-      final selector = parent.select((i) => i.toString());
+    test('ComputedAtom debug properties', () {
+      final a = Atom(1);
+      final c = computed(() => a.value * 2);
       final builder = DiagnosticPropertiesBuilder();
-      selector.debugFillProperties(builder);
-      expect(builder.properties.any((p) => p.name == 'parentValue'), isTrue);
+      c.debugFillProperties(builder);
+      expect(builder.properties.any((p) => p.name == 'value'), isTrue);
     });
 
     test('ComputedAtom disposal removes listeners', () {
       final dep = Atom(0);
-      final computed = ComputedAtom([dep], () => dep.value * 2);
+      final computed = ComputedAtom(() => dep.value * 2);
 
       expect(computed.value, 0);
       dep.set(1);

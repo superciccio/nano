@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:nano/core/debug_service.dart';
 import 'package:nano/core/nano_config.dart';
+import 'package:nano/core/nano_middleware.dart';
 import 'package:nano/core/nano_persistence.dart';
 
 abstract class NanoLogicBase {
@@ -13,6 +14,10 @@ abstract class NanoLogicBase {
 class Nano {
   /// Set this in your main() to capture logs (e.g., NanoObserver()).
   static NanoObserver observer = _DefaultObserver();
+
+  /// List of active middlewares.
+  static final List<NanoMiddleware> middlewares = [];
+
   static NanoLogicBase? get logic => Zone.current[#nanoLogic] as NanoLogicBase?;
 
   /// Global storage backend for [PersistedAtom].
@@ -24,22 +29,56 @@ class Nano {
   /// [Internal] Returns true if an action is running.
   static bool get isInAction => _isInAction;
 
+  /// [Internal] Global version incremented on every atom change.
+  static int _version = 0;
+
+  /// [Internal] Returns the current global version.
+  static int get version => _version;
+
+  /// [Test Only] Resets Nano global state for testing.
+  @visibleForTesting
+  static void reset() {
+    _version = 0;
+    observer = _DefaultObserver();
+    _isInAction = false;
+    middlewares.clear();
+  }
+
   /// [Internal] Starts an action.
-  static void _actionStart() {
+  static void _actionStart(String name) {
     _isInAction = true;
+    for (final middleware in middlewares) {
+      middleware.onActionStart(name);
+    }
   }
 
   /// [Internal] Ends an action.
-  static void _actionEnd() {
+  static void _actionEnd(String name) {
+    for (final middleware in middlewares) {
+      middleware.onActionEnd(name);
+    }
     _isInAction = false;
   }
 
-  static void action(void Function() fn) {
-    _actionStart();
+  /// Runs [fn] as an action.
+  /// Actions are used to batch state updates and provide a label for debugging.
+  static void action(dynamic nameOrFn, [void Function()? fn]) {
+    final String name;
+    final void Function() actualFn;
+
+    if (nameOrFn is String) {
+      name = nameOrFn;
+      actualFn = fn!;
+    } else {
+      name = 'anonymous_action';
+      actualFn = nameOrFn as void Function();
+    }
+
+    _actionStart(name);
     try {
-      fn();
+      actualFn();
     } finally {
-      _actionEnd();
+      _actionEnd(name);
     }
   }
 
@@ -131,6 +170,11 @@ class Nano {
 
   /// Initialize Nano for debugging. Usually called by Scope.
   static void init() {
+    if (kDebugMode) {
+      if (!middlewares.any((m) => m is TimelineMiddleware)) {
+        middlewares.add(TimelineMiddleware());
+      }
+    }
     NanoDebugService.init();
   }
 }
@@ -148,6 +192,16 @@ abstract class NanoObserver {
 
   /// Called whenever an error occurs (e.g., in [AsyncAtom] or [NanoLogic.bindStream]).
   void onError(Atom atom, Object error, StackTrace stack);
+}
+
+/// Interface for intercepting the lifecycle of an action.
+/// Useful for analytics, performance profiling, and logging.
+abstract class NanoMiddleware {
+  /// Called when an action starts.
+  void onActionStart(String name);
+
+  /// Called when an action ends.
+  void onActionEnd(String name);
 }
 
 /// Default observer that prints to console in debug mode.
@@ -211,6 +265,7 @@ class Atom<T> extends ValueNotifier<T> with Diagnosticable {
 
   final String? label;
   final Map<String, dynamic> meta;
+  bool _disposed = false;
 
   /// [Internal] Flag to track if this atom is already pending notification in the current batch.
   bool _isPending = false;
@@ -232,6 +287,27 @@ class Atom<T> extends ValueNotifier<T> with Diagnosticable {
 
   void set(T newValue) {
     if (value == newValue) return;
+
+    if (Nano.logic?.isInitializing == true) {
+      throw '''
+[Nano] side-effect Violation
+---------------------------
+You are updating an Atom (${label ?? runtimeType}) during 'onInit'.
+State updates are forbidden in 'onInit' to ensure predictable initialization.
+
+✅ Fix (Use onReady):
+@override
+void onReady() {
+  ${label ?? 'atom'}.value = newValue;
+}
+
+✅ Fix (Use microtask if absolutely necessary):
+@override
+void onInit(params) {
+  Future.microtask(() => ${label ?? 'atom'}.value = newValue);
+}
+''';
+    }
 
     if (NanoConfig.strictMode && !Nano.isInAction) {
       throw '''
@@ -265,6 +341,7 @@ atom.value++;
 
     Nano.observer.onChange(this, value, newValue);
     super.value = newValue;
+    Nano._version++;
   }
 
   /// Internal setter to bypass the [set] method (and its overrides).
@@ -317,6 +394,7 @@ atom.value++;
 
   @override
   void dispose() {
+    _disposed = true;
     NanoDebugService.unregisterAtom(this);
     super.dispose();
   }
@@ -326,34 +404,124 @@ atom.value++;
 ///
 /// The `ComputedAtom` automatically listens to its dependencies and updates
 /// its own value when any of them change.
-class ComputedAtom<T> extends Atom<T> {
-  final T Function() selector;
-  final List<ValueListenable> dependencies;
+class ComputedAtom<T> extends Atom<T> implements NanoDerivation {
+  final T Function() _selector;
+  Set<Atom> _observing = {};
+  Set<Atom>? _newObserving;
+  int _lastVersion = -1;
+  bool _isDirty = true;
+  bool _isActive = false;
 
-  ComputedAtom(this.dependencies, this.selector, {super.label, super.meta})
-    : super(selector()) {
-    for (final dep in dependencies) {
-      dep.addListener(_update);
+  ComputedAtom(this._selector, {super.label, super.meta})
+    : super(_selector()) {
+    _lastVersion = Nano.version;
+  }
+
+  @override
+  T get value {
+    Nano.reportRead(this);
+    if (_disposed) return super.value;
+    if (!_isActive && !hasListeners) {
+      // If inactive, we only re-compute if the global version has changed.
+      // This avoids redundant computations when nothing in the system changed.
+      if (Nano.version != _lastVersion) {
+        final newValue = Nano.track(this, _selector);
+        _lastVersion = Nano.version;
+        if (!_disposed) _innerSet(newValue);
+        return newValue;
+      }
+      return super.value;
+    }
+    if (_isDirty) {
+      _compute();
+    }
+    return super.value;
+  }
+
+  @override
+  void addListener(VoidCallback listener) {
+    _activate();
+    super.addListener(listener);
+  }
+
+  @override
+  void removeListener(VoidCallback listener) {
+    super.removeListener(listener);
+    _deactivateIfNeeded();
+  }
+
+  void _activate() {
+    if (!_isActive) {
+      _isActive = true;
+      _compute();
     }
   }
 
-  void _update() {
-    // Optimization: Glitch Prevention.
-    // If we are in a batch flush, and any OTHER dependency is still waiting to be flushed,
-    // we defer our update. The last dependency to flush will trigger us.
+  void _deactivateIfNeeded() {
+    if (!hasListeners && _isActive) {
+      _isActive = false;
+      _stopObserving();
+    }
+  }
+
+  void _stopObserving() {
+    for (final atom in _observing) {
+      atom.removeListener(_handleDependencyChange);
+    }
+    _observing.clear();
+    _isDirty = true;
+  }
+
+  void _handleDependencyChange() {
+    if (!_isDirty) {
+      _isDirty = true;
+      if (_isActive) {
+        _compute(); // Eager update when active to ensure surgical notifications
+      }
+    }
+  }
+
+  void _compute() {
+    if (_disposed) return;
     if (Nano.isFlushing) {
-      for (final dep in dependencies) {
-        // Dependencies are ValueListenable, but we need to check if they are Atoms in the flush set.
-        if (dep is Atom && Nano.isFlushingAtom(dep)) {
-          return;
-        }
+      for (final atom in _observing) {
+        if (Nano.isFlushingAtom(atom)) return;
       }
     }
 
-    final newValue = selector();
-    if (value == newValue) return;
-    Nano.observer.onChange(this, value, newValue);
-    _innerSet(newValue);
+    final previousNewObserving = _newObserving;
+    _newObserving = {};
+
+    try {
+      final newValue = Nano.track(this, _selector);
+
+      // Diffing Strategy:
+      // 1. Unsubscribe from atoms in _observing that are NOT in _newObserving
+      for (final atom in _observing) {
+        if (!_newObserving!.contains(atom)) {
+          atom.removeListener(_handleDependencyChange);
+        }
+      }
+
+      _observing = _newObserving!;
+      _isDirty = false;
+
+      if (super.value != newValue) {
+        Nano.observer.onChange(this, super.value, newValue);
+        _innerSet(newValue);
+      }
+    } finally {
+      _newObserving = previousNewObserving;
+    }
+  }
+
+  @override
+  void addDependency(Atom atom) {
+    if (_newObserving != null && _newObserving!.add(atom)) {
+      if (!_observing.contains(atom)) {
+        atom.addListener(_handleDependencyChange);
+      }
+    }
   }
 
   @override
@@ -363,11 +531,14 @@ class ComputedAtom<T> extends Atom<T> {
 
   @override
   void dispose() {
-    for (final dep in dependencies) {
-      dep.removeListener(_update);
-    }
+    _stopObserving();
     super.dispose();
   }
+}
+
+/// Creates a [ComputedAtom] that automatically tracks all [Atom]s accessed within [selector].
+ComputedAtom<T> computed<T>(T Function() selector, {String? label}) {
+  return ComputedAtom<T>(selector, label: label);
 }
 
 /// Represents the state of an asynchronous operation.
@@ -604,45 +775,10 @@ class PersistedAtom<T> extends Atom<T> {
   }
 }
 
-/// A specialized Atom that selects a part of another Atom's state.
-///
-/// It only notifies listeners when the selected value changes.
-class SelectorAtom<T, R> extends Atom<R> {
-  final Atom<T> parent;
-  final R Function(T) selector;
-  late VoidCallback _remover;
-
-  SelectorAtom(this.parent, this.selector, {String? label})
-    : super(
-        selector(parent.value),
-        label: label ?? '${parent.label ?? "Atom"}.select',
-      ) {
-    void listener() {
-      final newValue = selector(parent.value);
-      if (newValue != value) {
-        set(newValue);
-      }
-    }
-
-    parent.addListener(listener);
-    _remover = () => parent.removeListener(listener);
-  }
-
-  @override
-  void dispose() {
-    _remover();
-    super.dispose();
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<T>('parentValue', parent.value));
-    properties.add(DiagnosticsProperty<R>('selectedValue', value));
-    properties.add(
-      StringProperty('selector', 'derived from ${parent.runtimeType}'),
-    );
-  }
+@Deprecated('Use computed(() => selector(parent.value)) or atom.select() instead')
+class SelectorAtom<T, R> extends ComputedAtom<R> {
+  SelectorAtom(Atom<T> parent, R Function(T) selector, {String? label})
+    : super(() => selector(parent.value), label: label);
 }
 
 extension AtomSelectorExtension<T> on Atom<T> {
@@ -650,7 +786,10 @@ extension AtomSelectorExtension<T> on Atom<T> {
   ///
   /// The resulting [Atom<R>] will only notify when [R] changes.
   Atom<R> select<R>(R Function(T) selector, {String? label}) {
-    return SelectorAtom<T, R>(this, selector, label: label);
+    return computed(
+      () => selector(value),
+      label: label ?? '${this.label ?? "Atom"}.select',
+    );
   }
 }
 

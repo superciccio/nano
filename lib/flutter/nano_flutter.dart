@@ -149,6 +149,15 @@ class NanoView<T extends NanoLogic<P>, P> extends StatefulWidget {
   /// Defaults to true.
   final bool autoDispose;
 
+  /// Whether the view should rebuild whenever the logic notifies listeners.
+  ///
+  /// - `true` (Default): Coarse updates. The entire [builder] runs on every change.
+  ///   Best for small views or when you don't want to use [Watch] everywhere.
+  /// - `false`: Surgical updates. The [builder] runs ONLY when [status] changes.
+  ///   You MUST use [Watch] or `.watch()` inside the builder to react to other atoms.
+  ///   Highly recommended for massive lists or complex screens.
+  final bool rebuildOnUpdate;
+
   const NanoView({
     super.key,
     required this.create,
@@ -158,6 +167,7 @@ class NanoView<T extends NanoLogic<P>, P> extends StatefulWidget {
     this.error,
     this.empty,
     this.autoDispose = true,
+    this.rebuildOnUpdate = true,
   });
 
   @override
@@ -220,35 +230,44 @@ class _NanoViewState<T extends NanoLogic<P>, P> extends State<NanoView<T, P>> {
   Widget build(BuildContext context) {
     if (_logic == null) return const SizedBox.shrink(); // Safety guard
 
-    // Default: Listens to the whole Logic for coarse updates (notifyListeners)
-    return ListenableBuilder(
-      listenable: _logic!,
-      builder: (context, _) {
-        // Watch the status and switch surgically
-        return Watch<NanoStatus>(
-          _logic!.status,
-          builder: (context, status) {
-            return switch (status) {
-              NanoStatus.loading =>
-                widget.loading?.call(context) ??
-                    widget.builder(context, _logic!),
-              NanoStatus.success => widget.builder(context, _logic!),
-              NanoStatus.error =>
-                widget.error?.call(context, _logic!.error.value) ??
-                    const SizedBox.shrink(),
-              NanoStatus.empty =>
-                widget.empty?.call(context) ?? const SizedBox.shrink(),
-            };
-          },
-        );
-      },
-    );
+    // Encapsulate the status-based builder logic
+    Widget buildContent() {
+      return Watch<NanoStatus>(
+        _logic!.status,
+        builder: (context, status) {
+          return switch (status) {
+            NanoStatus.loading =>
+              widget.loading?.call(context) ?? widget.builder(context, _logic!),
+            NanoStatus.success => widget.builder(context, _logic!),
+            NanoStatus.error =>
+              widget.error?.call(context, _logic!.error.value) ??
+                  const SizedBox.shrink(),
+            NanoStatus.empty =>
+              widget.empty?.call(context) ?? const SizedBox.shrink(),
+          };
+        },
+      );
+    }
+
+    if (widget.rebuildOnUpdate) {
+      return ListenableBuilder(
+        listenable: _logic!,
+        builder: (context, _) => buildContent(),
+      );
+    } else {
+      return buildContent();
+    }
   }
 }
 
 /// Surgical rebuilds.
 ///
-/// Only rebuilds this widget when the specific [Atom] (or any [ValueListenable]) changes.
+/// Only rebuilds this widget when the specific [ValueListenable] (usually an
+/// [Atom] or [ComputedAtom]) changes.
+///
+/// This widget is highly optimized. It is a [StatefulWidget] that listens
+/// directly to the atom, avoiding the overhead of extra widget layers like
+/// `ValueListenableBuilder`.
 ///
 /// Example:
 /// ```dart
@@ -256,7 +275,7 @@ class _NanoViewState<T extends NanoLogic<P>, P> extends State<NanoView<T, P>> {
 ///   return Text('$value');
 /// })
 /// ```
-class Watch<T> extends StatelessWidget {
+class Watch<T> extends StatefulWidget {
   /// The [ValueListenable] (usually an [Atom] or [ComputedAtom]) to watch.
   final ValueListenable<T> atom;
 
@@ -266,16 +285,46 @@ class Watch<T> extends StatelessWidget {
   const Watch(this.atom, {super.key, required this.builder});
 
   @override
+  State<Watch<T>> createState() => _WatchState<T>();
+}
+
+class _WatchState<T> extends State<Watch<T>> {
+  @override
+  void initState() {
+    super.initState();
+    widget.atom.addListener(_handleChange);
+  }
+
+  @override
+  void didUpdateWidget(Watch<T> oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.atom != widget.atom) {
+      oldWidget.atom.removeListener(_handleChange);
+      widget.atom.addListener(_handleChange);
+    }
+  }
+
+  @override
+  void dispose() {
+    widget.atom.removeListener(_handleChange);
+    super.dispose();
+  }
+
+  void _handleChange() {
+    setState(() {});
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<T>(
-      valueListenable: atom,
-      builder: (context, value, _) => builder(context, value),
-    );
+    return widget.builder(context, widget.atom.value);
   }
 }
 
 /// Batched rebuilds for multiple atoms.
-class WatchMany extends StatelessWidget {
+///
+/// This widget is highly optimized. It listens directly to the list of atoms
+/// and rebuilds only once even if multiple atoms change in the same batch.
+class WatchMany extends StatefulWidget {
   /// The list of [ValueListenable] (atoms) to watch.
   final List<ValueListenable> atoms;
 
@@ -285,11 +334,46 @@ class WatchMany extends StatelessWidget {
   const WatchMany(this.atoms, {super.key, required this.builder});
 
   @override
+  State<WatchMany> createState() => _WatchManyState();
+}
+
+class _WatchManyState extends State<WatchMany> {
+  @override
+  void initState() {
+    super.initState();
+    for (final atom in widget.atoms) {
+      atom.addListener(_handleChange);
+    }
+  }
+
+  @override
+  void didUpdateWidget(WatchMany oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!listEquals(oldWidget.atoms, widget.atoms)) {
+      for (final atom in oldWidget.atoms) {
+        atom.removeListener(_handleChange);
+      }
+      for (final atom in widget.atoms) {
+        atom.addListener(_handleChange);
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    for (final atom in widget.atoms) {
+      atom.removeListener(_handleChange);
+    }
+    super.dispose();
+  }
+
+  void _handleChange() {
+    setState(() {});
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return ListenableBuilder(
-      listenable: Listenable.merge(atoms),
-      builder: (context, _) => builder(context),
-    );
+    return widget.builder(context);
   }
 }
 

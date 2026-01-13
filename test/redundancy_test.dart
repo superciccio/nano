@@ -9,7 +9,7 @@ void main() {
     int computeCount = 0;
 
     // c = a + b
-    final c = ComputedAtom<int>([a, b], () {
+    final c = ComputedAtom<int>(() {
       computeCount++;
       return a.value + b.value;
     }, label: 'c');
@@ -30,8 +30,8 @@ void main() {
 
     expect(c.value, 30);
 
-    // We strictly want ONLY 1 re-computation for the batch, so total should be 1 (init) + 1 (update) = 2.
-    // If it is 3, we have redundancy.
+    // We want specifically 2 computations: 1 (init) + 1 (update)
+    // The force read in the middle is now cached thanks to Nano.version tagging.
     expect(
       computeCount,
       2,
