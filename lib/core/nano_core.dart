@@ -82,6 +82,50 @@ class Nano {
     // We cannot "clear" them globally.
   }
 
+  static Map<String, dynamic>? _savedState;
+
+  /// [Developer-Only] Backups the current state of all registered atoms.
+  /// Used to simulate state persistence across Hot Restarts.
+  static void backupState() {
+    if (!kDebugMode) return;
+    final state = <String, dynamic>{};
+    for (final atom in NanoDebugService.registeredAtoms) {
+      if (atom.label != null) {
+        final val = atom.value;
+        if (val is NanoSerializable) {
+          state[atom.label!] = val.toJson();
+        } else if (val is int ||
+            val is double ||
+            val is bool ||
+            val is String) {
+          state[atom.label!] = val;
+        }
+      }
+    }
+    _savedState = state;
+  }
+
+  /// [Developer-Only] Restores the previously backed-up state.
+  static void restoreState() {
+    if (!kDebugMode || _savedState == null) return;
+    action('restoreState', () {
+      for (final atom in NanoDebugService.registeredAtoms) {
+        if (atom.label != null && _savedState!.containsKey(atom.label)) {
+          final savedVal = _savedState![atom.label];
+          if (atom.fromJson != null && savedVal is Map<String, dynamic>) {
+            atom.value = atom.fromJson!(savedVal);
+          } else {
+            try {
+              atom.value = savedVal;
+            } catch (_) {
+              // Skip if types don't match or other issues
+            }
+          }
+        }
+      }
+    });
+  }
+
   /// [Internal] Starts an action.
   static void _actionStart(String name) {
     _isInAction = true;
@@ -322,6 +366,13 @@ abstract class Atom<T> extends ChangeNotifier
   T Function(Map<String, dynamic>)? get fromJson;
 
   void set(T newValue);
+
+  /// Creates a derived [ComputedAtom] that selects a sub-field from this atom.
+  /// It only notifies when the selected value actually changes.
+  Atom<R> select<R>(R Function(T value) selector, {String? label}) {
+    return computed(() => selector(value),
+        label: label ?? '${this.label ?? 'Atom'}.select');
+  }
 
   /// [Internal] Flag to track if this atom is already pending notification in the current batch.
   bool _isPending = false;
