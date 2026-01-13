@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:nano/nano.dart';
+import 'dart:async';
 
 // --- Primitives ---
 class Point {
@@ -187,62 +188,62 @@ void debugLog(String msg) {
 
 // --- Main Benchmark ---
 void main() {
-  // Disable Nano debug logging to simulate release mode performance
-  Nano.observer = SilentObserver();
+  final config = NanoConfig(observer: SilentObserver());
 
-  debugLog('--- STARTING STRESS TEST ---');
-  final stopwatch = Stopwatch()..start();
+  runZoned(() {
+    debugLog('--- STARTING STRESS TEST ---');
+    final stopwatch = Stopwatch()..start();
 
-  // 1. Setup Nodes
-  final leader = TeamLeader();
-  leader.initialize(null);
+    // 1. Setup Nodes
+    final leader = TeamLeader();
+    leader.initialize(null);
 
-  final stats = GlobalStats(leader.units);
-  stats.initialize(null);
+    final stats = GlobalStats(leader.units);
+    stats.initialize(null);
 
-  // 2. Spawn 50 Units
-  measure('Spawn 50', () {
-    leader.spawnUnits(50);
-  });
+    // 2. Spawn 50 Units
+    measure('Spawn 50', () {
+      leader.spawnUnits(50);
+    });
 
-  // 3. Tick Loop (Concurrent Mutations)
-  // This is the heavy part: 50 moves -> 50 * 50 triggers?
-  measure('Tick 10 Times', () {
-    for (int i = 0; i < 10; i++) {
-      leader.tick();
-    }
-  });
+    // 3. Tick Loop (Concurrent Mutations)
+    measure('Tick 10 Times', () {
+      for (int i = 0; i < 10; i++) {
+        leader.tick();
+      }
+    });
 
-  // 4. Dynamic Resource Management
-  measure('Add 10 Units', () {
-    leader.spawnUnits(10);
-  });
+    // 4. Dynamic Resource Management
+    measure('Add 10 Units', () {
+      leader.spawnUnits(10);
+    });
 
-  measure('Tick 5 Times (60 Units)', () {
-    for (int i = 0; i < 5; i++) {
-      leader.tick();
-    }
-  });
+    measure('Tick 5 Times (60 Units)', () {
+      for (int i = 0; i < 5; i++) {
+        leader.tick();
+      }
+    });
 
-  measure('Remove 20 Units', () {
-    leader.removeRandomUnits(20);
-  });
+    measure('Remove 20 Units', () {
+      leader.removeRandomUnits(20);
+    });
 
-  measure('Tick 5 Times (40 Units)', () {
-    for (int i = 0; i < 5; i++) {
-      leader.tick();
-    }
-  });
+    measure('Tick 5 Times (40 Units)', () {
+      for (int i = 0; i < 5; i++) {
+        leader.tick();
+      }
+    });
 
-  // 5. State Propagation (Level Ups)
-  measure('Level Up 50 times', () {
-    leader.triggerLevelUps(50);
-  });
+    // 5. State Propagation (Level Ups)
+    measure('Level Up 50 times', () {
+      leader.triggerLevelUps(50);
+    });
 
-  debugLog('--- FINISHED in ${stopwatch.elapsedMilliseconds}ms ---');
+    debugLog('--- FINISHED in ${stopwatch.elapsedMilliseconds}ms ---');
 
-  leader.dispose();
-  stats.dispose();
+    leader.dispose();
+    stats.dispose();
+  }, zoneValues: {#nanoConfig: config});
 }
 
 void measure(String label, void Function() task) {

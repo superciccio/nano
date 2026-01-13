@@ -1,9 +1,13 @@
+import 'dart:async'; // Add async import for runZoned
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
+import 'package:nano/core/nano_config.dart'; // Import NanoConfig
 import 'package:nano/core/nano_core.dart';
 import 'package:nano/core/nano_di.dart'
     show Registry, NanoException, NanoFactory, NanoLazy;
 import 'package:nano/core/nano_logic.dart' show NanoLogic, NanoStatus;
+import 'package:nano/core/nano_middleware.dart'; // Import Middleware
 
 /// The Dependency Injection Container.
 ///
@@ -12,6 +16,7 @@ import 'package:nano/core/nano_logic.dart' show NanoLogic, NanoStatus;
 /// Example:
 /// ```dart
 /// Scope(
+///   config: NanoConfig(observer: MyObserver()),
 ///   modules: [
 ///     AuthService(),
 ///     Database(),
@@ -22,8 +27,14 @@ import 'package:nano/core/nano_logic.dart' show NanoLogic, NanoStatus;
 class Scope extends StatefulWidget {
   final List<Object> modules;
   final Widget child;
+  final NanoConfig? config;
 
-  const Scope({super.key, required this.modules, required this.child});
+  const Scope({
+    super.key,
+    required this.modules,
+    required this.child,
+    this.config,
+  });
 
   @override
   State<Scope> createState() => _ScopeState();
@@ -38,6 +49,12 @@ class Scope extends StatefulWidget {
       );
     }
     return scope.registry;
+  }
+
+  /// Explicit lookup for configuration from the given [context].
+  static NanoConfig? configOf(BuildContext context) {
+    final scope = context.dependOnInheritedWidgetOfExactType<_InheritedScope>();
+    return scope?.config;
   }
 }
 
@@ -82,30 +99,50 @@ class _ScopeState extends State<Scope> {
     }
   }
 
-  @override
-  void didUpdateWidget(Scope oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    // If modules changed, we might need to re-register?
-    // In many DI libs, changing modules on the fly is not supported or creates a new registry.
-    // For now, let's assume modules are static for the lifetime of the scope
-    // or at least that we don't support dynamic module updates without a new state.
-  }
 
   @override
   Widget build(BuildContext context) {
     if (!_initialized) return const SizedBox.shrink();
-    return _InheritedScope(registry: _registry, child: widget.child);
+
+    // Calculate effective config (Inject TimelineMiddleware in debug)
+    NanoConfig? effectiveConfig = widget.config;
+    if (kDebugMode) {
+      final middlewares = effectiveConfig?.middlewares ?? [];
+      final hasTimeline = middlewares.any((m) => m is TimelineMiddleware);
+
+      if (!hasTimeline) {
+        effectiveConfig = NanoConfig(
+          observer: effectiveConfig?.observer,
+          storage: effectiveConfig?.storage,
+          middlewares: [...middlewares, TimelineMiddleware()],
+        );
+      } else if (effectiveConfig == null) {
+        // Should catch above, but explicit null handling
+        effectiveConfig = NanoConfig(middlewares: [TimelineMiddleware()]);
+      }
+    }
+
+    return _InheritedScope(
+      registry: _registry,
+      config: effectiveConfig ?? widget.config,
+      child: widget.child,
+    );
   }
 }
 
 class _InheritedScope extends InheritedWidget {
   final Registry registry;
+  final NanoConfig? config;
 
-  const _InheritedScope({required this.registry, required super.child});
+  const _InheritedScope({
+    required this.registry,
+    this.config,
+    required super.child,
+  });
 
   @override
   bool updateShouldNotify(_InheritedScope oldWidget) =>
-      registry != oldWidget.registry;
+      registry != oldWidget.registry || config != oldWidget.config;
 }
 
 /// The Smart View Widget.
@@ -198,11 +235,17 @@ class _NanoViewState<T extends NanoLogic<P>, P> extends State<NanoView<T, P>> {
   void _initLogic() {
     try {
       final registry = Scope.of(context);
-      _logic = widget.create(registry);
-      // We force cast params to P because if P is non-nullable,
-      // the user MUST have provided params (checked statically or runtime failure).
-      // But if P is dynamic/void/nullable, null is fine.
-      _logic!.initialize(widget.params as P);
+      final config = Scope.configOf(context);
+
+      // We run the creation and initialization in the zone 
+      // so that if they access Nano.observer immediately, it works.
+      runZoned(() {
+        _logic = widget.create(registry);
+        // We force cast params to P because if P is non-nullable,
+        // the user MUST have provided params (checked statically or runtime failure).
+        // But if P is dynamic/void/nullable, null is fine.
+        _logic!.initialize(widget.params as P);
+      }, zoneValues: {#nanoConfig: config});
     } catch (e, s) {
       Nano.observer.onError(
         Atom(null, label: 'NanoViewInit<${T.toString()}>'),
@@ -249,14 +292,22 @@ class _NanoViewState<T extends NanoLogic<P>, P> extends State<NanoView<T, P>> {
       );
     }
 
-    if (widget.rebuildOnUpdate) {
-      return ListenableBuilder(
-        listenable: _logic!,
-        builder: (context, _) => buildContent(),
-      );
-    } else {
-      return buildContent();
-    }
+    final config = Scope.configOf(context);
+    // We wrap the build in runZoned so that any closures created (e.g. onPressed)
+    // capture the zone with the config.
+    return runZoned(
+      () {
+        if (widget.rebuildOnUpdate) {
+          return ListenableBuilder(
+            listenable: _logic!,
+            builder: (context, _) => buildContent(),
+          );
+        } else {
+          return buildContent();
+        }
+      },
+      zoneValues: {#nanoConfig: config},
+    );
   }
 }
 

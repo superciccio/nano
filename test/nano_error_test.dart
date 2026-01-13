@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nano/nano.dart';
 
@@ -18,22 +19,19 @@ void main() {
       expect(atom.value.isLoading, isFalse);
     });
 
+
+
     test('track notifies NanoObserver on error', () async {
       final observer = _CapturingObserver();
-      final oldObserver = Nano.observer;
-      Nano.observer = observer;
+      final config = NanoConfig(observer: observer);
 
-      try {
-        final atom = AsyncAtom<String>(label: 'error_atom');
-        final exception = Exception('boom');
+      final atom = AsyncAtom<String>(label: 'error_atom');
+      final exception = Exception('boom');
 
-        await atom.track(Future.error(exception));
+      await runZoned(() => atom.track(Future.error(exception)), zoneValues: {#nanoConfig: config});
 
-        expect(observer.lastErrorLabel, 'error_atom');
-        expect(observer.lastError, exception);
-      } finally {
-        Nano.observer = oldObserver;
-      }
+      expect(observer.lastErrorLabel, 'error_atom');
+      expect(observer.lastError, exception);
     });
   });
 

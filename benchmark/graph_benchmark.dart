@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nano/nano.dart';
+import 'dart:async';
 
 // --- Graph Logic ---
 
@@ -94,54 +95,49 @@ void main() {
   test(
     'Graph Logic Benchmark: 10 Layers x 10 Width (100 Nodes)',
     () {
-      // Disable logging for benchmark
-      Nano.observer = SilentObserver();
+      final config = NanoConfig(observer: SilentObserver());
 
-      print('--- LOGIC BENCHMARK: 10 Layers x 10 Width (100 Nodes) ---');
+      runZoned(() {
+        print('--- LOGIC BENCHMARK: 10 Layers x 10 Width (100 Nodes) ---');
 
-      final benchmark = GraphBenchmark(10, 10);
+        final benchmark = GraphBenchmark(10, 10);
 
-      final setupSw = Stopwatch()..start();
-      benchmark.build();
-      setupSw.stop();
-      print('Graph Build Time: ${setupSw.elapsedMilliseconds}ms');
+        final setupSw = Stopwatch()..start();
+        benchmark.build();
+        setupSw.stop();
+        print('Graph Build Time: ${setupSw.elapsedMilliseconds}ms');
 
-      // Warmup
-      print('Warming up JIT...');
-      for (int i = 0; i < 100; i++) {
-        benchmark.updateInput(i % 10);
-      }
+        // Warmup
+        print('Warming up JIT...');
+        for (int i = 0; i < 100; i++) {
+          benchmark.updateInput(i % 10);
+        }
 
-      // Measure Propagation
-      final sw = Stopwatch();
+        // Measure Propagation
+        final sw = Stopwatch();
 
-      // 1. Single Input Update Propagation
-      // Changing 1 input affects 2 nodes in L1, 3 in L2... cascading down.
-      // In a triangular path, at layer 50, it affects many nodes.
-      sw.start();
-      for (int i = 0; i < 1000; i++) {
-        benchmark.updateInput(i % 10);
-      }
-      sw.stop();
-      print(
-        '1000 Single Input Updates: ${sw.elapsedMilliseconds}ms (${(sw.elapsedMilliseconds / 1000).toStringAsFixed(3)}ms/op)',
-      );
+        sw.start();
+        for (int i = 0; i < 1000; i++) {
+          benchmark.updateInput(i % 10);
+        }
+        sw.stop();
+        print(
+          '1000 Single Input Updates: ${sw.elapsedMilliseconds}ms (${(sw.elapsedMilliseconds / 1000).toStringAsFixed(3)}ms/op)',
+        );
 
-      sw.reset();
+        sw.reset();
 
-      // 2. Full Input Update (Batch)
-      // Changing all inputs should trigger re-eval for EVERYTHING in next layers.
-      // Ideally, 2500 updates.
-      sw.start();
-      for (int i = 0; i < 100; i++) {
-        benchmark.updateAllInputs();
-      }
-      sw.stop();
-      print(
-        '100 Full Graph Updates: ${sw.elapsedMilliseconds}ms (${(sw.elapsedMilliseconds / 100).toStringAsFixed(3)}ms/op)',
-      );
+        sw.start();
+        for (int i = 0; i < 100; i++) {
+          benchmark.updateAllInputs();
+        }
+        sw.stop();
+        print(
+          '100 Full Graph Updates: ${sw.elapsedMilliseconds}ms (${(sw.elapsedMilliseconds / 100).toStringAsFixed(3)}ms/op)',
+        );
 
-      benchmark.dispose();
+        benchmark.dispose();
+      }, zoneValues: {#nanoConfig: config});
     },
     timeout: const Timeout(Duration(minutes: 5)),
   );
