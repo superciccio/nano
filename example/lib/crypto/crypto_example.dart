@@ -12,6 +12,7 @@ class CryptoTickerPage extends StatelessWidget {
     // NanoView handles creating the logic and the scope
     return NanoView<CryptoLogic, void>(
       create: (reg) => CryptoLogic(reg.get()),
+      rebuildOnUpdate: false,
       builder: (context, logic) {
         return Scaffold(
           backgroundColor: const Color(0xFF0F172A), // Dark Navy

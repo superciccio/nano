@@ -9,14 +9,14 @@ class CryptoLogic extends NanoLogic<void> {
   final coins = Atom<List<CryptoCoin>>([], label: 'coins');
 
   // 2. Computed: Sort by price high to low
-  late final sortedCoins = ComputedAtom([coins], () {
+  late final sortedCoins = computed(() {
     final list = List<CryptoCoin>.from(coins.value);
     list.sort((a, b) => b.price.compareTo(a.price));
     return list;
   }, label: 'sortedCoins');
 
   // 3. Computed: Top Gainer (Best performance)
-  late final topGainer = ComputedAtom([coins], () {
+  late final topGainer = computed(() {
     if (coins.value.isEmpty) return null;
     return coins.value.reduce(
       (curr, next) => curr.change24h > next.change24h ? curr : next,
@@ -24,7 +24,7 @@ class CryptoLogic extends NanoLogic<void> {
   }, label: 'topGainer');
 
   // 4. Computed: Market Status (Bull vs Bear)
-  late final marketSentiment = ComputedAtom([coins], () {
+  late final marketSentiment = computed(() {
     if (coins.value.isEmpty) return 'Neutral';
     final avgChange =
         coins.value.fold(0.0, (sum, c) => sum + c.change24h) /
@@ -36,8 +36,18 @@ class CryptoLogic extends NanoLogic<void> {
 
   @override
   void onInit(void params) {
-    // Automatically bind the stream to the atom.
-    // Nano handles subscription and disposal.
-    bindStream(_service.pricesStream, coins);
+    // Showcase: Scoped reactions (automatically disposed)
+    auto(() {
+      final gainer = topGainer.value;
+      if (gainer != null) {
+        print('?? [Showcase] New Top Gainer: ${gainer.name} (\$${gainer.price})');
+      }
+    });
+
+    // Showcase: Named Actions for DevTools Performance Timeline
+    Nano.action(
+      () => bindStream(_service.pricesStream, coins),
+      name: 'Crypto: Start Price Stream',
+    );
   }
 }

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:nano/core/nano_action.dart';
 import 'package:nano/core/nano_core.dart' show Nano, Atom, NanoLogicBase;
+import 'package:nano/core/nano_reaction.dart';
 
 /// Possible states for a [NanoLogic].
 enum NanoStatus { loading, success, error, empty }
@@ -42,6 +43,7 @@ abstract class NanoLogic<P> extends ChangeNotifier
     with DiagnosticableTreeMixin
     implements NanoLogicBase {
   final List<StreamSubscription> _subscriptions = [];
+  final List<ReactionDisposer> _disposers = [];
 
   /// The current status of the logic (loading, success, error, empty).
   final status = Atom<NanoStatus>(NanoStatus.loading);
@@ -50,25 +52,35 @@ abstract class NanoLogic<P> extends ChangeNotifier
   final error = Atom<Object?>(null);
 
   /// Called immediately after the Logic is created.
-  /// Use this for async initialization (fetching data, etc).
+  /// Use this for field initialization and dependency setup.
+  /// NOTE: Updating atoms (side-effects) is forbidden here.
   void onInit(P params) {}
+
+  /// Called after [onInit] in a microtask.
+  /// Use this for side-effects (state updates, navigation, etc).
+  void onReady() {}
 
   bool _initialized = false;
 
   bool _isInitializing = false;
   bool get isInitializing => _isInitializing;
 
-  /// Internal method to ensure onInit is called only once.
+  /// Internal method to ensure onInit and onReady are called correctly.
   void initialize(P params) {
     if (_initialized) return;
     _initialized = true;
+
+    // Phase 1: Synchronous Init (Field setup)
+    _isInitializing = true;
+    try {
+      runZoned(() => onInit(params), zoneValues: {#nanoLogic: this});
+    } finally {
+      _isInitializing = false;
+    }
+
+    // Phase 2: Asynchronous Ready (Side-effects)
     Future.microtask(() {
-      _isInitializing = true;
-      try {
-        runZoned(() => onInit(params), zoneValues: {#nanoLogic: this});
-      } finally {
-        _isInitializing = false;
-      }
+      runZoned(() => onReady(), zoneValues: {#nanoLogic: this});
     });
   }
 
@@ -104,11 +116,34 @@ abstract class NanoLogic<P> extends ChangeNotifier
     _subscriptions.add(sub);
   }
 
+  /// Runs [effect] immediately and whenever any [Atom] accessed within it changes.
+  /// The reaction is automatically disposed when this [NanoLogic] is disposed.
+  void auto(void Function() effect) {
+    _disposers.add(autorun(effect));
+  }
+
+  /// Runs [sideEffect] whenever the value returned by [tracker] changes.
+  /// The reaction is automatically disposed when this [NanoLogic] is disposed.
+  void react<T>(
+    T Function() tracker,
+    void Function(T value) sideEffect, {
+    bool fireImmediately = false,
+  }) {
+    _disposers.add(reaction<T>(
+      tracker,
+      sideEffect,
+      fireImmediately: fireImmediately,
+    ));
+  }
+
   @override
   @mustCallSuper
   void dispose() {
-    for (var sub in _subscriptions) {
+    for (final sub in _subscriptions) {
       sub.cancel();
+    }
+    for (final disposer in _disposers) {
+      disposer();
     }
     status.dispose();
     error.dispose();

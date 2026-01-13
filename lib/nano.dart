@@ -8,4 +8,5 @@ export 'core/nano_action.dart';
 export 'core/history_observer.dart';
 export 'core/nano_persistence.dart';
 export 'core/nano_reaction.dart';
+export 'core/nano_middleware.dart';
 export 'flutter/nano_flutter.dart';
