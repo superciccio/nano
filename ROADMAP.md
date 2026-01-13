@@ -166,3 +166,24 @@ final theme = PersistAtom('theme_key', ThemeMode.system);
         return sub;
     });
     ```
+
+### 8. Nano Clusters (Isolated Contexts)
+- **Problem**: Building a Super App where "Mini Apps" need completely isolated state but share a core.
+- **Solution**: `NanoContainer` instances that can be nested or peered.
+    ```dart
+    final core = NanoContainer();
+    final miniApp = core.fork(); // Inherits core atoms but has its own memory
+    ```
+
+### 9. State Replay (Hot Restart Persistence)
+- **Problem**: Hot Restart kills all state. Iterating on complex deep-link flows is painful.
+- **Solution**: A dev-only hook that serializes the *entire atomic graph* to a temp file before shutdown and rehydrates it on startup.
+    - Result: **Hot Restart feels like Hot Reload** but for Logic.
+
+### 10. Remote Inspector (WebSocket Server)
+- **Problem**: Debugging a bug that only happens on a physical device in the field (no USB).
+- **Solution**: Embed a tiny `NanoServer`.
+    - `telnet 192.168.1.5 8080`
+    - `> ls atoms`
+    - `> get user`
+    - `> set theme "dark"`
