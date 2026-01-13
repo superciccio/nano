@@ -100,6 +100,28 @@ Nano loves clean code.
 | **Bool** | `atom.value = !atom.value` | `atom.toggle()` |
 | **Collections** | `atom.set([...atom.value, item])` | `atom.add(item)` |
 
+## ⚡ Advanced Features
+
+### Batch Updates
+Group multiple updates into a single notification to improve performance and prevent glitches.
+
+```dart
+Nano.batch(() {
+  // These updates won't trigger listeners immediately
+  count.increment();
+  status.set(NanoStatus.loading);
+});
+// Listeners notified once here
+```
+
+### Persistence
+Automatically save state to storage (defaults to in-memory, swappable with SharedPreferences/Hive).
+
+```dart
+// Auto-saves to storage whenever value changes
+final themeMode = PersistedAtom('light', key: 'theme_mode');
+```
+
 ## 🛠️ DevTools Extension
 
 Nano comes with a powerful DevTools extension to make debugging a breeze.

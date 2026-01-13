@@ -1,5 +1,24 @@
 # 🪐 Nano Migration Guide
 
+## 0.6.0 Migration
+
+### `SelectorAtom` Deprecation
+The `SelectorAtom` class and its usage are deprecated in favor of `computed` or the `.select()` extension, which offer better composability and Type inference.
+
+**Before:**
+```dart
+final userName = SelectorAtom(userAtom, (user) => user.name);
+```
+
+**After:**
+```dart
+// Option 1: Use .select() (Recommended)
+final userName = userAtom.select((user) => user.name);
+
+// Option 2: Use computed()
+final userName = computed(() => userAtom().name);
+```
+
 ## 0.5.0 Migration
 
 ### `toAtom()` Syntax Change

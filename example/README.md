@@ -1,17 +1,26 @@
-# nano_example
+# Nano Example
 
-A new Flutter project.
+This directory contains a complete example application demonstrating the capabilities of the Nano state management library.
+
+## Features Demonstrated
+
+*   **Atomic State**: Using `Atom<T>` for reactive state management.
+*   **Business Logic**: Implementing `NanoLogic` to separate UI and logic.
+*   **Dependency Injection**: Using `Scope` and `Registry` for modularity.
+*   **Async State**: Handling API calls with `AsyncAtom` and automatic loading/error states.
+*   **Routing**: Managing navigation state.
+*   **Theming**: Dynamic theme switching.
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+1.  From the root directory, run:
+    ```bash
+    flutter pub get
+    cd example
+    flutter pub get
+    ```
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+2.  Run the app:
+    ```bash
+    flutter run
+    ```

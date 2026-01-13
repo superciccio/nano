@@ -1,3 +1,20 @@
+## 0.6.0
+
+*   **New Feature: Batch Updates & Glitch Prevention**:
+    *   Introduced `Nano.batch(() { ... })` to group multiple atom updates into a single notification cycle.
+    *   Implemented a glitch prevention mechanism that defers updates of dependent atoms (computed/reactions) until the batch is flushed, ensuring topological consistency.
+*   **New Feature: Persistence**:
+    *   Added `PersistedAtom<T>` for automatic state persistence.
+    *   Added `Nano.storage` interface (defaults to `InMemoryStorage`) to support swappable storage backends (e.g., SharedPreferences, Hive).
+*   **New Feature: Collection Extensions**:
+    *   Added ergonomic extensions for `Atom<List>`, `Atom<Set>`, and `Atom<Map>` (`.add()`, `.remove()`, `.clear()`, `.put()`) that perform immutable updates.
+*   **Improvement: AsyncAtom Safety**:
+    *   `AsyncAtom` now tracks sessions to handle race conditions (only the latest `track` call updates the state).
+    *   State updates in `AsyncAtom` are now automatically wrapped in `Nano.action` for Strict Mode compliance.
+*   **Improvement: ComputedAtom Optimization**:
+    *   Enhanced dependency tracking with a diffing strategy to avoid unnecessary unsubscribe/resubscribe operations.
+*   **Deprecation**: `SelectorAtom` is now deprecated. Use `computed(() => selector(parent.value))` or `atom.select(selector)` instead.
+
 ## 0.5.0
 
 *   **Breaking Change: `toAtom()` Standardization**: Modified `toAtom()` extension to use named parameters (`label`, `meta`) instead of positional ones for consistency with other `Atom` constructors.
