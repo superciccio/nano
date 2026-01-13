@@ -124,6 +124,36 @@ class AsyncAtom<T> extends Atom<AsyncState<T>> {
 - `AsyncData<T>` (access data via `.data`)
 - `AsyncError` (access error via `.error`, `.stackTrace`)
 
+### `PersistedAtom<T>`
+An `Atom` that automatically persists its value to a storage backend (default: `InMemoryStorage`).
+
+**Signature:**
+```dart
+class PersistedAtom<T> extends Atom<T> {
+  PersistedAtom(T value, {
+    required String key,
+    T Function(String)? fromString,
+    String Function(T)? toStringEncoder,
+    String? label,
+  });
+}
+```
+
+**Setup Storage:**
+By default, persistence is in-memory. To use real storage (e.g., SharedPreferences), implement `NanoStorage` and assign it in `main()`:
+
+```dart
+class SharedPrefsStorage implements NanoStorage {
+  // Implement read/write/delete...
+}
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  Nano.storage = SharedPrefsStorage(); // Assign before app starts
+  runApp(MyApp());
+}
+```
+
 ### `NanoLogic<P>`
 Base class for Business Logic Components (BLoC/ViewModel).
 
@@ -308,4 +338,21 @@ class CounterLogic extends NanoLogic<void> {
 // In your UI:
 logic.dispatch(IncrementAction());
 ```
+
+## 7. Batch Updates & Glitch Prevention
+
+Nano provides a `Nano.batch()` utility to group multiple state updates into a single notification cycle. This improves performance and ensures topological consistency (glitch prevention) for dependent atoms.
+
+**Usage:**
+
+```dart
+Nano.batch(() {
+  atom1.value = 10;
+  atom2.value = 20;
+  // Listeners are NOT notified yet.
+});
+// Listeners are notified exactly once here.
+```
+
+If `atom3` depends on `atom1` and `atom2` (via `ComputedAtom`), it will only recompute once after the batch completes, preventing intermediate "glitch" states.
 ```
