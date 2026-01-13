@@ -10,4 +10,5 @@ export 'core/nano_persistence.dart';
 export 'core/nano_reaction.dart';
 export 'core/nano_middleware.dart';
 export 'core/debug_service.dart';
+export 'core/nano_forms.dart';
 export 'flutter/nano_flutter.dart';
