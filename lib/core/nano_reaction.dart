@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:nano/core/nano_core.dart';
 
 /// Disposes a reaction.
@@ -36,11 +35,6 @@ ReactionDisposer reaction<T>(
   void Function(T value) sideEffect, {
   bool fireImmediately = false,
 }) {
-  final reaction = _Reaction(() {
-    // This is effectively a computed, but simplified
-    // We track inside here
-  });
-
   // Actually, reaction is different from autorun.
   // It tracks `tracker`, and executes `sideEffect` when `tracker` result changes.
 
