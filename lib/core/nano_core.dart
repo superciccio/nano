@@ -18,6 +18,13 @@ class NanoInitContext {
   void invalidate() => _isValid = false;
 }
 
+/// Interface for complex state that can be serialized/deserialized.
+/// Required for robust DevTools time travel with complex models.
+abstract interface class NanoSerializable {
+  /// Converts this object to a JSON-serializable map.
+  Map<String, dynamic> toJson();
+}
+
 /// Global configuration for Nano.
 class Nano {
   /// Set this in your main() to capture logs (e.g., NanoObserver()).
@@ -306,12 +313,13 @@ class Atom<T> extends ValueNotifier<T> with Diagnosticable {
 
   final String? label;
   final Map<String, dynamic> meta;
+  final T Function(Map<String, dynamic>)? fromJson;
   bool _disposed = false;
 
   /// [Internal] Flag to track if this atom is already pending notification in the current batch.
   bool _isPending = false;
 
-  Atom(super.value, {this.label, this.meta = const {}}) {
+  Atom(super.value, {this.label, this.meta = const {}, this.fromJson}) {
     NanoDebugService.registerAtom(this);
   }
 

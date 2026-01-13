@@ -48,9 +48,13 @@ class NanoDebugService {
 
     dev.registerExtension('ext.nano.getAtoms', (method, parameters) async {
       final atomsJson = _registeredAtoms.map((atom) {
+        final val = atom.value;
+        final serializableValue =
+            val is NanoSerializable ? val.toJson() : val.toString();
+
         return {
           'label': atom.label ?? 'Atom',
-          'value': atom.value.toString(),
+          'value': serializableValue,
           'type': atom.runtimeType.toString(),
           'state': _getAsyncState(atom),
           'meta': atom.meta.map((k, v) => MapEntry(k, v.toString())),
@@ -67,10 +71,13 @@ class NanoDebugService {
 
     dev.registerExtension('ext.nano.getHistory', (method, parameters) async {
       final historyJson = historyObserver.events.map((event) {
+        final oldVal = event.oldValue;
+        final newVal = event.newValue;
+
         return {
           'label': event.label,
-          'oldValue': event.oldValue.toString(),
-          'newValue': event.newValue.toString(),
+          'oldValue': oldVal is NanoSerializable ? oldVal.toJson() : oldVal.toString(),
+          'newValue': newVal is NanoSerializable ? newVal.toJson() : newVal.toString(),
           'timestamp': event.timestamp.toIso8601String(),
         };
       }).toList();
@@ -92,7 +99,7 @@ class NanoDebugService {
         }
 
         final atom = _registeredAtoms.firstWhere((a) => a.label == label);
-        final parsedValue = _parseValue(atom.value, value);
+        final parsedValue = _parseValue(atom, value);
         Nano.action(() => atom.value = parsedValue);
 
         return dev.ServiceExtensionResponse.result(
@@ -135,7 +142,21 @@ class NanoDebugService {
     };
   }
 
-  static dynamic _parseValue(dynamic originalValue, String valueToParse) {
+  static dynamic _parseValue(Atom atom, String valueToParse) {
+    final originalValue = atom.value;
+
+    // Try complex deserialization first
+    if (atom.fromJson != null) {
+      try {
+        final decoded = json.decode(valueToParse);
+        if (decoded is Map<String, dynamic>) {
+          return atom.fromJson!(decoded);
+        }
+      } catch (_) {
+        // Fallback to primitive parsing if JSON decode fails
+      }
+    }
+
     if (originalValue is int) {
       return int.parse(valueToParse);
     } else if (originalValue is double) {
@@ -146,8 +167,7 @@ class NanoDebugService {
       return valueToParse;
     }
     // For complex types, we can't parse from string.
-    // In a real implementation, this would need a more robust serialization.
-    throw Exception('Unsupported type for time travel');
+    throw Exception('Unsupported type for time travel: ${originalValue.runtimeType}');
   }
 
   static String? _getAsyncState(Atom atom) {
