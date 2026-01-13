@@ -19,7 +19,7 @@ class Validators {
       return null;
     };
   }
-  
+
   static Validator<String> email() {
     return (value) {
       if (value.isEmpty) return null; // Let required handle empty
@@ -30,10 +30,11 @@ class Validators {
 }
 
 /// An Atom that manages form field state including validation.
-class FieldAtom<T> extends Atom<T> {
+class FieldAtom<T> extends ValueAtom<T> {
   final List<Validator<T>> validators;
+  // ignore: avoid_atom_outside_logic
   final Atom<String?> _error = Atom(null);
-  
+
   /// Whether validation has run at least once (touched).
   bool _touched = false;
 
@@ -41,7 +42,7 @@ class FieldAtom<T> extends Atom<T> {
     super.initial, {
     this.validators = const [],
     super.label,
-  }) : super();
+  });
 
   /// The current error message, if any.
   /// Returns null if valid or not yet validated.
@@ -75,7 +76,7 @@ class FieldAtom<T> extends Atom<T> {
     _error.value = null;
     return true;
   }
-  
+
   /// Resets the field to initial state and clears errors.
   void reset() {
     // Need access to initial value? Atom doesn't store it publicly.

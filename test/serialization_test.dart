@@ -1,8 +1,6 @@
-
 import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nano/nano.dart';
-import 'package:nano/core/debug_service.dart';
 
 class UserModel implements NanoSerializable {
   final String name;
@@ -33,7 +31,9 @@ class UserModel implements NanoSerializable {
 }
 
 void main() {
-  test('Serialization: Atom<UserModel> should support custom serialization/deserialization', () {
+  test(
+      'Serialization: Atom<UserModel> should support custom serialization/deserialization',
+      () {
     final originalUser = UserModel('Alice', 25);
     final atom = Atom<UserModel>(
       originalUser,
@@ -43,30 +43,28 @@ void main() {
 
     // Verify serialization (simulation of getAtoms)
     final val = atom.value;
-    final serializableValue = val is NanoSerializable ? val.toJson() : val.toString();
+    final serializableValue = val.toJson();
     expect(serializableValue, {'name': 'Alice', 'age': 25});
 
     // Verify deserialization (simulation of revertToState)
     // We simulate what NanoDebugService._parseValue does
     final jsonString = json.encode({'name': 'Bob', 'age': 30});
-    
-    // Since _parseValue is private, we'll verify it indirectly if we can, 
+
+    // Since _parseValue is private, we'll verify it indirectly if we can,
     // but here we just test the strategy we implemented in debug_service.dart
-    
+
     final decoded = json.decode(jsonString);
     final revertedUser = atom.fromJson!(decoded as Map<String, dynamic>);
-    
+
     expect(revertedUser.name, 'Bob');
     expect(revertedUser.age, 30);
   });
 
   test('Serialization: Primitives should still work', () {
-    final atom = Atom<int>(0, label: 'count_atom');
-    
     // Simulation of primitive parsing in _parseValue
     final valueToParse = '10';
     final parsedValue = int.parse(valueToParse);
-    
+
     expect(parsedValue, 10);
   });
 }

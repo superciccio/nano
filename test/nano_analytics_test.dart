@@ -1,3 +1,4 @@
+// ignore_for_file: suggest_nano_action
 import 'dart:async';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
