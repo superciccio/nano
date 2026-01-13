@@ -67,9 +67,11 @@ class GraphBenchmark {
   }
 
   void updateAllInputs() {
-    for(var node in graph[0]) {
-      node.atom.increment();
-    }
+    Nano.batch(() {
+      for(var node in graph[0]) {
+        node.atom.increment();
+      }
+    });
   }
 
   void dispose() {
