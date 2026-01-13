@@ -32,7 +32,7 @@ void main() {
         fail('Should have thrown an error');
       } catch (e) {
         expect(e.toString(), contains('microtask'));
-        expect(e.toString(), contains('side-effect'));
+        expect(e.toString().toLowerCase(), contains('side-effect'));
       }
     });
     group('AsyncState Extensions', () {

@@ -2,7 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:nano/core/nano_action.dart';
-import 'package:nano/core/nano_core.dart' show Nano, Atom, NanoLogicBase;
+import 'package:nano/core/nano_core.dart'
+    show Nano, Atom, NanoLogicBase, NanoInitContext;
 import 'package:nano/core/nano_reaction.dart';
 
 /// Possible states for a [NanoLogic].
@@ -53,6 +54,11 @@ abstract class NanoLogic<P> extends ChangeNotifier
 
   /// Called immediately after the Logic is created.
   /// Use this for field initialization and dependency setup.
+  ///
+  /// **CRITICAL**: This method must be SYNCHRONOUS. Do not use `async` or `await`
+  /// here, as any work after an `await` will leak out of the initialization
+  /// context and side-effect protection.
+  ///
   /// NOTE: Updating atoms (side-effects) is forbidden here.
   void onInit(P params) {}
 
@@ -71,11 +77,19 @@ abstract class NanoLogic<P> extends ChangeNotifier
     _initialized = true;
 
     // Phase 1: Synchronous Init (Field setup)
+    final initContext = NanoInitContext();
     _isInitializing = true;
     try {
-      runZoned(() => onInit(params), zoneValues: {#nanoLogic: this});
+      runZoned(
+        () => onInit(params),
+        zoneValues: {
+          #nanoLogic: this,
+          #nanoInitContext: initContext,
+        },
+      );
     } finally {
       _isInitializing = false;
+      initContext.invalidate();
     }
 
     // Phase 2: Asynchronous Ready (Side-effects)

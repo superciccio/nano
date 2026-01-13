@@ -9,6 +9,15 @@ abstract class NanoLogicBase {
   bool get isInitializing;
 }
 
+/// [Internal] Context used to track the validity of the synchronous 'onInit' phase.
+class NanoInitContext {
+  bool _isValid = true;
+  bool get isValid => _isValid;
+
+  /// Invalidates this context, identifying the end of the synchronous phase.
+  void invalidate() => _isValid = false;
+}
+
 /// Global configuration for Nano.
 class Nano {
   /// Set this in your main() to capture logs (e.g., NanoObserver()).
@@ -40,6 +49,10 @@ class Nano {
     final config = Zone.current[#nanoConfig] as NanoConfig?;
     return config?.storage ?? _defaultStorage;
   }
+
+  /// [Internal] Returns the current [NanoInitContext].
+  static NanoInitContext? get initContext =>
+      Zone.current[#nanoInitContext] as NanoInitContext?;
 
   /// [Internal] A flag to check if an action is running.
   static bool _isInAction = false;
@@ -313,15 +326,20 @@ class Atom<T> extends ValueNotifier<T> with Diagnosticable {
     set(newValue);
   }
 
-  void set(T newValue) {
+    void set(T newValue) {
     if (super.value == newValue) return;
 
-    if (Nano.logic?.isInitializing == true) {
+    final initContext = Nano.initContext;
+    final isAsyncInit = initContext != null && !initContext.isValid;
+
+    if (Nano.logic?.isInitializing == true || isAsyncInit) {
+      final violationType = isAsyncInit ? 'Asynchronous' : 'Synchronous';
       throw '''
-[Nano] side-effect Violation
----------------------------
+[Nano] Side-effect Violation ($violationType)
+--------------------------------------------
 You are updating an Atom (${label ?? runtimeType}) during 'onInit'.
 State updates are forbidden in 'onInit' to ensure predictable initialization.
+${isAsyncInit ? '⚠️ DETACTED ASYNC WORK: This update happened after an await in onInit.' : ''}
 
 ✅ Fix (Use onReady):
 @override
