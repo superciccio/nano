@@ -1,6 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nano/nano.dart';
-import 'package:nano/core/nano_reaction.dart';
 
 void main() {
   group('Reactions', () {

@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:nano/core/nano_core.dart';
 
 /// Disposes a reaction.
@@ -36,11 +35,6 @@ ReactionDisposer reaction<T>(
   void Function(T value) sideEffect, {
   bool fireImmediately = false,
 }) {
-  final reaction = _Reaction(() {
-    // This is effectively a computed, but simplified
-    // We track inside here
-  });
-
   // Actually, reaction is different from autorun.
   // It tracks `tracker`, and executes `sideEffect` when `tracker` result changes.
 
@@ -66,7 +60,8 @@ ReactionDisposer reaction<T>(
 
 class _Reaction implements NanoDerivation {
   final void Function() _onInvalidate;
-  final Set<Atom> _observing = {};
+  Set<Atom> _observing = {};
+  Set<Atom>? _newObserving; // Temporary set for new run
   bool _disposed = false;
 
   _Reaction(this._onInvalidate);
@@ -74,21 +69,51 @@ class _Reaction implements NanoDerivation {
   void schedule() {
     if (_disposed) return;
 
-    // Cleanup old dependencies
-    for (final atom in _observing) {
-      atom.removeListener(schedule);
+    // Glitch Prevention
+    if (Nano.isFlushing) {
+      for (final atom in _observing) {
+        if (Nano.isFlushingAtom(atom)) {
+          return;
+        }
+      }
     }
-    _observing.clear();
+
+    // Prepare for new tracking (handle recursion)
+    final previousNewObserving = _newObserving;
+    _newObserving = {};
 
     // Run in tracking context
-    Nano.track(this, _onInvalidate);
+    try {
+      Nano.track(this, _onInvalidate);
+
+      // Diffing Strategy:
+      // 1. Unsubscribe from atoms in _observing that are NOT in _newObserving
+      // Note: We access _newObserving (the current one) safely here.
+      for (final atom in _observing) {
+        if (!_newObserving!.contains(atom)) {
+          atom.removeListener(schedule);
+        }
+      }
+
+      // Swap sets: _observing becomes the set we just built
+      _observing = _newObserving!;
+    } finally {
+      // Restore previous state (pop stack)
+      _newObserving = previousNewObserving;
+    }
   }
 
   @override
   void addDependency(Atom atom) {
     if (_disposed) return;
-    if (_observing.add(atom)) {
-      atom.addListener(schedule);
+
+    // We are running inside Nano.track, so _newObserving is not null.
+    if (_newObserving!.add(atom)) {
+      // If it wasn't already in the OLD set, we need to listen.
+      // If it WAS in the OLD set, we are already listening, so do nothing (Optimization!).
+      if (!_observing.contains(atom)) {
+        atom.addListener(schedule);
+      }
     }
   }
 
@@ -98,5 +123,6 @@ class _Reaction implements NanoDerivation {
       atom.removeListener(schedule);
     }
     _observing.clear();
+    _newObserving = null;
   }
 }

@@ -33,6 +33,71 @@ class Nano {
     }
   }
 
+  /// [Internal] Batch depth counter.
+  static int _batchDepth = 0;
+
+  /// [Internal] Pending atoms to notify.
+  static final List<Atom> _pendingNotifications = [];
+
+  /// [Internal] Set of atoms currently flushing in the batch.
+  static final Set<Atom> _flushingAtoms = {};
+
+  /// [Internal] Returns true if Nano is currently flushing a batch.
+  static bool get isFlushing => _flushingAtoms.isNotEmpty;
+
+  /// [Internal] Returns true if the given atom is currently in the flush queue.
+  static bool isFlushingAtom(Atom atom) => _flushingAtoms.contains(atom);
+
+  /// Batches notifications for state updates.
+  ///
+  /// Changes to [Atom]s inside the [fn] will not trigger listeners immediately.
+  /// Instead, they will be collected and notified once the batch completes.
+  ///
+  /// This is useful for performance when updating multiple atoms at once,
+  /// or when updating a single atom multiple times (only the last value is notified).
+  ///
+  /// Example:
+  /// ```dart
+  /// Nano.batch(() {
+  ///   atom1.value = 1;
+  ///   atom2.value = 2;
+  /// });
+  /// // Listeners are notified here.
+  /// ```
+  static void batch(void Function() fn) {
+    _batchDepth++;
+    try {
+      fn();
+    } finally {
+      _batchDepth--;
+      if (_batchDepth == 0) {
+        final pending = List<Atom>.from(_pendingNotifications);
+        _pendingNotifications.clear();
+
+        // Reset flags first to ensure consistency
+        for (final atom in pending) {
+          atom._isPending = false;
+        }
+
+        // Add to flushing set for glitch prevention checks
+        _flushingAtoms.addAll(pending);
+
+        try {
+          // Then notify
+          for (final atom in pending) {
+            // Remove current from flushing set so dependents don't wait on it
+            _flushingAtoms.remove(atom);
+
+            // Since `_batchDepth` is 0, this will trigger actual listeners.
+            atom.notifyListeners();
+          }
+        } finally {
+          _flushingAtoms.clear();
+        }
+      }
+    }
+  }
+
   /// Initialize Nano for debugging. Usually called by Scope.
   static void init() {
     NanoDebugService.init();
@@ -114,6 +179,9 @@ class Atom<T> extends ValueNotifier<T> with Diagnosticable {
   final String? label;
   final Map<String, dynamic> meta;
 
+  /// [Internal] Flag to track if this atom is already pending notification in the current batch.
+  bool _isPending = false;
+
   Atom(super.value, {this.label, this.meta = const {}}) {
     NanoDebugService.registerAtom(this);
   }
@@ -138,6 +206,18 @@ class Atom<T> extends ValueNotifier<T> with Diagnosticable {
   /// Internal setter to bypass the [set] method (and its overrides).
   void _innerSet(T newValue) {
     super.value = newValue;
+  }
+
+  @override
+  void notifyListeners() {
+    if (Nano._batchDepth > 0) {
+      if (!_isPending) {
+        _isPending = true;
+        Nano._pendingNotifications.add(this);
+      }
+    } else {
+      super.notifyListeners();
+    }
   }
 
   void update(T Function(T current) fn) {
@@ -198,6 +278,18 @@ class ComputedAtom<T> extends Atom<T> {
   }
 
   void _update() {
+    // Optimization: Glitch Prevention.
+    // If we are in a batch flush, and any OTHER dependency is still waiting to be flushed,
+    // we defer our update. The last dependency to flush will trigger us.
+    if (Nano.isFlushing) {
+      for (final dep in dependencies) {
+        // Dependencies are ValueListenable, but we need to check if they are Atoms in the flush set.
+        if (dep is Atom && Nano.isFlushingAtom(dep)) {
+          return;
+        }
+      }
+    }
+
     final newValue = selector();
     if (value == newValue) return;
     Nano.observer.onChange(this, value, newValue);
