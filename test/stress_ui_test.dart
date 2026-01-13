@@ -1,8 +1,8 @@
+// ignore_for_file: logic_naming_convention
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nano/nano.dart';
 import 'dart:async';
-
 
 // --- Components ---
 
@@ -48,7 +48,7 @@ class CellWidget extends StatelessWidget {
   final VoidCallback onBuild;
 
   const CellWidget({Key? key, required this.atom, required this.onBuild})
-    : super(key: key);
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -136,7 +136,8 @@ void main() {
         await tester.pump();
         stopwatch.stop();
 
-        print('Row Update (100 cells) Time: ${stopwatch.elapsedMilliseconds}ms');
+        print(
+            'Row Update (100 cells) Time: ${stopwatch.elapsedMilliseconds}ms');
         expect(buildCount, equals(100));
         buildCount = 0;
         stopwatch.reset();

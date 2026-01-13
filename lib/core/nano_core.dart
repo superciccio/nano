@@ -1,5 +1,5 @@
+// ignore_for_file: avoid_atom_outside_logic
 import 'dart:async';
-
 import 'package:flutter/foundation.dart';
 import 'package:nano/core/debug_service.dart';
 import 'package:nano/core/nano_config.dart';
@@ -209,7 +209,7 @@ class Nano {
             _flushingAtoms.remove(atom);
 
             // Since `_batchDepth` is 0, this will trigger actual listeners.
-            atom.notifyListeners();
+            atom._notifyBatch();
           }
         } finally {
           _flushingAtoms.clear();
@@ -298,7 +298,7 @@ class CompositeObserver implements NanoObserver {
 }
 
 /// The atomic unit of state.
-/// Wraps a [ValueNotifier] with extra powers:
+/// Implements [ValueListenable] with extra powers:
 /// 1. Logging via [NanoObserver].
 /// 2. Helper methods like [update].
 ///
@@ -308,34 +308,113 @@ class CompositeObserver implements NanoObserver {
 /// count.set(10);
 /// count.update((v) => v + 1);
 /// ```
-class Atom<T> extends ValueNotifier<T> with Diagnosticable {
+abstract class Atom<T> extends ChangeNotifier
+    with Diagnosticable
+    implements ValueListenable<T> {
   static const _sentinel = Object();
 
-  final String? label;
-  final Map<String, dynamic> meta;
-  final T Function(Map<String, dynamic>)? fromJson;
-  bool _disposed = false;
+  @override
+  T get value;
+  set value(T newValue);
+
+  String? get label;
+  Map<String, dynamic> get meta;
+  T Function(Map<String, dynamic>)? get fromJson;
+
+  void set(T newValue);
 
   /// [Internal] Flag to track if this atom is already pending notification in the current batch.
   bool _isPending = false;
+  bool _disposed = false;
 
-  Atom(super.value, {this.label, this.meta = const {}, this.fromJson}) {
+  factory Atom(T initial,
+      {String? label,
+      Map<String, dynamic> meta,
+      T Function(Map<String, dynamic>)? fromJson}) = ValueAtom<T>;
+
+  /// Internal constructor for subclasses.
+  @protected
+  Atom.internal();
+
+  @override
+  void dispose() {
+    _disposed = true;
+    super.dispose();
+  }
+
+  // Internal helper for batching
+  void _notifyBatch() {
+    if (Nano._batchDepth > 0) {
+      if (!_isPending) {
+        _isPending = true;
+        Nano._pendingNotifications.add(this);
+      }
+    } else {
+      notifyListeners();
+    }
+  }
+
+  void update(T Function(T current) fn) {
+    set(fn(value));
+  }
+
+  /// Ergonomic shortcut to get/set the value.
+  ///
+  /// Example:
+  /// ```dart
+  /// final count = 0.toAtom();
+  /// print(count()); // Same as count.value
+  /// count(10); // Same as count.set(10)
+  /// count((c) => c + 1); // Same as count.update((c) => c + 1)
+  /// ```
+  T call([dynamic newValue = _sentinel]) {
+    if (!identical(newValue, _sentinel)) {
+      if (newValue is T Function(T)) {
+        update(newValue);
+      } else {
+        set(newValue);
+      }
+    }
+    return value;
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty('label', label, defaultValue: null));
+    properties.add(DiagnosticsProperty('value', value));
+  }
+}
+
+/// A concrete [Atom] that holds a mutable value.
+class ValueAtom<T> extends Atom<T> {
+  T _value;
+
+  @override
+  final String? label;
+  @override
+  final Map<String, dynamic> meta;
+  @override
+  final T Function(Map<String, dynamic>)? fromJson;
+
+  ValueAtom(T initial, {this.label, this.meta = const {}, this.fromJson})
+      : _value = initial,
+        super.internal() {
     NanoDebugService.registerAtom(this);
   }
 
   @override
   T get value {
     Nano.reportRead(this);
-    return super.value;
+    return _value;
   }
 
   @override
-  set value(T newValue) {
-    set(newValue);
-  }
+  set value(T newValue) => set(newValue);
 
-    void set(T newValue) {
-    if (super.value == newValue) return;
+  @override
+  void set(T newValue) {
+    if (_value == newValue) return;
 
     final initContext = Nano.initContext;
     final isAsyncInit = initContext != null && !initContext.isValid;
@@ -347,7 +426,7 @@ class Atom<T> extends ValueNotifier<T> with Diagnosticable {
 --------------------------------------------
 You are updating an Atom (${label ?? runtimeType}) during 'onInit'.
 State updates are forbidden in 'onInit' to ensure predictable initialization.
-${isAsyncInit ? '⚠️ DETACTED ASYNC WORK: This update happened after an await in onInit.' : ''}
+${isAsyncInit ? '⚠️ DETECTED ASYNC WORK: This update happened after an await in onInit.' : ''}
 
 ✅ Fix (Use onReady):
 @override
@@ -393,62 +472,20 @@ atom.value++;
 ''';
     }
 
-    Nano.observer.onChange(this, value, newValue);
-    super.value = newValue;
-    Nano._version++;
+    final oldValue = _value;
+    _value = newValue;
+    Nano.observer.onChange(this, oldValue, newValue);
+    _notifyBatch();
   }
 
   /// Internal setter to bypass the [set] method (and its overrides).
   void _innerSet(T newValue) {
-    super.value = newValue;
-  }
-
-  @override
-  void notifyListeners() {
-    if (Nano._batchDepth > 0) {
-      if (!_isPending) {
-        _isPending = true;
-        Nano._pendingNotifications.add(this);
-      }
-    } else {
-      super.notifyListeners();
-    }
-  }
-
-  void update(T Function(T current) fn) {
-    set(fn(value));
-  }
-
-  /// Ergonomic shortcut to get/set the value.
-  ///
-  /// Example:
-  /// ```dart
-  /// final count = 0.toAtom();
-  /// print(count()); // Same as count.value
-  /// count(10); // Same as count.set(10)
-  /// count((c) => c + 1); // Same as count.update((c) => c + 1)
-  /// ```
-  T call([dynamic newValue = _sentinel]) {
-    if (!identical(newValue, _sentinel)) {
-      if (newValue is T Function(T)) {
-        update(newValue);
-      } else {
-        set(newValue);
-      }
-    }
-    return value;
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty('label', label, defaultValue: null));
-    properties.add(DiagnosticsProperty('value', value));
+    _value = newValue;
+    _notifyBatch();
   }
 
   @override
   void dispose() {
-    _disposed = true;
     NanoDebugService.unregisterAtom(this);
     super.dispose();
   }
@@ -466,38 +503,50 @@ class ComputedAtom<T> extends Atom<T> implements NanoDerivation {
   Iterable<Atom> get dependencies => _observing;
 
   final T Function() _selector;
-  Set<Atom> _observing = {};
-  Set<Atom>? _newObserving;
-  int _lastVersion = -1;
-  bool _isDirty = true;
-  bool _isActive = false;
-
-  ComputedAtom(this._selector, {super.label, super.meta})
-    : super(_selector()) {
-    _lastVersion = Nano.version;
-    NanoDebugService.registerDerivation(this);
-  }
+  T? _actualValue;
+  bool _hasValue = false;
 
   @override
   T get value {
     Nano.reportRead(this);
-    if (_disposed) return super.value;
-    if (!_isActive && !hasListeners) {
-      // If inactive, we only re-compute if the global version has changed.
-      // This avoids redundant computations when nothing in the system changed.
-      if (Nano.version != _lastVersion) {
-        final newValue = Nano.track(this, _selector);
-        _lastVersion = Nano.version;
-        if (!_disposed) _innerSet(newValue);
-        return newValue;
-      }
-      return super.value;
-    }
     if (_isDirty) {
       _compute();
     }
-    return super.value;
+    return _actualValue as T;
   }
+
+  @override
+  set value(T _) => throw UnsupportedError('ComputedAtom is read-only');
+
+  @override
+  final String? label;
+
+  @override
+  Map<String, dynamic> get meta => const {};
+
+  @override
+  T Function(Map<String, dynamic>)? get fromJson => null;
+
+  Set<Atom> _observing = {};
+  Set<Atom>? _newObserving;
+  bool _isDirty = true;
+  bool _isActive = false;
+
+  ComputedAtom(this._selector, {this.label}) : super.internal() {
+    _isDirty = true;
+    NanoDebugService.registerDerivation(this);
+    // Initial compute to establish initial value and dependencies
+    _compute();
+  }
+
+  void _innerSet(T newValue) {
+    _actualValue = newValue;
+    _hasValue = true;
+    _notifyBatch();
+  }
+
+  @override
+  void set(T newValue) => throw UnsupportedError('ComputedAtom is read-only');
 
   @override
   void addListener(VoidCallback listener) {
@@ -514,7 +563,9 @@ class ComputedAtom<T> extends Atom<T> implements NanoDerivation {
   void _activate() {
     if (!_isActive) {
       _isActive = true;
-      _compute();
+      if (_isDirty) {
+        _compute();
+      }
     }
   }
 
@@ -567,8 +618,9 @@ class ComputedAtom<T> extends Atom<T> implements NanoDerivation {
       _observing = _newObserving!;
       _isDirty = false;
 
-      if (super.value != newValue) {
-        Nano.observer.onChange(this, super.value, newValue);
+      if (!_hasValue || _actualValue != newValue) {
+        final oldValue = _hasValue ? _actualValue : Atom._sentinel;
+        Nano.observer.onChange(this, oldValue, newValue);
         _innerSet(newValue);
       }
     } finally {
@@ -586,8 +638,13 @@ class ComputedAtom<T> extends Atom<T> implements NanoDerivation {
   }
 
   @override
-  void set(T newValue) {
+  void update(T Function(T current) fn) {
     throw UnsupportedError('ComputedAtom is read-only');
+  }
+
+  @override
+  T call([dynamic newValue = Atom._sentinel]) {
+    return value;
   }
 
   @override
@@ -688,35 +745,33 @@ class AsyncError<T> extends AsyncState<T> {
 /// // In the UI, you can use a switch statement on `searchResults.value`
 /// // to display the appropriate widget for each state (loading, data, error).
 /// ```
-class AsyncAtom<T> extends Atom<AsyncState<T>> {
+class AsyncAtom<T> extends ValueAtom<AsyncState<T>> {
   int _session = 0;
 
   AsyncAtom({AsyncState<T> initial = const AsyncIdle(), String? label})
-    : super(initial, label: label);
+      : super(initial, label: label);
 
   Future<void> track(Future<T> future) {
     final currentSession = ++_session;
     Nano.action(() => set(AsyncLoading<T>()));
 
-    return future
-        .then((data) {
-          if (_session == currentSession) {
-            Nano.action(() => set(AsyncData<T>(data)));
-          }
-        })
-        .catchError((e, s) {
-          if (_session == currentSession) {
-            Nano.action(() {
-              set(AsyncError<T>(e, s));
-              Nano.observer.onError(this, e, s);
-            });
-          }
+    return future.then((data) {
+      if (_session == currentSession) {
+        Nano.action(() => set(AsyncData<T>(data)));
+      }
+    }).catchError((e, s) {
+      if (_session == currentSession) {
+        Nano.action(() {
+          set(AsyncError<T>(e, s));
+          Nano.observer.onError(this, e, s);
         });
+      }
+    });
   }
 }
 
 /// An [Atom] that manages the state of a [Stream].
-class StreamAtom<T> extends Atom<AsyncState<T>> {
+class StreamAtom<T> extends ValueAtom<AsyncState<T>> {
   StreamSubscription<T>? _subscription;
 
   StreamAtom(
@@ -747,7 +802,7 @@ class StreamAtom<T> extends Atom<AsyncState<T>> {
 /// When the value is set, it will wait for the specified [duration] before
 /// actually updating the value and notifying listeners. If the value is set
 /// again within the duration, the timer will be reset.
-class DebouncedAtom<T> extends Atom<T> {
+class DebouncedAtom<T> extends ValueAtom<T> {
   final Duration duration;
   Timer? _debounce;
 
@@ -776,7 +831,7 @@ class DebouncedAtom<T> extends Atom<T> {
 ///
 /// Only supports basic types (int, double, bool, String) or objects that
 /// can be serialized to/from String.
-class PersistedAtom<T> extends Atom<T> {
+class PersistedAtom<T> extends ValueAtom<T> {
   final String key;
   final T Function(String)? fromString;
   final String Function(T)? toStringEncoder;
@@ -837,10 +892,11 @@ class PersistedAtom<T> extends Atom<T> {
   }
 }
 
-@Deprecated('Use computed(() => selector(parent.value)) or atom.select() instead')
+@Deprecated(
+    'Use computed(() => selector(parent.value)) or atom.select() instead')
 class SelectorAtom<T, R> extends ComputedAtom<R> {
   SelectorAtom(Atom<T> parent, R Function(T) selector, {String? label})
-    : super(() => selector(parent.value), label: label);
+      : super(() => selector(parent.value), label: label);
 }
 
 extension AtomSelectorExtension<T> on Atom<T> {
@@ -860,7 +916,8 @@ extension StreamNanoExtension<T> on Stream<T> {
   StreamAtom<T> toStreamAtom({
     AsyncState<T> initial = const AsyncLoading(),
     String? label,
-  }) => StreamAtom<T>(this, initial: initial, label: label);
+  }) =>
+      StreamAtom<T>(this, initial: initial, label: label);
 }
 
 /// Ergonomic extensions for [Atom] of type [int].

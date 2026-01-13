@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:nano/core/nano_core.dart' show Nano, NanoInitContext;
+import 'package:nano/core/nano_core.dart' show Nano;
 
 /// A simple registry to hold your dependencies.
 ///

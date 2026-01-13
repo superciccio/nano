@@ -1,3 +1,4 @@
+// ignore_for_file: avoid_atom_outside_logic
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nano/nano.dart';
 import 'dart:async';

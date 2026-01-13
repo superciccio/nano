@@ -1,6 +1,8 @@
 import 'dart:math';
 import 'package:nano/nano.dart';
-import 'dart:async';
+import 'dart:async' as async;
+
+// ignore_for_file: avoid_atom_outside_logic
 
 // --- Primitives ---
 class Point {
@@ -30,9 +32,9 @@ class Unit {
   late final ReactionDisposer _disposer;
 
   Unit(this.id, Point startPos, Atom<List<Unit>> allUnits)
-    : position = startPos.toAtom(label: 'Unit-$id-Pos'),
-      level = 1.toAtom(label: 'Unit-$id-Lvl'),
-      nearestNeighborDist = 0.0.toAtom(label: 'Unit-$id-Dist') {
+      : position = startPos.toAtom(label: 'Unit-$id-Pos'),
+        level = 1.toAtom(label: 'Unit-$id-Lvl'),
+        nearestNeighborDist = 0.0.toAtom(label: 'Unit-$id-Dist') {
     // Reactive Logic: Always keep nearestNeighborDist updated
     _disposer = autorun(() {
       final units = allUnits.value; // Track list changes
@@ -71,7 +73,7 @@ class Unit {
 }
 
 /// Global Controller collecting stats.
-class GlobalStats extends NanoLogic<void> {
+class GlobalStatsControllerLogic extends NanoLogic<void> {
   final Atom<List<Unit>> _unitsSource;
 
   // Derived state
@@ -80,7 +82,7 @@ class GlobalStats extends NanoLogic<void> {
 
   ReactionDisposer? _disposer;
 
-  GlobalStats(this._unitsSource);
+  GlobalStatsControllerLogic(this._unitsSource);
 
   @override
   void onInit(void params) {
@@ -113,7 +115,7 @@ class GlobalStats extends NanoLogic<void> {
 }
 
 /// Team Leader managing the units.
-class TeamLeader extends NanoLogic<void> {
+class TeamLeaderLogic extends NanoLogic<void> {
   final units = Atom<List<Unit>>([], label: 'Team-Units');
   final random = Random(42); // Seed for deterministic benchmark
 
@@ -190,15 +192,15 @@ void debugLog(String msg) {
 void main() {
   final config = NanoConfig(observer: SilentObserver());
 
-  runZoned(() {
+  async.runZoned(() {
     debugLog('--- STARTING STRESS TEST ---');
     final stopwatch = Stopwatch()..start();
 
     // 1. Setup Nodes
-    final leader = TeamLeader();
+    final leader = TeamLeaderLogic();
     leader.initialize(null);
 
-    final stats = GlobalStats(leader.units);
+    final stats = GlobalStatsControllerLogic(leader.units);
     stats.initialize(null);
 
     // 2. Spawn 50 Units
