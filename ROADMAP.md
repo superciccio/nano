@@ -87,3 +87,39 @@ TextField(
 // Auto-loads on creation, auto-saves on set
 final theme = PersistAtom('theme_key', ThemeMode.system);
 ```
+
+---
+
+## 🔮 Phase 4: Beyond Magic (Future Concepts)
+
+**Goal**: Powerful features inspired by Riverpod/MobX but kept **explicit** (No `build_runner`, No magic globals).
+
+### 1. Smart Caching (Explicit Families)
+- **Problem**: Fetching data for dynamic IDs (e.g., `User(1)`, `User(2)`) without manual Map management.
+- **Solution**: `AtomCache<Key, Atom<T>>`.
+    ```dart
+    final userCache = AtomCache((id) => AsyncAtom.track(fetchUser(id)));
+    
+    // Usage: Explicitly asking for a specific atom
+    final user1 = userCache(1);
+    ```
+
+### 2. Time Control (Transformers)
+- **Problem**: Search inputs spamming the API.
+- **Solution**: Explicit method extensions for atoms.
+    ```dart
+    final search = Atom('');
+    // Returns a ReadOnlyAtom that updates at most every 500ms
+    final debouncedSearch = search.debounce(500.ms);
+    ```
+
+### 3. Parallel Power (Isolate Atoms)
+- **Problem**: Heavy filtering logic freezing UI.
+- **Solution**: `WorkerAtom` that runs `computed` logic in a `compute()` definition.
+    ```dart
+    // Logic runs in background, result synced to main thread
+    final filtered = WorkerAtom((read) {
+        final list = read(allItems);
+        return list.where((i) => heavyCheck(i)).toList();
+    });
+    ```
