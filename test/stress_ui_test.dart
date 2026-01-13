@@ -26,17 +26,21 @@ class GridController extends NanoLogic<void> {
   }
 
   void updateRow(int r) {
-    for (int c = 0; c < cols; c++) {
-      grid[r][c].increment();
-    }
-  }
-
-  void updateAll() {
-    for (int r = 0; r < rows; r++) {
+    Nano.batch(() {
       for (int c = 0; c < cols; c++) {
         grid[r][c].increment();
       }
-    }
+    });
+  }
+
+  void updateAll() {
+    Nano.batch(() {
+      for (int r = 0; r < rows; r++) {
+        for (int c = 0; c < cols; c++) {
+          grid[r][c].increment();
+        }
+      }
+    });
   }
 }
 

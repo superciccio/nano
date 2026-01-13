@@ -33,6 +33,50 @@ class Nano {
     }
   }
 
+  /// [Internal] Batch depth counter.
+  static int _batchDepth = 0;
+
+  /// [Internal] Pending atoms to notify.
+  static final Set<Atom> _pendingNotifications = {};
+
+  /// Batches notifications for state updates.
+  ///
+  /// Changes to [Atom]s inside the [fn] will not trigger listeners immediately.
+  /// Instead, they will be collected and notified once the batch completes.
+  ///
+  /// This is useful for performance when updating multiple atoms at once,
+  /// or when updating a single atom multiple times (only the last value is notified).
+  ///
+  /// Example:
+  /// ```dart
+  /// Nano.batch(() {
+  ///   atom1.value = 1;
+  ///   atom2.value = 2;
+  /// });
+  /// // Listeners are notified here.
+  /// ```
+  static void batch(void Function() fn) {
+    _batchDepth++;
+    try {
+      fn();
+    } finally {
+      _batchDepth--;
+      if (_batchDepth == 0) {
+        final pending = _pendingNotifications.toList();
+        _pendingNotifications.clear();
+        for (final atom in pending) {
+          // We must manually call the listener notification logic.
+          // Since we overrode notifyListeners to be suppressed, we need a way
+          // to force it or bypass the check.
+          //
+          // However, since `_batchDepth` is now 0, calling `notifyListeners`
+          // on the atom will work normally!
+          atom.notifyListeners();
+        }
+      }
+    }
+  }
+
   /// Initialize Nano for debugging. Usually called by Scope.
   static void init() {
     NanoDebugService.init();
@@ -138,6 +182,15 @@ class Atom<T> extends ValueNotifier<T> with Diagnosticable {
   /// Internal setter to bypass the [set] method (and its overrides).
   void _innerSet(T newValue) {
     super.value = newValue;
+  }
+
+  @override
+  void notifyListeners() {
+    if (Nano._batchDepth > 0) {
+      Nano._pendingNotifications.add(this);
+    } else {
+      super.notifyListeners();
+    }
   }
 
   void update(T Function(T current) fn) {
