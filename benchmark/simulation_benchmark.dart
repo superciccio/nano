@@ -29,10 +29,9 @@ class Unit {
   late final ReactionDisposer _disposer;
 
   Unit(this.id, Point startPos, Atom<List<Unit>> allUnits)
-      : position = startPos.toAtom('Unit-$id-Pos'),
-        level = 1.toAtom('Unit-$id-Lvl'),
-        nearestNeighborDist = 0.0.toAtom('Unit-$id-Dist') {
-
+    : position = startPos.toAtom(label: 'Unit-$id-Pos'),
+      level = 1.toAtom(label: 'Unit-$id-Lvl'),
+      nearestNeighborDist = 0.0.toAtom(label: 'Unit-$id-Dist') {
     // Reactive Logic: Always keep nearestNeighborDist updated
     _disposer = autorun(() {
       final units = allUnits.value; // Track list changes
@@ -75,8 +74,8 @@ class GlobalStats extends NanoLogic<void> {
   final Atom<List<Unit>> _unitsSource;
 
   // Derived state
-  late final totalLevels = 0.toAtom('Global-TotalLevels');
-  late final averageDistance = 0.0.toAtom('Global-AvgDist');
+  late final totalLevels = 0.toAtom(label: 'Global-TotalLevels');
+  late final averageDistance = 0.0.toAtom(label: 'Global-AvgDist');
 
   ReactionDisposer? _disposer;
 
@@ -99,7 +98,9 @@ class GlobalStats extends NanoLogic<void> {
       totalLevels.value = levels;
       averageDistance.value = units.isEmpty ? 0.0 : totalDist / units.length;
 
-      debugLog('STATS UPDATED: Levels=$levels, AvgDist=${averageDistance.value.toStringAsFixed(2)}');
+      debugLog(
+        'STATS UPDATED: Levels=$levels, AvgDist=${averageDistance.value.toStringAsFixed(2)}',
+      );
     });
   }
 
@@ -149,21 +150,21 @@ class TeamLeader extends NanoLogic<void> {
     for (final unit in units.value) {
       unit.move(
         (random.nextDouble() - 0.5) * 2,
-        (random.nextDouble() - 0.5) * 2
+        (random.nextDouble() - 0.5) * 2,
       );
     }
   }
 
   void triggerLevelUps(int count) {
     final list = units.value;
-    for(int i=0; i<count; i++) {
+    for (int i = 0; i < count; i++) {
       list[random.nextInt(list.length)].levelUp();
     }
   }
 
   @override
   void dispose() {
-    for(final u in units.value) u.dispose();
+    for (final u in units.value) u.dispose();
     super.dispose();
   }
 }
@@ -207,7 +208,7 @@ void main() {
   // 3. Tick Loop (Concurrent Mutations)
   // This is the heavy part: 50 moves -> 50 * 50 triggers?
   measure('Tick 10 Times', () {
-    for(int i=0; i<10; i++) {
+    for (int i = 0; i < 10; i++) {
       leader.tick();
     }
   });
@@ -218,7 +219,7 @@ void main() {
   });
 
   measure('Tick 5 Times (60 Units)', () {
-    for(int i=0; i<5; i++) {
+    for (int i = 0; i < 5; i++) {
       leader.tick();
     }
   });
@@ -228,7 +229,7 @@ void main() {
   });
 
   measure('Tick 5 Times (40 Units)', () {
-    for(int i=0; i<5; i++) {
+    for (int i = 0; i < 5; i++) {
       leader.tick();
     }
   });

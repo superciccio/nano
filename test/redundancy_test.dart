@@ -3,20 +3,16 @@ import 'package:nano/nano.dart';
 
 void main() {
   test('ComputedAtom avoids redundant updates in batch', () {
-    final a = 1.toAtom('a');
-    final b = 2.toAtom('b');
+    final a = 1.toAtom(label: 'a');
+    final b = 2.toAtom(label: 'b');
 
     int computeCount = 0;
 
     // c = a + b
-    final c = ComputedAtom<int>(
-      [a, b],
-      () {
-        computeCount++;
-        return a.value + b.value;
-      },
-      label: 'c',
-    );
+    final c = ComputedAtom<int>([a, b], () {
+      computeCount++;
+      return a.value + b.value;
+    }, label: 'c');
 
     // Initial computation happens on creation
     expect(computeCount, 1);
@@ -36,6 +32,10 @@ void main() {
 
     // We strictly want ONLY 1 re-computation for the batch, so total should be 1 (init) + 1 (update) = 2.
     // If it is 3, we have redundancy.
-    expect(computeCount, 2, reason: 'ComputedAtom re-evaluated multiple times during batch');
+    expect(
+      computeCount,
+      2,
+      reason: 'ComputedAtom re-evaluated multiple times during batch',
+    );
   });
 }

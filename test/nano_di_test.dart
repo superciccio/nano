@@ -53,10 +53,7 @@ void main() {
 
     test('throws when service not found', () {
       final reg = Registry();
-      expect(
-        () => reg.get<_Service>(),
-        throwsA(isA<NanoException>()),
-      );
+      expect(() => reg.get<_Service>(), throwsA(isA<NanoException>()));
     });
 
     test('debugFillProperties works', () {
@@ -80,19 +77,21 @@ void main() {
     });
 
     test('NanoFactory wrapper works', () {
-        final f = NanoFactory((r) => _Service());
-        expect(f.type, _Service);
-        expect(f.create(Registry()), isA<_Service>());
+      final f = NanoFactory((r) => _Service());
+      expect(f.type, _Service);
+      expect(f.create(Registry()), isA<_Service>());
     });
 
     test('NanoLazy wrapper works', () {
-        final l = NanoLazy((r) => _Service());
-        expect(l.type, _Service);
-        expect(l.create(Registry()), isA<_Service>());
+      final l = NanoLazy((r) => _Service());
+      expect(l.type, _Service);
+      expect(l.create(Registry()), isA<_Service>());
     });
   });
 }
 
 class _Service {}
+
 class _FactoryService {}
+
 class _LazyService {}

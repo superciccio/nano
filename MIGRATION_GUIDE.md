@@ -1,5 +1,28 @@
 # 🪐 Nano Migration Guide
 
+## 0.5.0 Migration
+
+### `toAtom()` Syntax Change
+The `toAtom()` extension has been standardized to use named parameters for better clarity and future extensibility.
+
+**Before:**
+```dart
+final count = 0.toAtom('counter');
+```
+
+**After:**
+```dart
+final count = 0.toAtom(label: 'counter');
+```
+
+**Fix:** You can use a global find & replace or `sed`:
+```bash
+sed -i "s/\.toAtom('\([^']*\)')/\.toAtom(label: '\1')/g" lib/**/*.dart
+```
+
+---
+
+
 This guide describes how to migrate your existing Flutter project to Nano using the automated refactoring tools.
 
 ## 🚀 Automated Refactoring

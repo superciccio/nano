@@ -26,7 +26,7 @@ void testSuggestAction() {
     atom2.value = 5;
     atom3.increment();
   };
-  
+
   // Use the variables to avoid warnings
   _okParams();
   _complexParams();

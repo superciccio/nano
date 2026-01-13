@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'counter/counter_example.dart';
-import 'search/search_example.dart';
-import 'shopping/shopping_example.dart';
+import 'crypto/crypto_example.dart';
 
 class MainMenu extends StatelessWidget {
   const MainMenu({super.key});
@@ -14,24 +12,10 @@ class MainMenu extends StatelessWidget {
         children: [
           _buildMenuItem(
             context,
-            'Counter & Computed',
-            'Showcases Atom, ComputedAtom, and basic state updates.',
-            Icons.numbers,
-            const CounterPage(),
-          ),
-          _buildMenuItem(
-            context,
-            'Async Search',
-            'Showcases AsyncAtom, NanoLazy, and dependency injection.',
-            Icons.search,
-            const SearchPage(),
-          ),
-          _buildMenuItem(
-            context,
-            'Shopping Cart',
-            'Showcases complex ComputedAtom logic and interactions.',
-            Icons.shopping_cart,
-            const ShoppingPage(),
+            'Live Crypto Ticker',
+            'Surgical updates, computed atoms, and live streams.',
+            Icons.currency_bitcoin,
+            const CryptoTickerPage(),
           ),
         ],
       ),
@@ -53,9 +37,7 @@ class MainMenu extends StatelessWidget {
         subtitle: Text(subtitle),
         trailing: const Icon(Icons.arrow_forward_ios),
         onTap: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(builder: (_) => page),
-          );
+          Navigator.of(context).push(MaterialPageRoute(builder: (_) => page));
         },
       ),
     );

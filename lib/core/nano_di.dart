@@ -11,9 +11,17 @@ import 'package:flutter/foundation.dart';
 /// final auth = registry.get<AuthService>();
 /// ```
 class Registry with Diagnosticable {
+  Registry? _parent;
+  Registry? get parent => _parent;
+  set parent(Registry? value) => _parent = value;
   final Map<Type, Object> _services = {};
   final Map<Type, Object Function(Registry)> _factories = {};
   final Map<Type, Object Function(Registry)> _lazySingletons = {};
+
+  /// [Internal] Stack of types currently being resolved to detect circular dependencies.
+  final List<Type> _lookupStack = [];
+
+  Registry({Registry? parent}) : _parent = parent;
 
   /// Registers an [instance] of type [T].
   void register<T>(T instance) {
@@ -48,28 +56,45 @@ class Registry with Diagnosticable {
   ///
   /// Throws [NanoException] if the type is not registered.
   T get<T>() {
-    // 1. Check existing instances
-    if (_services.containsKey(T)) {
-      return _services[T] as T;
+    if (_lookupStack.contains(T)) {
+      throw NanoException(
+        "Circular dependency detected while resolving '${T.toString()}'.\n"
+        "👉 Chain: ${_lookupStack.join(' -> ')} -> ${T.toString()}",
+      );
     }
 
-    // 2. Check Factories (create new)
-    if (_factories.containsKey(T)) {
-      return _factories[T]!(this) as T;
-    }
+    _lookupStack.add(T);
+    try {
+      // 1. Check existing instances
+      if (_services.containsKey(T)) {
+        return _services[T] as T;
+      }
 
-    // 3. Check Lazy Singletons (create, cache, return)
-    if (_lazySingletons.containsKey(T)) {
-      final instance = _lazySingletons[T]!(this);
-      _services[T] = instance; // Cache it!
-      _lazySingletons.remove(T); // Optimization: remove from lazy map
-      return instance as T;
-    }
+      // 2. Check Factories (create new)
+      if (_factories.containsKey(T)) {
+        return _factories[T]!(this) as T;
+      }
 
-    throw NanoException(
-      "Service of type '${T.toString()}' not found in the current Scope.\n"
-      "👉 Fix: Ensure you added '${T.toString()}' to the 'modules' list in your Scope widget.",
-    );
+      // 3. Check Lazy Singletons (create, cache, return)
+      if (_lazySingletons.containsKey(T)) {
+        final instance = _lazySingletons[T]!(this);
+        _services[T] = instance; // Cache it!
+        _lazySingletons.remove(T); // Optimization: remove from lazy map
+        return instance as T;
+      }
+
+      // 4. Try Parent
+      if (parent != null) {
+        return parent!.get<T>();
+      }
+
+      throw NanoException(
+        "Service of type '${T.toString()}' not found in the current Scope.\n"
+        "👉 Fix: Ensure you added '${T.toString()}' to the 'modules' list in your Scope widget.",
+      );
+    } finally {
+      _lookupStack.removeLast();
+    }
   }
 
   @override

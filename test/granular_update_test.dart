@@ -19,10 +19,7 @@ void main() {
     // Create 10,000 atoms
     final grid = List.generate(
       rows,
-      (r) => List.generate(
-        cols,
-        (c) => 0.toAtom('Cell-$r-$c'),
-      ),
+      (r) => List.generate(cols, (c) => 0.toAtom(label: 'Cell-$r-$c')),
     );
 
     // Ensure we have listeners or else notifyListeners might be too cheap (no-op)
@@ -47,7 +44,9 @@ void main() {
       }
     });
     stopwatch.stop();
-    print('Scattered Updates (1000 random): ${stopwatch.elapsedMicroseconds}µs');
+    print(
+      'Scattered Updates (1000 random): ${stopwatch.elapsedMicroseconds}µs',
+    );
 
     stopwatch.reset();
 
@@ -75,7 +74,8 @@ void main() {
       }
     });
     stopwatch.stop();
-    print('Single Cell Repeated (1000 times): ${stopwatch.elapsedMicroseconds}µs');
-
+    print(
+      'Single Cell Repeated (1000 times): ${stopwatch.elapsedMicroseconds}µs',
+    );
   });
 }

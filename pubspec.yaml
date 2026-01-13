@@ -1,10 +1,10 @@
 name: nano
 description: "A new Flutter package project."
-version: 0.4.0
+version: 0.5.0
 homepage:
 
 environment:
-  sdk: ^3.11.0-276.0.dev
+  sdk: ">=3.0.0 <4.0.0"
   flutter: ">=1.17.0"
 
 dependencies:

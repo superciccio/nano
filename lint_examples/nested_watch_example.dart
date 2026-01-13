@@ -5,12 +5,18 @@ void testNestedWatch() {
   final atom1 = 0.toAtom();
   final atom2 = 'foo'.toAtom();
 
-  Watch(atom1, builder: (context, v1) {
-    // expect_lint: avoid_nested_watch
-    return Watch(atom2, builder: (context, v2) {
-      return Text('$v1 $v2', textDirection: TextDirection.ltr);
-    });
-  });
+  Watch(
+    atom1,
+    builder: (context, v1) {
+      // expect_lint: avoid_nested_watch
+      return Watch(
+        atom2,
+        builder: (context, v2) {
+          return Text('$v1 $v2', textDirection: TextDirection.ltr);
+        },
+      );
+    },
+  );
 
   atom1.watch((context, v1) {
     // expect_lint: avoid_nested_watch

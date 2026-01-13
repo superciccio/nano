@@ -11,12 +11,12 @@ class Node {
 
   // Input Node
   Node.input(this.layer, this.index) : _disposer = null {
-    atom = 0.toAtom('Node-$layer-$index');
+    atom = 0.toAtom(label: 'Node-$layer-$index');
   }
 
   // Computed Node (Simulated manually for raw perf testing, or using autorun)
   Node.computed(this.layer, this.index, List<Node> dependencies) {
-    atom = 0.toAtom('Node-$layer-$index');
+    atom = 0.toAtom(label: 'Node-$layer-$index');
 
     // We use autorun to simulate a ComputedAtom effect.
     // In a real spreadsheet, this would be the cell formula.
@@ -52,10 +52,7 @@ class GraphBenchmark {
       for (int i = 0; i < width; i++) {
         // Dependencies: Each node depends on node [i] and node [(i+1)%width] from previous layer
         final prevLayer = graph[l - 1];
-        final deps = [
-          prevLayer[i],
-          prevLayer[(i + 1) % width],
-        ];
+        final deps = [prevLayer[i], prevLayer[(i + 1) % width]];
         layerNodes.add(Node.computed(l, i, deps));
       }
       graph.add(layerNodes);
@@ -68,7 +65,7 @@ class GraphBenchmark {
 
   void updateAllInputs() {
     Nano.batch(() {
-      for(var node in graph[0]) {
+      for (var node in graph[0]) {
         node.atom.increment();
       }
     });
@@ -94,50 +91,58 @@ class SilentObserver implements NanoObserver {
 // --- Benchmark Runner ---
 
 void main() {
-  test('Graph Logic Benchmark: 10 Layers x 10 Width (100 Nodes)', () {
-    // Disable logging for benchmark
-    Nano.observer = SilentObserver();
+  test(
+    'Graph Logic Benchmark: 10 Layers x 10 Width (100 Nodes)',
+    () {
+      // Disable logging for benchmark
+      Nano.observer = SilentObserver();
 
-    print('--- LOGIC BENCHMARK: 10 Layers x 10 Width (100 Nodes) ---');
+      print('--- LOGIC BENCHMARK: 10 Layers x 10 Width (100 Nodes) ---');
 
-    final benchmark = GraphBenchmark(10, 10);
+      final benchmark = GraphBenchmark(10, 10);
 
-    final setupSw = Stopwatch()..start();
-    benchmark.build();
-    setupSw.stop();
-    print('Graph Build Time: ${setupSw.elapsedMilliseconds}ms');
+      final setupSw = Stopwatch()..start();
+      benchmark.build();
+      setupSw.stop();
+      print('Graph Build Time: ${setupSw.elapsedMilliseconds}ms');
 
-    // Warmup
-    print('Warming up JIT...');
-    for(int i=0; i<100; i++) {
-      benchmark.updateInput(i % 10);
-    }
+      // Warmup
+      print('Warming up JIT...');
+      for (int i = 0; i < 100; i++) {
+        benchmark.updateInput(i % 10);
+      }
 
-    // Measure Propagation
-    final sw = Stopwatch();
+      // Measure Propagation
+      final sw = Stopwatch();
 
-    // 1. Single Input Update Propagation
-    // Changing 1 input affects 2 nodes in L1, 3 in L2... cascading down.
-    // In a triangular path, at layer 50, it affects many nodes.
-    sw.start();
-    for (int i = 0; i < 1000; i++) {
-      benchmark.updateInput(i % 10);
-    }
-    sw.stop();
-    print('1000 Single Input Updates: ${sw.elapsedMilliseconds}ms (${(sw.elapsedMilliseconds/1000).toStringAsFixed(3)}ms/op)');
+      // 1. Single Input Update Propagation
+      // Changing 1 input affects 2 nodes in L1, 3 in L2... cascading down.
+      // In a triangular path, at layer 50, it affects many nodes.
+      sw.start();
+      for (int i = 0; i < 1000; i++) {
+        benchmark.updateInput(i % 10);
+      }
+      sw.stop();
+      print(
+        '1000 Single Input Updates: ${sw.elapsedMilliseconds}ms (${(sw.elapsedMilliseconds / 1000).toStringAsFixed(3)}ms/op)',
+      );
 
-    sw.reset();
+      sw.reset();
 
-    // 2. Full Input Update (Batch)
-    // Changing all inputs should trigger re-eval for EVERYTHING in next layers.
-    // Ideally, 2500 updates.
-    sw.start();
-    for (int i = 0; i < 100; i++) {
-      benchmark.updateAllInputs();
-    }
-    sw.stop();
-    print('100 Full Graph Updates: ${sw.elapsedMilliseconds}ms (${(sw.elapsedMilliseconds/100).toStringAsFixed(3)}ms/op)');
+      // 2. Full Input Update (Batch)
+      // Changing all inputs should trigger re-eval for EVERYTHING in next layers.
+      // Ideally, 2500 updates.
+      sw.start();
+      for (int i = 0; i < 100; i++) {
+        benchmark.updateAllInputs();
+      }
+      sw.stop();
+      print(
+        '100 Full Graph Updates: ${sw.elapsedMilliseconds}ms (${(sw.elapsedMilliseconds / 100).toStringAsFixed(3)}ms/op)',
+      );
 
-    benchmark.dispose();
-  }, timeout: const Timeout(Duration(minutes: 5)));
+      benchmark.dispose();
+    },
+    timeout: const Timeout(Duration(minutes: 5)),
+  );
 }

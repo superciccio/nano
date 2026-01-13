@@ -3,6 +3,7 @@ library;
 export 'core/nano_core.dart';
 export 'core/nano_logic.dart';
 export 'core/nano_di.dart';
+export 'core/nano_config.dart';
 export 'core/nano_action.dart';
 export 'core/history_observer.dart';
 export 'core/nano_persistence.dart';

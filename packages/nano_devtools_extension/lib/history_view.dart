@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:devtools_extensions/devtools_extensions.dart';
-import 'dart:convert';
 
 class _HistoryEventDetails {
   final String label;
@@ -42,7 +41,7 @@ class HistoryViewState extends State<HistoryView> {
   void initState() {
     super.initState();
     _refreshHistory();
-    _refreshTimer = Timer.periodic(const Duration(seconds: 2), (_) {
+    _refreshTimer = Timer.periodic(const Duration(seconds: 3), (_) {
       _refreshHistory();
     });
   }
@@ -65,7 +64,7 @@ class HistoryViewState extends State<HistoryView> {
       final response = await serviceManager.callServiceExtensionOnMainIsolate(
         'ext.nano.getHistory',
       );
-      final json = jsonDecode(response.json! as String);
+      final json = response.json!;
       if (json['history'] != null) {
         final List<dynamic> historyList = json['history'];
         setState(() {
@@ -91,7 +90,11 @@ class HistoryViewState extends State<HistoryView> {
       return const Center(child: CircularProgressIndicator());
     }
     if (_history.isEmpty) {
-      return const Center(child: Text('No history yet. Interact with your app to see state changes.'));
+      return const Center(
+        child: Text(
+          'No history yet. Interact with your app to see state changes.',
+        ),
+      );
     }
 
     return ListView.builder(
@@ -101,14 +104,18 @@ class HistoryViewState extends State<HistoryView> {
         return Card(
           margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
           child: ListTile(
-            title: Text(event.label, style: const TextStyle(fontWeight: FontWeight.bold)),
+            title: Text(
+              event.label,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
             subtitle: Text('${event.oldValue} -> ${event.newValue}'),
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  TimeOfDay.fromDateTime(DateTime.parse(event.timestamp))
-                      .format(context),
+                  TimeOfDay.fromDateTime(
+                    DateTime.parse(event.timestamp),
+                  ).format(context),
                   style: const TextStyle(color: Colors.grey, fontSize: 12),
                 ),
                 const SizedBox(width: 8),
@@ -118,10 +125,7 @@ class HistoryViewState extends State<HistoryView> {
                   onPressed: () {
                     serviceManager.callServiceExtensionOnMainIsolate(
                       'ext.nano.revertToState',
-                      args: {
-                        'label': event.label,
-                        'value': event.oldValue,
-                      },
+                      args: {'label': event.label, 'value': event.oldValue},
                     );
                   },
                 ),

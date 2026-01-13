@@ -1,6 +1,6 @@
 import 'package:analyzer/dart/ast/ast.dart';
-import 'package:analyzer/error/listener.dart';
 import 'package:custom_lint_builder/custom_lint_builder.dart';
+import '../lint_utils.dart';
 
 class AvoidAtomOutsideLogic extends DartLintRule {
   const AvoidAtomOutsideLogic() : super(code: _code);
@@ -14,15 +14,26 @@ class AvoidAtomOutsideLogic extends DartLintRule {
   @override
   void run(
     CustomLintResolver resolver,
-    DiagnosticReporter reporter,
+    dynamic reporter,
     CustomLintContext context,
   ) {
-    context.registry.addInstanceCreationExpression((node) {
-      final type = node.constructorName.type;
-      final typeName = type.name.lexeme;
+    final path = resolver.source.fullName;
+    if (path.contains('/test/') ||
+        path.contains('/example/') ||
+        path.contains('/lint_examples/')) {
+      return;
+    }
 
-      if (['Atom', 'ComputedAtom', 'AsyncAtom'].contains(typeName)) {
-        // Traverse up to find the enclosing class
+    context.registry.addInstanceCreationExpression((node) {
+      final element = node.constructorName.element;
+      if (element == null) return;
+
+      final enclosing = element.enclosingElement;
+      if (['Atom', 'ComputedAtom', 'AsyncAtom', 'StreamAtom', 'DebouncedAtom']
+              .contains(enclosing.name!) &&
+          (enclosing.library.name == 'nano' ||
+              enclosing.library.identifier.contains('package:nano/') == true)) {
+        // Enforce that atoms are defined inside NanoLogic
         final classDeclaration = node.thisOrAncestorOfType<ClassDeclaration>();
 
         if (classDeclaration == null) {
@@ -30,17 +41,59 @@ class AvoidAtomOutsideLogic extends DartLintRule {
           return;
         }
 
-        final extendsClause = classDeclaration.extendsClause;
-        if (extendsClause == null) {
-          reporter.atNode(node, _code);
-          return;
-        }
+        final classElement = classDeclaration.declaredFragment?.element;
+        if (classElement == null) return;
 
-        // Check if the enclosing class extends NanoLogic or Service
-        // Again, using simple name check for simplicity/speed in this context
-        final superclassName = extendsClause.superclass.name.lexeme;
-        if (!['NanoLogic', 'Service'].contains(superclassName)) {
+        // Check if it extends NanoLogic or has a valid suffix
+        final name = classElement.name;
+        final isValidSuffix = name != null &&
+            (name.endsWith('Service') ||
+                name.endsWith('Logic') ||
+                name.endsWith('Runner') ||
+                name.endsWith('Manager') ||
+                name.endsWith('Controller') ||
+                name.endsWith('Repository'));
+
+        if (!isValidSuffix && !TypeCheckers.nanoLogic.isSuperOf(classElement)) {
           reporter.atNode(node, _code);
+        }
+      }
+    });
+
+    // Also check for .toAtom() extension calls
+    context.registry.addMethodInvocation((node) {
+      if (node.methodName.name == 'toAtom') {
+        final element = node.methodName.element;
+        if (element == null) return;
+
+        // Verify it's the nano extension
+        // Note: isEquivalentToDeclaration might be tricky for extensions,
+        // but checking the library name is a good fallback if TypeChecker fails on extensions.
+        if (element.library?.name == 'nano' ||
+            element.library?.identifier.contains('package:nano/') == true) {
+          final classDeclaration =
+              node.thisOrAncestorOfType<ClassDeclaration>();
+          if (classDeclaration == null) {
+            reporter.atNode(node, _code);
+            return;
+          }
+
+          final classElement = classDeclaration.declaredFragment?.element;
+          if (classElement == null) return;
+
+          final name = classElement.name;
+          final isValidSuffix = name != null &&
+              (name.endsWith('Service') ||
+                  name.endsWith('Logic') ||
+                  name.endsWith('Runner') ||
+                  name.endsWith('Manager') ||
+                  name.endsWith('Controller') ||
+                  name.endsWith('Repository'));
+
+          if (!isValidSuffix &&
+              !TypeCheckers.nanoLogic.isSuperOf(classElement)) {
+            reporter.atNode(node, _code);
+          }
         }
       }
     });

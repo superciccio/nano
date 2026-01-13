@@ -75,8 +75,9 @@ void main() {
       expect(logic.isDisposed, true);
     });
 
-    testWidgets('NanoView does NOT dispose logic if autoDispose: false',
-        (tester) async {
+    testWidgets('NanoView does NOT dispose logic if autoDispose: false', (
+      tester,
+    ) async {
       final logic = _MockLogic();
       await tester.pumpWidget(
         Scope(
@@ -121,13 +122,15 @@ void main() {
 
     testWidgets('throws exception when Scope is missing', (tester) async {
       // Build a test app that our exception should bubble up through
-      await tester.pumpWidget(Directionality(
-        textDirection: TextDirection.ltr,
-        child: NanoView<_MockLogic, void>(
-          create: (_) => _MockLogic(),
-          builder: (_, _) => const Text('Success'),
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: NanoView<_MockLogic, void>(
+            create: (_) => _MockLogic(),
+            builder: (_, __) => const Text('Success'),
+          ),
         ),
-      ));
+      );
 
       // The exception should be a NanoException
       expect(tester.takeException(), isA<NanoException>());
@@ -163,12 +166,10 @@ void main() {
       int buildCount = 0;
 
       await tester.pumpWidget(
-        atom.watch(
-          (context, value) {
-            buildCount++;
-            return Text('value: $value', textDirection: TextDirection.ltr);
-          },
-        ),
+        atom.watch((context, value) {
+          buildCount++;
+          return Text('value: $value', textDirection: TextDirection.ltr);
+        }),
       );
 
       expect(find.text('value: 0'), findsOneWidget);
@@ -217,8 +218,9 @@ void main() {
       expect(find.text('error: fail'), findsOneWidget);
     });
 
-    testWidgets('.when() uses loading for idle if idle not provided',
-        (tester) async {
+    testWidgets('.when() uses loading for idle if idle not provided', (
+      tester,
+    ) async {
       final asyncAtom = AsyncAtom<String>();
 
       Widget buildTestWidget() {
@@ -310,8 +312,10 @@ void main() {
           modules: [],
           child: NanoView<_MockLogic, dynamic>(
             create: (reg) => logic,
-            loading: (context) => const Text('Loading...', textDirection: TextDirection.ltr),
-            builder: (context, logic) => const Text('Content', textDirection: TextDirection.ltr),
+            loading: (context) =>
+                const Text('Loading...', textDirection: TextDirection.ltr),
+            builder: (context, logic) =>
+                const Text('Content', textDirection: TextDirection.ltr),
           ),
         ),
       );
@@ -329,8 +333,10 @@ void main() {
           modules: [],
           child: NanoView<_MockLogic, dynamic>(
             create: (reg) => logic,
-            empty: (context) => const Text('Empty', textDirection: TextDirection.ltr),
-            builder: (context, logic) => const Text('Content', textDirection: TextDirection.ltr),
+            empty: (context) =>
+                const Text('Empty', textDirection: TextDirection.ltr),
+            builder: (context, logic) =>
+                const Text('Content', textDirection: TextDirection.ltr),
           ),
         ),
       );
@@ -348,8 +354,10 @@ void main() {
           modules: [],
           child: NanoView<_MockLogic, dynamic>(
             create: (reg) => logic,
-            error: (context, err) => Text('Error: $err', textDirection: TextDirection.ltr),
-            builder: (context, logic) => const Text('Content', textDirection: TextDirection.ltr),
+            error: (context, err) =>
+                Text('Error: $err', textDirection: TextDirection.ltr),
+            builder: (context, logic) =>
+                const Text('Content', textDirection: TextDirection.ltr),
           ),
         ),
       );

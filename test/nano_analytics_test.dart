@@ -36,7 +36,11 @@ void main() {
     });
 
     test('Atom transmits meta data to observer', () {
-      final atom = Atom(0, label: 'counter', meta: {'analytics_event': 'counter_update'});
+      final atom = Atom(
+        0,
+        label: 'counter',
+        meta: {'analytics_event': 'counter_update'},
+      );
 
       atom.value = 1;
 
