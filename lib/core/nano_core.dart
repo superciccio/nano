@@ -884,23 +884,29 @@ class DebouncedAtom<T> extends ValueAtom<T> {
 /// can be serialized to/from String.
 class PersistedAtom<T> extends ValueAtom<T> {
   final String key;
+  final NanoStorage? _customStorage;
   final T Function(String)? fromString;
-  final String Function(T)? toStringEncoder;
+  final String Function(T)? toJson;
+
+  /// The storage backend to use for this atom.
+  /// Falls back to [Nano.storage] if not provided.
+  NanoStorage get storage => _customStorage ?? Nano.storage;
 
   PersistedAtom(
-    super.value, {
+    super.initial, {
     required this.key,
     this.fromString,
-    this.toStringEncoder,
+    this.toJson,
+    NanoStorage? storage,
     super.label,
     super.meta,
-  }) {
+  }) : _customStorage = storage {
     _load();
   }
 
   Future<void> _load() async {
     try {
-      final stored = await Nano.storage.read(key);
+      final stored = await storage.read(key);
       if (stored != null) {
         final val = _decode(stored);
         if (val != value) {
@@ -914,13 +920,14 @@ class PersistedAtom<T> extends ValueAtom<T> {
 
   @override
   void set(T newValue) {
+    if (value == newValue) return;
     super.set(newValue);
     _save(newValue);
   }
 
   Future<void> _save(T val) async {
     try {
-      await Nano.storage.write(key, _encode(val));
+      await storage.write(key, _encode(val));
     } catch (e, s) {
       Nano.observer.onError(this, e, s);
     }
@@ -938,10 +945,13 @@ class PersistedAtom<T> extends ValueAtom<T> {
   }
 
   String _encode(T val) {
-    if (toStringEncoder != null) return toStringEncoder!(val);
+    if (toJson != null) return toJson!(val);
     return val.toString();
   }
 }
+
+/// Alias for [PersistedAtom] for a more concise API.
+typedef PersistAtom<T> = PersistedAtom<T>;
 
 @Deprecated(
     'Use computed(() => selector(parent.value)) or atom.select() instead')

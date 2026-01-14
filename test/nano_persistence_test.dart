@@ -2,7 +2,6 @@ import 'dart:async'; // Add async import
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nano/nano.dart';
 
-
 class MockStorage implements NanoStorage {
   final Map<String, String> data = {};
 
@@ -18,10 +17,7 @@ class MockStorage implements NanoStorage {
 
 void main() {
   group('PersistedAtom', () {
-
-
     // setUp removed
-
 
     test('loads from storage on init', () async {
       final storage = MockStorage();
@@ -53,11 +49,11 @@ void main() {
       storage.data['bool_key'] = 'true';
 
       await runZoned(() async {
-        final atom = PersistedAtom<bool>(
+        final atom = PersistAtom<bool>(
           false,
           key: 'bool_key',
           fromString: (s) => s == 'true',
-          toStringEncoder: (b) => b.toString(),
+          toJson: (b) => b.toString(),
         );
 
         await Future.delayed(Duration.zero);

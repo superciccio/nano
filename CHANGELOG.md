@@ -1,3 +1,11 @@
+## 0.7.0
+
+*   **Phase 3: Cleanup (Auto-Persistence)**:
+    *   Introduced `PersistAtom<T>` (alias for `PersistedAtom`) with improved API.
+    *   Added explicit `storage`, `fromString`, and `toJson` parameters to `PersistAtom` for better control over serialization.
+    *   Implemented `SharedPrefsStorage` to support Flutter's `SharedPreferences` as an easy-to-use persistence backend.
+    *   Exposed `_innerSet` as protected to allow custom atoms to update state without triggering side-effects during rehydration.
+
 ## 0.6.0
 
 *   **New Feature: Batch Updates & Glitch Prevention**:
