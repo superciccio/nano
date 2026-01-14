@@ -23,7 +23,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           TITLE="Docs: Update documentation for recent changes [${{ github.sha }}]"
-          BODY="The build passed on main. Please review the recent changes in \`lib/\` and update \`README.md\`, \`NANO_GUIDE.md\`, and \`MIGRATION_GUIDE.md\` (if applicable) to reflect the current state of the codebase.
+          BODY="The build passed on main. Please review the recent changes in \`lib/\` and update \`README.md\`, \`NANO_GUIDE.md\`, \`CHANGELOG.md\`, and \`MIGRATION_GUIDE.md\` (if applicable) to reflect the current state of the codebase.
 
           Instructions: Acknowledge this task with a 'Started' comment. Do not provide intermediate updates. Only comment again upon 'Success' or if you need clarification."
 
