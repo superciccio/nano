@@ -128,7 +128,7 @@ class PokedexHome extends StatelessWidget {
             height: 250,
             width: double.infinity,
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: 0.1),
               borderRadius: const BorderRadius.only(
                 bottomLeft: Radius.circular(32),
                 bottomRight: Radius.circular(32),

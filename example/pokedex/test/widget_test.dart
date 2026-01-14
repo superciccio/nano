@@ -44,7 +44,7 @@ void main() {
       NanoView(
         create: (_) => logic, // Inject mock logic
         builder: (context, logic) {
-          return MaterialApp(home: const PokedexHome());
+          return const MaterialApp(home: PokedexHome());
         },
       ),
     );
