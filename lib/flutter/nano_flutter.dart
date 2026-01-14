@@ -27,6 +27,7 @@ import 'package:nano/core/nano_middleware.dart'; // Import Middleware
 /// ```
 class Scope extends StatefulWidget {
   final List<Object> modules;
+  final List<Object>? overrides;
   final Widget child;
   final NanoConfig? config;
 
@@ -35,6 +36,7 @@ class Scope extends StatefulWidget {
     required this.modules,
     required this.child,
     this.config,
+    this.overrides,
   });
 
   @override
@@ -70,8 +72,8 @@ class _ScopeState extends State<Scope> {
     // Find parent scope
     Registry? parentRegistry;
     try {
-      final parentScope = context
-          .dependOnInheritedWidgetOfExactType<_InheritedScope>();
+      final parentScope =
+          context.dependOnInheritedWidgetOfExactType<_InheritedScope>();
       parentRegistry = parentScope?.registry;
     } catch (_) {}
 
@@ -87,16 +89,26 @@ class _ScopeState extends State<Scope> {
   void _registerModules() {
     Nano.init();
     for (var m in widget.modules) {
-      if (m is NanoFactory) {
-        _registry.registerFactoryDynamic(m.type, (r) => m.create(r) as Object);
-      } else if (m is NanoLazy) {
-        _registry.registerLazySingletonDynamic(
-          m.type,
-          (r) => m.create(r) as Object,
-        );
-      } else {
-        _registry.register(m);
+      _registerItem(m);
+    }
+
+    if (widget.overrides != null) {
+      for (var o in widget.overrides!) {
+        _registerItem(o);
       }
+    }
+  }
+
+  void _registerItem(dynamic m) {
+    if (m is NanoFactory) {
+      _registry.registerFactoryDynamic(m.type, (r) => m.create(r) as Object);
+    } else if (m is NanoLazy) {
+      _registry.registerLazySingletonDynamic(
+        m.type,
+        (r) => m.create(r) as Object,
+      );
+    } else {
+      _registry.register(m);
     }
   }
 
@@ -104,6 +116,7 @@ class _ScopeState extends State<Scope> {
   void didUpdateWidget(Scope oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (!listEquals(oldWidget.modules, widget.modules) ||
+        !listEquals(oldWidget.overrides, widget.overrides) ||
         oldWidget.config != widget.config) {
       _registry.clear();
       _registerModules();
@@ -247,7 +260,7 @@ class _NanoViewState<T extends NanoLogic<P>, P> extends State<NanoView<T, P>> {
       final registry = Scope.of(context);
       final config = Scope.configOf(context);
 
-      // We run the creation and initialization in the zone 
+      // We run the creation and initialization in the zone
       // so that if they access Nano.observer immediately, it works.
       runZoned(() {
         _logic = widget.create(registry);
@@ -462,8 +475,10 @@ extension ValueListenableWatcher<T> on ValueListenable<T> {
 }
 
 /// Ergonomic extensions for Tuple (Record) of 2 [ValueListenable]s.
-extension NanoTuple2Extension<T1, T2>
-    on (ValueListenable<T1>, ValueListenable<T2>) {
+extension NanoTuple2Extension<T1, T2> on (
+  ValueListenable<T1>,
+  ValueListenable<T2>
+) {
   /// Watches both atoms and rebuilds when either changes.
   ///
   /// Example:
@@ -481,8 +496,11 @@ extension NanoTuple2Extension<T1, T2>
 }
 
 /// Ergonomic extensions for Tuple (Record) of 3 [ValueListenable]s.
-extension NanoTuple3Extension<T1, T2, T3>
-    on (ValueListenable<T1>, ValueListenable<T2>, ValueListenable<T3>) {
+extension NanoTuple3Extension<T1, T2, T3> on (
+  ValueListenable<T1>,
+  ValueListenable<T2>,
+  ValueListenable<T3>
+) {
   /// Watches all 3 atoms and rebuilds when any changes.
   Widget watch(
     Widget Function(BuildContext context, T1 v1, T2 v2, T3 v3) builder,

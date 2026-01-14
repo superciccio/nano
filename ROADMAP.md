@@ -121,12 +121,11 @@ final theme = PersistAtom('theme_key', ThemeMode.system);
     ```
 
 ### 2. Time Control (Transformers)
+- **Status**: [x] COMPLETED
 - **Problem**: Search inputs spamming the API.
 - **Solution**: Explicit method extensions for atoms.
     ```dart
-    final search = Atom('');
-    // Returns a ReadOnlyAtom that updates at most every 500ms
-    final debouncedSearch = search.debounce(500.ms);
+    final search = Atom('').debounce(Duration(milliseconds: 500));
     ```
 
 ### 3. Parallel Power (Isolate Atoms)
