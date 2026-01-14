@@ -150,12 +150,13 @@ final theme = PersistAtom('theme_key', ThemeMode.system);
     ```
 
 ### 5. Scope Overrides (Testing & Previews)
+- **Status**: [x] COMPLETED
 - **Problem**: Testing a Widget in isolation (Storybook) often requires mocking global state.
-- **Solution**: `NanoScope` widget that intercepts atom lookups.
+- **Solution**: `Scope` widget with `overrides` parameter.
     ```dart
-    NanoScope(
+    Scope(
       overrides: [
-        userAtom.overrideWithValue(MockUser()),
+        MockUser(),
       ],
       child: UserProfile(),
     );
@@ -173,13 +174,14 @@ final theme = PersistAtom('theme_key', ThemeMode.system);
     ```
 
 ### 7. Resource Atoms (Auto-Dispose)
+- **Status**: [x] COMPLETED
 - **Problem**: Managing StreamSubscriptions or WebSockets that need to close when the Atom is no longer needed.
 - **Solution**: `ResourceAtom` with a `ref.onDispose` hook.
     ```dart
-    final streamAtom = ResourceAtom((addDisposer) {
+    final streamAtom = ResourceAtom((ref) {
         final sub = stream.listen(...);
-        addDisposer(() => sub.cancel()); // Auto-closes
-        return sub;
+        ref.onDispose(() => sub.cancel()); // Auto-closes
+        return ...;
     });
     ```
 
