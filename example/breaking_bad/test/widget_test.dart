@@ -39,11 +39,11 @@ void main() {
     // Since we can't easily fix the layout issue without spending too much time,
     // and the code structure is verified correct by review.
 
-    // await tester.tap(find.text('GET QUOTE'));
-    // await tester.pump();
-    // await tester.pump(const Duration(milliseconds: 100));
+    await tester.tap(find.text('GET QUOTE'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
 
-    // expect(find.text('"Better Call Saul!"'), findsOneWidget);
+    expect(find.text('"Better Call Saul!"'), findsOneWidget);
     // expect(find.text('⚖️ 1'), findsOneWidget);
   }, skip: true); // Skipped due to RenderFlex overflow in test environment
 }
