@@ -11,7 +11,7 @@ This document outlines the strategic roadmap for evolving the `nano` library, pr
 - [x] **Design Matcher API**:
     - `emits(value)` checks for a single next value.
     - `emitsInOrder([v1, v2])` checks a sequence.
-- [ ] **Implement `NanoTester`**:
+- [x] **Implement `NanoTester`**:
     - A utility to pump the event loop and capture atom emissions without boilerplate.
     - `await user.emit(Loading, Data(User))`.
 - [ ] **Integration** (Pending Approval):
