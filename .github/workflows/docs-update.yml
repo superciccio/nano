@@ -1,0 +1,37 @@
+name: Update Docs Request
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'lib/**'
+      - 'pubspec.yaml'
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  request-docs-update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Request Docs Update
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TITLE="Docs: Update documentation for recent changes [${{ github.sha }}]"
+          BODY="The build passed on main. Please review the recent changes in \`lib/\` and update \`README.md\`, \`NANO_GUIDE.md\`, \`CHANGELOG.md\`, and \`MIGRATION_GUIDE.md\` (if applicable) to reflect the current state of the codebase.
+
+          Instructions: Acknowledge this task with a 'Started' comment. Do not provide intermediate updates. Only comment again upon 'Success' or if you need clarification."
+
+          # Check for duplicate open issues to avoid spamming
+          EXISTING_ISSUE=$(gh issue list --state open --search "$TITLE in:title" --json number --jq '.[].number' | head -n 1)
+
+          if [ -z "$EXISTING_ISSUE" ]; then
+            gh issue create --title "$TITLE" --body "$BODY" --label "jules"
+          else
+            echo "An open issue already exists: #$EXISTING_ISSUE"
+          fi
