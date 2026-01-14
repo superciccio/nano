@@ -164,6 +164,22 @@ void main() async {
 ### `AtomFamily<K, T>`
 A factory for atoms indexed by a key. This is useful for managing collections of state (e.g., users by ID) without manual map management.
 
+> [!IMPORTANT]
+> **Avoid Global Families**: Like Atoms, families should be encapsulated within a `NanoLogic` or registered in a `Scope`. Do not define them as global variables.
+
+**Example: Inside NanoLogic**
+```dart
+class ProfileLogic extends NanoLogic<void> {
+  // The family is owned and encapsulated by this logic
+  final profileFamily = AtomFamily<int, AsyncAtom<User>>((id) {
+    return AsyncAtom<User>(label: 'user_$id')..track(fetchUser(id));
+  });
+
+  // Accessing a specific atom
+  AsyncAtom<User> getUser(int id) => profileFamily(id);
+}
+```
+
 **Signature:**
 ```dart
 class AtomFamily<K, T extends Atom> {
@@ -175,16 +191,6 @@ class AtomFamily<K, T extends Atom> {
   /// Removes an entry from the cache.
   void remove(K key);
 }
-```
-
-**Example:**
-```dart
-final profileFamily = AtomFamily<int, AsyncAtom<User>>((id) {
-  return AsyncAtom<User>(label: 'user_$id')..track(fetchUser(id));
-});
-
-// In Logic/UI
-final user1 = profileFamily(1);
 ```
 
 ### `NanoLogic<P>`
