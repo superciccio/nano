@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [ "main", "master" ]
 
+permissions:
+  contents: read
+  issues: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -24,8 +28,13 @@ jobs:
 
       - name: Pub Get (Example)
         run: |
-          cd example
-          flutter pub get
+          for d in example/*/; do
+            if [ -f "$d/pubspec.yaml" ]; then
+              cd $d
+              flutter pub get
+              cd ../..
+            fi
+          done
 
       - name: Pub Get (Packages)
         run: |
@@ -45,5 +54,31 @@ jobs:
 
       - name: Run Tests (Example)
         run: |
-          cd example
-          flutter test
+          for d in example/*/; do
+            if [ -f "$d/pubspec.yaml" ]; then
+              if [ -d "$d/test" ]; then
+                cd $d
+                flutter test
+                cd ../..
+              fi
+            fi
+          done
+
+      - name: Report Failure
+        if: failure() && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TITLE="Build Failed: Verify [${{ github.sha }}]"
+          BODY="Build failed on commit ${{ github.sha }}. Check the logs here: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+          Instructions: Please fix the build. Acknowledge this task with a 'Started' comment. Do not provide intermediate updates. Only comment again upon 'Success' or if you need clarification."
+
+          # Check for duplicate open issues to avoid spamming
+          EXISTING_ISSUE=$(gh issue list --state open --search "$TITLE in:title" --json number --jq '.[].number' | head -n 1)
+
+          if [ -z "$EXISTING_ISSUE" ]; then
+            gh issue create --title "$TITLE" --body "$BODY" --label "jules"
+          else
+            echo "An open issue already exists: #$EXISTING_ISSUE"
+          fi
