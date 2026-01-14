@@ -87,9 +87,16 @@ class NanoDebugService {
         };
       }).toList();
 
-      return dev.ServiceExtensionResponse.result(
-        json.encode({'history': historyJson}),
-      );
+      try {
+        final encoded = json.encode({'history': historyJson});
+        return dev.ServiceExtensionResponse.result(encoded);
+      } catch (e) {
+        print('!! [NanoDebugService] Serialization Error: $e');
+        return dev.ServiceExtensionResponse.error(
+          dev.ServiceExtensionResponse.extensionError,
+          'Serialization Error: $e',
+        );
+      }
     });
 
     dev.registerExtension('ext.nano.revertToState', (method, parameters) async {

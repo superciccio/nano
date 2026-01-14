@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nano/nano.dart';
@@ -9,7 +8,8 @@ class Service {
 }
 
 void main() {
-  testWidgets('Scope should update Registry when modules change', (tester) async {
+  testWidgets('Scope should update Registry when modules change',
+      (tester) async {
     final serviceA = Service('A');
     final serviceB = Service('B');
 
@@ -30,14 +30,15 @@ void main() {
 
     // Update with service B
     await tester.pumpWidget(MaterialApp(home: buildScope(serviceB)));
-    
+
     // This is expected to FAIL currently because Scope doesn't update registry
     expect(find.text('B'), findsOneWidget);
   });
 
-  testWidgets('Scope should update Registry when NanoLazy changes', (tester) async {
+  testWidgets('Scope should update Registry when NanoLazy changes',
+      (tester) async {
     int creations = 0;
-    
+
     Widget buildScope(String name) {
       return Scope(
         modules: [
@@ -61,7 +62,7 @@ void main() {
 
     // Update with service B
     await tester.pumpWidget(MaterialApp(home: buildScope('B')));
-    
+
     // This is expected to FAIL: it should find 'B' and creations should be 2
     expect(find.text('B'), findsOneWidget);
     expect(creations, 2);

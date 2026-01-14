@@ -1,0 +1,21 @@
+name: crypto_tracker
+description: "A simple Weather app demonstrating Nano features."
+publish_to: 'none'
+version: 0.0.1
+
+environment:
+  sdk: ^3.10.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  nano:
+    path: ../../
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true

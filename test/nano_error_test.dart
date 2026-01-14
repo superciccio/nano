@@ -19,8 +19,6 @@ void main() {
       expect(atom.value.isLoading, isFalse);
     });
 
-
-
     test('track notifies NanoObserver on error', () async {
       final observer = _CapturingObserver();
       final config = NanoConfig(observer: observer);
@@ -28,7 +26,8 @@ void main() {
       final atom = AsyncAtom<String>(label: 'error_atom');
       final exception = Exception('boom');
 
-      await runZoned(() => atom.track(Future.error(exception)), zoneValues: {#nanoConfig: config});
+      await runZoned(() => atom.track(Future.error(exception)),
+          zoneValues: {#nanoConfig: config});
 
       expect(observer.lastErrorLabel, 'error_atom');
       expect(observer.lastError, exception);

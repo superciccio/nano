@@ -27,7 +27,7 @@ void main() {
     test('Atom transmits meta data to observer', () {
       final mockObserver = MockObserver();
       final config = NanoConfig(observer: mockObserver);
-      
+
       final atom = Atom(
         0,
         label: 'counter',
@@ -49,7 +49,7 @@ void main() {
       final config = NanoConfig(observer: composite);
 
       final atom = Atom(0, label: 'test');
-      
+
       runZoned(() {
         atom.value = 1;
       }, zoneValues: {#nanoConfig: config});

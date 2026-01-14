@@ -1,4 +1,3 @@
-
 import 'dart:async';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nano/nano.dart';
@@ -41,23 +40,31 @@ class SyncInitSideEffectLogic extends NanoLogic<void> {
 }
 
 void main() {
-  test('onInit should throw Synchronous violation if state is updated during onInit', () {
+  test(
+      'onInit should throw Synchronous violation if state is updated during onInit',
+      () {
     final logic = SyncInitSideEffectLogic();
     logic.initialize(null);
-    expect(logic.caughtError.toString(), contains('Side-effect Violation (Synchronous)'));
+    expect(logic.caughtError.toString(),
+        contains('Side-effect Violation (Synchronous)'));
   });
 
-  test('onInit should throw Asynchronous violation if state is updated after await', () async {
+  test(
+      'onInit should throw Asynchronous violation if state is updated after await',
+      () async {
     final logic = AsyncInitSideEffectLogic();
     logic.initialize(null);
-    
+
     // Wait for the async part of logic.onInit to run
     await Future.delayed(Duration(milliseconds: 10));
-    
-    expect(logic.caughtSideEffectError, true, reason: 'Should have caught Asynchronous Side-effect Violation');
+
+    expect(logic.caughtSideEffectError, true,
+        reason: 'Should have caught Asynchronous Side-effect Violation');
   });
 
-  test('Registry.get should not throw but might warn (verified via code coverage) after await', () async {
+  test(
+      'Registry.get should not throw but might warn (verified via code coverage) after await',
+      () async {
     // This is hard to verify via automated test (requires intercepting debugPrint),
     // but we can ensure it doesn't crash.
     final registry = Registry();
@@ -66,7 +73,7 @@ void main() {
     runZoned(() async {
       final ctx = NanoInitContext();
       ctx.invalidate(); // Simulate end of synchronous phase
-      
+
       await runZoned(() async {
         final val = registry.get<String>();
         expect(val, "hello");

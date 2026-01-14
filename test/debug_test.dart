@@ -4,8 +4,6 @@ import 'package:nano/nano.dart';
 
 void main() {
   group('HistoryObserver', () {
-
-
     test('records state changes', () {
       final observer = HistoryObserver();
       final atom = Atom(0, label: 'test');
@@ -25,9 +23,9 @@ void main() {
     test('can clear history', () {
       final observer = HistoryObserver();
       final config = NanoConfig(observer: observer);
-      
+
       final atom = Atom(0);
-      
+
       runZoned(() {
         atom.set(1);
       }, zoneValues: {#nanoConfig: config});

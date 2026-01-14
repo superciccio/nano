@@ -32,13 +32,15 @@ void main() {
 
       final val = c.value; // Read once
       expect(val, 2);
-      expect(computations, 1); // CACHED: Nano.version hasn't changed since constructor
+      expect(computations,
+          1); // CACHED: Nano.version hasn't changed since constructor
 
       a.value = 5;
       expect(computations, 1); // Still 1 because nobody is listening (inactive)
 
       expect(c.value, 10);
-      expect(computations, 2); // Re-computed on access because it was stale (Nano.version bumped)
+      expect(computations,
+          2); // Re-computed on access because it was stale (Nano.version bumped)
     });
   });
 
@@ -81,7 +83,8 @@ void main() {
   });
 
   group('Evolution: NanoView improvements', () {
-    testWidgets('rebuildOnUpdate: false should avoid coarse rebuilds', (tester) async {
+    testWidgets('rebuildOnUpdate: false should avoid coarse rebuilds',
+        (tester) async {
       int rootBuilds = 0;
       int surgicalBuilds = 0;
 

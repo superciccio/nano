@@ -32,6 +32,7 @@ class Validators {
 /// An Atom that manages form field state including validation.
 class FieldAtom<T> extends ValueAtom<T> {
   final List<Validator<T>> validators;
+  final T _initialValue;
   // ignore: avoid_atom_outside_logic
   final Atom<String?> _error = Atom(null);
 
@@ -39,10 +40,11 @@ class FieldAtom<T> extends ValueAtom<T> {
   bool _touched = false;
 
   FieldAtom(
-    super.initial, {
+    T initial, {
     this.validators = const [],
     super.label,
-  });
+  })  : _initialValue = initial,
+        super(initial);
 
   /// The current error message, if any.
   /// Returns null if valid or not yet validated.
@@ -50,6 +52,9 @@ class FieldAtom<T> extends ValueAtom<T> {
     Nano.reportRead(_error);
     return _error.value;
   }
+
+  /// The error atom for tracking in UI.
+  Atom<String?> get errorAtom => _error;
 
   /// Whether the field is currently valid.
   bool get isValid => _error.value == null;
@@ -79,10 +84,9 @@ class FieldAtom<T> extends ValueAtom<T> {
 
   /// Resets the field to initial state and clears errors.
   void reset() {
-    // Need access to initial value? Atom doesn't store it publicly.
-    // For now just clear error.
-    _error.value = null;
     _touched = false;
+    value = _initialValue;
+    _error.value = null;
   }
 }
 
@@ -92,12 +96,11 @@ class FormAtom {
 
   FormAtom(this.fields);
 
-  /// Returns true if all fields are valid.
-  /// Note: specific fields might not have been "touched" yet,
-  /// but this checks their current validity.
-  bool get isValid {
-    return fields.every((f) => f.isValid);
-  }
+  /// Whether the whole form is valid.
+  bool get isValid => fields.every((f) => f.isValid);
+
+  /// An atom that tracks the validity of the whole form.
+  late final Atom<bool> isValidAtom = computed(() => isValid);
 
   /// Validates all fields immediately.
   bool validate() {
@@ -108,5 +111,12 @@ class FormAtom {
       }
     }
     return allValid;
+  }
+
+  /// Resets all fields.
+  void reset() {
+    for (final field in fields) {
+      field.reset();
+    }
   }
 }
