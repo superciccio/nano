@@ -1,3 +1,12 @@
+## 0.7.1
+
+*   **New Feature: Sticky Async Data**:
+    *   Updated `AsyncAtom` to support `keepPreviousData: true` (default). Data is now preserved during loading and error states, preventing UI flickering.
+    *   Updated `AsyncError` to include `previousData`.
+    *   Updated `AsyncState.dataOrNull` to return `previousData` even if the state is `AsyncError`.
+*   **New Feature: Logic Binding**:
+    *   Added `NanoLogic.bind(Listenable target, VoidCallback listener)` to automatically manage subscriptions to `ValueNotifier`, `TextEditingController`, etc. Bindings are automatically disposed when the logic is disposed.
+
 ## 0.7.0
 
 *   **Phase 3: Cleanup (Auto-Persistence)**:

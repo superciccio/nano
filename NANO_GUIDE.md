@@ -114,9 +114,13 @@ Manages asynchronous state (`AsyncIdle`, `AsyncLoading`, `AsyncData`, `AsyncErro
 **Signature:**
 ```dart
 class AsyncAtom<T> extends Atom<AsyncState<T>> {
+  AsyncAtom({bool keepPreviousData = true}); // Default: true (Sticky Data)
   Future<void> track(Future<T> future);
 }
 ```
+
+**"Sticky Data" (keepPreviousData):**
+By default, `AsyncAtom` retains the last successful data during loading and even error states. This prevents UI flickering when refreshing data. Access this data via `.dataOrNull` (or `.value` in legacy code).
 
 **States:**
 - `AsyncIdle`
@@ -257,6 +261,7 @@ Base class for Business Logic Components (BLoC/ViewModel).
 - `onInit(P params)`: Lifecycle hook.
 - `status`: `Atom<NanoStatus>` (loading, success, error, empty).
 - `error`: `Atom<Object?>`.
+- `bind(Listenable, listener)`: Auto-manages subscriptions (e.g., `TextEditingController`).
 - `bindStream(stream, atom)`: Auto-manages stream subscriptions.
 - `dispose()`: Auto-called by `NanoView`.
 
