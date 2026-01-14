@@ -347,6 +347,14 @@ class ChatLogic extends NanoLogic<String> {
 
 ---
 
+## BUILD AND TEST
+
+Before finalizing your changes, you must verify them by running the project's validation commands. This ensures your code is clean, correct, and adheres to the project standards.
+
+**The exact commands for linting, testing, and dependency management are documented in the [CONTRIBUTING.md](./CONTRIBUTING.md) file.** Refer to the "Development Workflow" section in that document.
+
+---
+
 ## LINT RULES (Active in Project)
 
 ### 1. `avoid_nested_watch`
