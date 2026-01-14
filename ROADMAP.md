@@ -90,7 +90,22 @@ final theme = PersistAtom('theme_key', ThemeMode.system);
 
 ---
 
-## 🔮 Phase 4: Beyond Magic (Future Concepts)
+## 🎉 Phase 5: The Grand Showcase (Version 0.7.0)
+
+**Goal**: Demonstrate the power of `nano` 0.7.0 in a real-world scenario.
+
+### Tasks
+- [ ] **Create "Nano Hub" Example App**:
+    - [ ] **Persistence**: Settings screen with theme/language auto-save.
+    - [ ] **Forms**: Registration/Login with complex validation rules.
+    - [ ] **Smart Caching**: User directory with keyed `AsyncAtom`s for profile loading.
+    - [ ] **Testing**: Full test suite using `NanoTester` and matchers.
+- [ ] **Interactive Documentation**:
+    - [ ] Add "Try it out" snippets for each feature in `NANO_GUIDE.md`.
+
+---
+
+## 🔮 Phase 6: Beyond Magic (Future Concepts)
 
 **Goal**: Powerful features inspired by Riverpod/MobX but kept **explicit** (No `build_runner`, No magic globals).
 
