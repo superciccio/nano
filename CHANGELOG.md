@@ -1,3 +1,6 @@
+## [0.7.2]
+- Fixed: Infinite loop in `AsyncAtom.track` when reading value inside an `auto` or `computed` callback. Sticky data now uses `untracked`.
+
 ## 0.7.1
 
 *   **New Feature: Sticky Async Data**:
