@@ -6,6 +6,7 @@
     *   Implemented `SharedPrefsStorage` to support Flutter's `SharedPreferences` as an easy-to-use persistence backend.
     *   Exposed `_innerSet` as protected to allow custom atoms to update state without triggering side-effects during rehydration.
     *   **Phase 6: Advanced Concepts**:
+        - Introduced `WorkerAtom<P, R>` to offload heavy computations to background isolates using `Isolate.run`.
         - Added `ThrottledAtom<T>` and ergonomic `.debounce()` / `.throttle()` extensions for time-based atom transformations.
         - Introduced `ResourceAtom<T>` with `ResourceRef` for robust lifecycle and cleanup management.
         - Enhanced `Scope` widget with `overrides` support for easier dependency mocking in tests.

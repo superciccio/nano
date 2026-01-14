@@ -191,6 +191,23 @@ final searchAtom = Atom('').debounce(Duration(milliseconds: 300));
 final scrollAtom = Atom(0.0).throttle(Duration(milliseconds: 300));
 ```
 
+### `WorkerAtom<P, R>`
+Offloads heavy computations to a background isolate. This is essential for maintaining 60/120 FPS when processing large datasets.
+
+```dart
+final heavyResults = WorkerAtom<List<Data>, List<Result>>(
+  source: rawDataAtom,
+  worker: (data) => performComplexCalculation(data), // Runs in Isolate
+);
+
+// Use in UI like any AsyncAtom
+heavyResults.when(
+  data: (context, results) => ListView(...),
+  loading: (context) => CircularProgressIndicator(),
+  error: (context, error) => ErrorWidget(error),
+);
+```
+
 ### `ResourceAtom<T>`
 Manages resources that require explicit cleanup (e.g., Stream subscriptions, Sockets, Timers).
 
