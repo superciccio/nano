@@ -1,10 +1,8 @@
-
 import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nano/core/nano_config.dart';
 import 'package:nano/core/nano_core.dart';
-
 
 void main() {
   test('NanoConfig is isolated by Zone', () async {
@@ -31,7 +29,7 @@ void main() {
       expect(observerB.changes.last.newValue, 2);
       expect(observerA.changes.length, 1); // A should not see this (still 1)
     }, zoneValues: {#nanoConfig: configB});
-    
+
     // Verify default observer (no zone config)
     atom.value = 3;
     expect(observerA.changes.length, 1); // Still 1

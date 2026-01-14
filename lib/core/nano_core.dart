@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:nano/core/debug_service.dart';
 import 'package:nano/core/nano_config.dart';
 import 'package:nano/core/nano_persistence.dart';
+import 'package:nano/core/history_observer.dart';
 
 abstract class NanoLogicBase {
   bool get isInitializing;
@@ -27,9 +28,15 @@ abstract interface class NanoSerializable {
 
 /// Global configuration for Nano.
 class Nano {
-  /// Set this in your main() to capture logs (e.g., NanoObserver()).
   /// The default observer used when no configuration is found in the Zone.
-  static final NanoObserver _defaultObserver = _DefaultObserver();
+  /// Set this in your main() to capture logs globally.
+  static NanoObserver _defaultObserver = const DefaultObserver();
+
+  /// Sets the global default observer.
+  /// Use this if you cannot rely on [Scope] zones (e.g. for simple apps or callbacks).
+  static set defaultObserver(NanoObserver observer) {
+    _defaultObserver = observer;
+  }
 
   /// Returns the current [NanoObserver].
   ///
@@ -297,12 +304,18 @@ abstract class NanoMiddleware {
 }
 
 /// Default observer that prints to console in debug mode.
-class _DefaultObserver implements NanoObserver {
+class DefaultObserver implements NanoObserver {
+  final String logTag;
+
+  const DefaultObserver({this.logTag = 'NANO'});
   @override
   void onChange(Atom atom, dynamic oldValue, dynamic newValue) {
     if (kDebugMode) {
+      // Automatically forward to HistoryObserver for DevTools
+      historyObserver.onChange(atom, oldValue, newValue);
+
       debugPrint(
-        '?? NANO [${atom.label ?? atom.runtimeType}]: $oldValue -> $newValue',
+        '?? $logTag [${atom.label ?? atom.runtimeType}]: $oldValue -> $newValue',
       );
     }
   }
@@ -716,9 +729,13 @@ sealed class AsyncState<T> with Diagnosticable {
   const AsyncState();
   bool get isLoading => this is AsyncLoading;
   bool get hasError => this is AsyncError;
-  bool get hasData => this is AsyncData;
-  T? get dataOrNull =>
-      this is AsyncData<T> ? (this as AsyncData<T>).data : null;
+  bool get hasData => dataOrNull != null;
+  T? get dataOrNull {
+    if (this is AsyncData<T>) return (this as AsyncData<T>).data;
+    if (this is AsyncLoading<T>) return (this as AsyncLoading<T>).previousData;
+    return null;
+  }
+
   Object? get errorOrNull =>
       this is AsyncError<T> ? (this as AsyncError<T>).error : null;
 
@@ -754,7 +771,14 @@ class AsyncIdle<T> extends AsyncState<T> {
 
 /// The state while the asynchronous operation is in progress.
 class AsyncLoading<T> extends AsyncState<T> {
-  const AsyncLoading();
+  final T? previousData;
+  const AsyncLoading([this.previousData]);
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty('previousData', previousData));
+  }
 }
 
 /// The state when the asynchronous operation has completed successfully.
@@ -804,7 +828,8 @@ class AsyncAtom<T> extends ValueAtom<AsyncState<T>> {
 
   Future<void> track(Future<T> future) {
     final currentSession = ++_session;
-    Nano.action(() => set(AsyncLoading<T>()));
+    final previousData = value.dataOrNull;
+    Nano.action(() => set(AsyncLoading<T>(previousData)));
 
     return future.then((data) {
       if (_session == currentSession) {
@@ -879,9 +904,15 @@ class WorkerAtom<P, R> extends AsyncAtom<R> {
   }
 
   void _execute() {
-    // We use Isolate.run to offload the work.
-    // AsyncAtom.track handles the session management (glitch prevention).
-    track(Isolate.run(() => worker(source.value)));
+    // We call a static helper to ensure we don't capture `this`.
+    // Closures created inside instance methods might capture the whole instance,
+    // which leads to serialization errors if the instance (or its fields)
+    // contains unsendable objects like StreamSubscriptions.
+    track(_spawn(worker, source.value));
+  }
+
+  static Future<R> _spawn<P, R>(R Function(P) worker, P param) {
+    return Isolate.run(() => worker(param));
   }
 
   @override
@@ -994,17 +1025,37 @@ class ResourceAtom<T> extends ValueAtom<T> {
 /// Ergonomic extensions for time-based atom transformations.
 extension AtomTimeControlExtension<T> on Atom<T> {
   /// Returns a new [Atom] that debounces updates from this atom.
-  Atom<T> debounce(Duration duration) {
-    final debounced = DebouncedAtom<T>(value, duration: duration);
+  Atom<T> debounce(Duration duration, {String? label}) {
+    final debounced = DebouncedAtom<T>(value, duration: duration, label: label);
     addListener(() => debounced.set(value));
     return debounced;
   }
 
   /// Returns a new [Atom] that throttles updates from this atom.
-  Atom<T> throttle(Duration duration) {
-    final throttled = ThrottledAtom<T>(value, duration: duration);
+  Atom<T> throttle(Duration duration, {String? label}) {
+    final throttled = ThrottledAtom<T>(value, duration: duration, label: label);
     addListener(() => throttled.set(value));
     return throttled;
+  }
+
+  /// Returns a new [Atom] that accumulates state over time.
+  ///
+  /// [accumulator] is a function that takes the current accumulated value and the new value,
+  /// and returns the new accumulated value.
+  Atom<S> scan<S>(
+    S initial,
+    S Function(S accumulated, T current) accumulator, {
+    String? label,
+  }) {
+    final atom = ValueAtom<S>(initial, label: label);
+    // Initialize with current value if it contributes to the state
+    atom.set(accumulator(initial, value));
+
+    addListener(() {
+      final newValue = accumulator(atom.value, value);
+      atom.set(newValue);
+    });
+    return atom;
   }
 }
 

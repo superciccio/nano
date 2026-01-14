@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:nano/core/nano_config.dart'; // Import NanoConfig
 import 'package:nano/core/nano_core.dart';
+import 'package:nano/core/debug_service.dart'; // Import NanoDebugService
 import 'package:nano/core/nano_di.dart'
     show Registry, NanoException, NanoFactory, NanoLazy;
 import 'package:nano/core/nano_logic.dart' show NanoLogic, NanoStatus;
@@ -87,7 +88,8 @@ class _ScopeState extends State<Scope> {
   }
 
   void _registerModules() {
-    Nano.init();
+    Nano.init(); // Initialize Core
+    NanoDebugService.init(); // Initialize DevTools Extensions
     for (var m in widget.modules) {
       _registerItem(m);
     }

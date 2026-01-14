@@ -41,8 +41,6 @@ void main() {
       final atom = Atom(0, label: 'error_atom');
       final logic = _MockLogic();
 
-
-
       final observer = _MockObserver();
       final config = NanoConfig(observer: observer);
 

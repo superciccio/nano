@@ -17,6 +17,13 @@
         - Added `FormAtom` to aggregate multiple fields and track whole-form validity.
         - Included built-in `Validators` (`required`, `email`, `minLength`).
     *   **Phase 1 Completion (Nano Test Utilities)**: Added `NanoTester<T>` and `Atom.tester` utility to `package:nano/test.dart` for simplified emission tracking and event loop management in tests.
+    *   **Showcase: Nano Hub**:
+        - Released `example/nano_hub`, a comprehensive reference application demonstrating modular architecture, persistent settings, and complex real-time data flows.
+        - Reorganized `example/` directory into `nano_hub` (advanced) and `crypto_tracker` (basic).
+    *   **Critical Fixes & Improvements**:
+        - **DevTools**: Fixed "Empty History" bug by patching the extension to safely handle non-string JSON values and ensuring `Nano.defaultObserver` captures global Zone events.
+        - **Observer**: Refactored `_DefaultObserver` to `DefaultObserver(logTag:)`, allowing customizable logging prefixes and automatic DevTools integration without boilerplate.
+        - **Operators**: Added `.scan((prev, current) => ...)` operator to `Atom` for declarative state accumulation, replacing manual listener patterns.
 
 ## 0.6.0
 

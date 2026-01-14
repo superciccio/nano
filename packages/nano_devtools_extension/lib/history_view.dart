@@ -17,10 +17,10 @@ class _HistoryEventDetails {
 
   factory _HistoryEventDetails.fromJson(Map<String, dynamic> json) {
     return _HistoryEventDetails(
-      label: json['label'] ?? 'Unknown',
-      oldValue: json['oldValue'] ?? '',
-      newValue: json['newValue'] ?? '',
-      timestamp: json['timestamp'] ?? '',
+      label: json['label']?.toString() ?? 'Unknown',
+      oldValue: json['oldValue']?.toString() ?? '',
+      newValue: json['newValue']?.toString() ?? '',
+      timestamp: json['timestamp']?.toString() ?? '',
     );
   }
 }

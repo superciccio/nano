@@ -3,7 +3,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:nano/nano.dart';
 import 'dart:async';
 
-
 // Helper to disable logging for performance tests
 class SilentObserver implements NanoObserver {
   @override
@@ -13,8 +12,6 @@ class SilentObserver implements NanoObserver {
 }
 
 void main() {
-
-
   test('Granular Updates Benchmark: Scattered vs Row', () {
     final config = NanoConfig(observer: SilentObserver());
 

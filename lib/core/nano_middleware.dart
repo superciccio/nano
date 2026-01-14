@@ -4,7 +4,7 @@ import 'package:nano/core/nano_core.dart';
 
 /// A middleware that record Nano actions in the Flutter DevTools Timeline.
 ///
-/// This allows you to see exactly which Nano action is running in the 
+/// This allows you to see exactly which Nano action is running in the
 /// Performance view of DevTools, helping you identify performance bottlenecks.
 class TimelineMiddleware implements NanoMiddleware {
   @override
