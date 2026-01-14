@@ -841,7 +841,8 @@ class AsyncAtom<T> extends ValueAtom<AsyncState<T>> {
     final currentSession = ++_session;
 
     // Sticky Data: Keep data from Data, Loading (recursive), or Error states
-    final previousData = keepPreviousData ? value.dataOrNull : null;
+    final previousData =
+        keepPreviousData ? Nano.untracked(() => value.dataOrNull) : null;
 
     Nano.action(() => set(AsyncLoading<T>(previousData)));
 
