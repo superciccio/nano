@@ -1080,3 +1080,33 @@ extension AtomMapExtension<K, V> on Atom<Map<K, V>> {
   /// Clears the map.
   void clear() => set({});
 }
+
+/// A factory for [Atom]s indexed by a key of type [K].
+///
+/// Use this to manage collections of atoms (e.g., one AsyncAtom per user ID)
+/// without manual map management.
+class AtomFamily<K, T extends Atom> {
+  final T Function(K key) _factory;
+  final Map<K, T> _cache = {};
+
+  AtomFamily(this._factory);
+
+  /// Returns the atom associated with [key].
+  /// Creates it using the factory if it doesn't already exist in the cache.
+  T call(K key) {
+    return _cache.putIfAbsent(key, () => _factory(key));
+  }
+
+  /// Removes the atom associated with [key] from the cache.
+  /// Note: This does not automatically dispose the atom if it's a [ResourceAtom].
+  void remove(K key) => _cache.remove(key);
+
+  /// Clears all atoms from the cache.
+  void clear() => _cache.clear();
+
+  /// Returns all currently cached keys.
+  Iterable<K> get keys => _cache.keys;
+
+  /// Returns all currently cached atoms.
+  Iterable<T> get values => _cache.values;
+}

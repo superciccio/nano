@@ -5,6 +5,8 @@
     *   Added explicit `storage`, `fromString`, and `toJson` parameters to `PersistAtom` for better control over serialization.
     *   Implemented `SharedPrefsStorage` to support Flutter's `SharedPreferences` as an easy-to-use persistence backend.
     *   Exposed `_innerSet` as protected to allow custom atoms to update state without triggering side-effects during rehydration.
+    *   **Phase 4: Beyond Magic (Smart Caching)**:
+        - Introduced `AtomFamily<K, T>` to manage collections of keyed atoms and prevent manual map management.
     *   **Phase 2 Completion (Nano Forms)**:
         - Introduced `FieldAtom<T>` for pure, reactive form validation.
         - Added `FormAtom` to aggregate multiple fields and track whole-form validity.
