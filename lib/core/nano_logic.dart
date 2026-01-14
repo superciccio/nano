@@ -150,6 +150,29 @@ abstract class NanoLogic<P> extends ChangeNotifier
     ));
   }
 
+  final List<VoidCallback> _bindings = [];
+
+  /// Helper to bind a [Listenable] (e.g., ValueNotifier, TextEditingController)
+  /// to an action or effect.
+  ///
+  /// The [listener] is automatically removed when the logic is disposed.
+  ///
+  /// Example:
+  /// ```dart
+  /// bind(myController, () {
+  ///   // This runs in an action automatically
+  ///   myAtom.value = myController.text;
+  /// });
+  /// ```
+  void bind(Listenable target, VoidCallback listener) {
+    void safeListener() {
+      Nano.action(listener);
+    }
+
+    target.addListener(safeListener);
+    _bindings.add(() => target.removeListener(safeListener));
+  }
+
   @override
   @mustCallSuper
   void dispose() {
@@ -158,6 +181,9 @@ abstract class NanoLogic<P> extends ChangeNotifier
     }
     for (final disposer in _disposers) {
       disposer();
+    }
+    for (final unbind in _bindings) {
+      unbind();
     }
     status.dispose();
     error.dispose();

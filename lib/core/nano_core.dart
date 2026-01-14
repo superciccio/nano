@@ -735,6 +735,7 @@ sealed class AsyncState<T> with Diagnosticable {
   T? get dataOrNull {
     if (this is AsyncData<T>) return (this as AsyncData<T>).data;
     if (this is AsyncLoading<T>) return (this as AsyncLoading<T>).previousData;
+    if (this is AsyncError<T>) return (this as AsyncError<T>).previousData;
     return null;
   }
 
@@ -798,11 +799,15 @@ class AsyncData<T> extends AsyncState<T> {
 class AsyncError<T> extends AsyncState<T> {
   final Object error;
   final StackTrace stackTrace;
-  const AsyncError(this.error, this.stackTrace);
+  final T? previousData;
+
+  const AsyncError(this.error, this.stackTrace, [this.previousData]);
+
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties.add(DiagnosticsProperty('error', error));
+    properties.add(DiagnosticsProperty('previousData', previousData));
   }
 }
 
@@ -824,13 +829,20 @@ class AsyncError<T> extends AsyncState<T> {
 /// ```
 class AsyncAtom<T> extends ValueAtom<AsyncState<T>> {
   int _session = 0;
+  final bool keepPreviousData;
 
-  AsyncAtom({AsyncState<T> initial = const AsyncIdle(), String? label})
-      : super(initial, label: label);
+  AsyncAtom({
+    AsyncState<T> initial = const AsyncIdle(),
+    String? label,
+    this.keepPreviousData = true,
+  }) : super(initial, label: label);
 
   Future<void> track(Future<T> future) {
     final currentSession = ++_session;
-    final previousData = value.dataOrNull;
+
+    // Sticky Data: Keep data from Data, Loading (recursive), or Error states
+    final previousData = keepPreviousData ? value.dataOrNull : null;
+
     Nano.action(() => set(AsyncLoading<T>(previousData)));
 
     return future.then((data) {
@@ -840,7 +852,7 @@ class AsyncAtom<T> extends ValueAtom<AsyncState<T>> {
     }).catchError((e, s) {
       if (_session == currentSession) {
         Nano.action(() {
-          set(AsyncError<T>(e, s));
+          set(AsyncError<T>(e, s, previousData));
           Nano.observer.onError(this, e, s);
         });
       }
