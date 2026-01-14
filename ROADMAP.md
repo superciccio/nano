@@ -95,10 +95,11 @@ final theme = PersistAtom('theme_key', ThemeMode.system);
 **Goal**: Powerful features inspired by Riverpod/MobX but kept **explicit** (No `build_runner`, No magic globals).
 
 ### 1. Smart Caching (Explicit Families)
+- **Status**: [x] COMPLETED
 - **Problem**: Fetching data for dynamic IDs (e.g., `User(1)`, `User(2)`) without manual Map management.
-- **Solution**: `AtomCache<Key, Atom<T>>`.
+- **Solution**: `AtomFamily<Key, Atom<T>>`.
     ```dart
-    final userCache = AtomCache((id) => AsyncAtom.track(fetchUser(id)));
+    final userCache = AtomFamily<int, AsyncAtom<User>>((id) => AsyncAtom<User>()..track(fetchUser(id)));
     
     // Usage: Explicitly asking for a specific atom
     final user1 = userCache(1);

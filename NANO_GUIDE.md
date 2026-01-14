@@ -161,6 +161,32 @@ void main() async {
 }
 ```
 
+### `AtomFamily<K, T>`
+A factory for atoms indexed by a key. This is useful for managing collections of state (e.g., users by ID) without manual map management.
+
+**Signature:**
+```dart
+class AtomFamily<K, T extends Atom> {
+  AtomFamily(T Function(K key) factory);
+
+  /// Returns the atom for [key], creating it if necessary.
+  T call(K key);
+
+  /// Removes an entry from the cache.
+  void remove(K key);
+}
+```
+
+**Example:**
+```dart
+final profileFamily = AtomFamily<int, AsyncAtom<User>>((id) {
+  return AsyncAtom<User>(label: 'user_$id')..track(fetchUser(id));
+});
+
+// In Logic/UI
+final user1 = profileFamily(1);
+```
+
 ### `NanoLogic<P>`
 Base class for Business Logic Components (BLoC/ViewModel).
 
