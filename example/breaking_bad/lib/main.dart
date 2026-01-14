@@ -34,8 +34,8 @@ class MainScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Bad Quotes'),
         backgroundColor: Colors.black,
-        actions: [
-          const CharacterCounterWidget(),
+        actions: const [
+          CharacterCounterWidget(),
         ],
       ),
       body: const Center(
@@ -92,9 +92,9 @@ class _CounterChip extends StatelessWidget {
         margin: const EdgeInsets.symmetric(horizontal: 4),
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.2),
+          color: color.withValues(alpha: 0.2),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: color.withOpacity(0.5)),
+          border: Border.all(color: color.withValues(alpha: 0.5)),
         ),
         child: Text(
           '$label $count',
