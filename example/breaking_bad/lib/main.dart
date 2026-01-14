@@ -35,7 +35,7 @@ class MainScreen extends StatelessWidget {
         title: const Text('Bad Quotes'),
         backgroundColor: Colors.black,
         actions: const [
-          CharacterCounterWidget(),
+          SizedBox(width: 300, child: CharacterCounterWidget()),
         ],
       ),
       body: const Center(
@@ -57,19 +57,13 @@ class CharacterCounterWidget extends StatelessWidget {
       create: (_) => StatsLogic(),
       builder: (context, logic) {
         return (logic.saulCount, logic.jesseCount, logic.waltCount).watch((context, saul, jesse, walt) {
-           // Use Row with min size and constraints to be safe in AppBar
-           return ConstrainedBox(
-             constraints: const BoxConstraints(maxWidth: 300),
-             child: Row(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                _CounterChip(label: '⚖️', count: saul, color: Colors.orange),
-                _CounterChip(label: '⚗️', count: jesse, color: Colors.yellow),
-                _CounterChip(label: '🕶️', count: walt, color: Colors.green),
-                const SizedBox(width: 8),
-              ],
-            ),
+           return Wrap(
+            spacing: 8,
+            children: [
+              _CounterChip(label: '⚖️', count: saul, color: Colors.orange),
+              _CounterChip(label: '⚗️', count: jesse, color: Colors.yellow),
+              _CounterChip(label: '🕶️', count: walt, color: Colors.green),
+            ],
           );
         });
       },
@@ -87,20 +81,18 @@ class _CounterChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (count == 0) return const SizedBox.shrink();
-    return Flexible( // Allow shrinking if needed
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 4),
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-        decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.2),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: color.withValues(alpha: 0.5)),
-        ),
-        child: Text(
-          '$label $count',
-          style: const TextStyle(fontSize: 12),
-          overflow: TextOverflow.ellipsis,
-        ),
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.2),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: color.withValues(alpha: 0.5)),
+      ),
+      child: Text(
+        '$label $count',
+        style: const TextStyle(fontSize: 12),
+        overflow: TextOverflow.ellipsis,
       ),
     );
   }
