@@ -119,7 +119,7 @@ Automatically save state to storage (defaults to in-memory, swappable with Share
 
 ```dart
 // Auto-saves to storage whenever value changes
-final themeMode = PersistedAtom('light', key: 'theme_mode');
+final themeMode = PersistAtom('light', key: 'theme_mode');
 ```
 
 ## 🛠️ DevTools Extension

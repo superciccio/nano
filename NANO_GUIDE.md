@@ -124,23 +124,24 @@ class AsyncAtom<T> extends Atom<AsyncState<T>> {
 - `AsyncData<T>` (access data via `.data`)
 - `AsyncError` (access error via `.error`, `.stackTrace`)
 
-### `PersistedAtom<T>`
+### `PersistAtom<T>` (aliased to `PersistedAtom`)
 An `Atom` that automatically persists its value to a storage backend (default: `InMemoryStorage`).
 
 **Signature:**
 ```dart
-class PersistedAtom<T> extends Atom<T> {
-  PersistedAtom(T value, {
+class PersistAtom<T> extends Atom<T> {
+  PersistAtom(T initial, {
     required String key,
     T Function(String)? fromString,
-    String Function(T)? toStringEncoder,
+    String Function(T)? toJson, // New in 0.7.0
+    NanoStorage? storage,      // New in 0.7.0
     String? label,
   });
 }
 ```
 
 **Setup Storage:**
-By default, persistence is in-memory. To use real storage (e.g., SharedPreferences), implement `NanoStorage` and assign it in `main()`:
+By default, persistence is in-memory. To use real storage (e.g., SharedPreferences), implement `NanoStorage` and provide it via `Scope`:
 
 ```dart
 class SharedPrefsStorage implements NanoStorage {
@@ -149,8 +150,14 @@ class SharedPrefsStorage implements NanoStorage {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  Nano.storage = SharedPrefsStorage(); // Assign before app starts
-  runApp(MyApp());
+  final prefs = await SharedPreferences.getInstance();
+  final storage = SharedPrefsStorage(prefs);
+
+  runApp(Scope(
+    config: NanoConfig(storage: storage),
+    modules: [...],
+    child: MyApp(),
+  ));
 }
 ```
 

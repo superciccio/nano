@@ -73,10 +73,10 @@ TextField(
 **Target**: `barbutov2` Settings (Theme, Language).
 
 ### Tasks
-- [ ] **`PersistAtom<T>`**:
+- [x] **`PersistAtom<T>`**:
     - Wraps `Atom<T>`.
     - Requires `key` and `Storage` interface.
-- [ ] **Storage Interface**:
+- [x] **Storage Interface**:
     - `write(key, value)`, `read(key)`, `delete(key)`.
     - Default implementation for `SharedPreferences`.
 - [ ] **Refactor Barbutov2** (Pending Approval):
