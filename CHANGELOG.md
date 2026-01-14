@@ -5,7 +5,11 @@
     *   Added explicit `storage`, `fromString`, and `toJson` parameters to `PersistAtom` for better control over serialization.
     *   Implemented `SharedPrefsStorage` to support Flutter's `SharedPreferences` as an easy-to-use persistence backend.
     *   Exposed `_innerSet` as protected to allow custom atoms to update state without triggering side-effects during rehydration.
-    *   **Phase 1 Completion**: Added `NanoTester<T>` and `Atom.tester` utility to `package:nano/test.dart` for simplified emission tracking and event loop management in tests.
+    *   **Phase 2 Completion (Nano Forms)**:
+        - Introduced `FieldAtom<T>` for pure, reactive form validation.
+        - Added `FormAtom` to aggregate multiple fields and track whole-form validity.
+        - Included built-in `Validators` (`required`, `email`, `minLength`).
+    *   **Phase 1 Completion (Nano Test Utilities)**: Added `NanoTester<T>` and `Atom.tester` utility to `package:nano/test.dart` for simplified emission tracking and event loop management in tests.
 
 ## 0.6.0
 
