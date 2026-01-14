@@ -1,0 +1,16 @@
+version: 2
+updates:
+  - package-ecosystem: "pub"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "dependabot"
+    # Group minor updates for a cleaner PR history
+    # For Dart, it often makes sense to group all non-major updates.
+    groups:
+      minor-and-patch:
+        update-types:
+          - "patch"
+          - "minor"

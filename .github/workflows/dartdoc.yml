@@ -1,0 +1,35 @@
+name: Deploy API Docs
+
+on:
+  workflow_dispatch: # Allows manual trigger
+
+permissions:
+  contents: write # Needed to push to gh-pages branch
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable' # Use stable channel for docs generation
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Generate Dartdoc
+        run: dart doc
+        working-directory: ./ # Ensure it runs from root
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./doc/api # The default output directory for dart doc
+          publish_branch: gh-pages # The branch for GitHub Pages
+          force_orphan: true # Overwrites existing gh-pages branch
