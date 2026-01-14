@@ -129,12 +129,12 @@ final theme = PersistAtom('theme_key', ThemeMode.system);
     ```
 
 ### 3. Parallel Power (Isolate Atoms)
+- **Status**: [x] COMPLETED
 - **Problem**: Heavy filtering logic freezing UI.
-- **Solution**: `WorkerAtom` that runs `computed` logic in a `compute()` definition.
+- **Solution**: `WorkerAtom` that runs `worker` logic in a background isolate.
     ```dart
-    // Logic runs in background, result synced to main thread
-    final filtered = WorkerAtom((read) {
-        final list = read(allItems);
+    // Logic runs in background, results synced to main thread
+    final filtered = WorkerAtom(allItems, (list) {
         return list.where((i) => heavyCheck(i)).toList();
     });
     ```

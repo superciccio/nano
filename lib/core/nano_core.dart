@@ -1,5 +1,5 @@
-// ignore_for_file: avoid_atom_outside_logic
 import 'dart:async';
+import 'dart:isolate';
 import 'package:flutter/foundation.dart';
 import 'package:nano/core/debug_service.dart';
 import 'package:nano/core/nano_config.dart';
@@ -844,6 +844,49 @@ class StreamAtom<T> extends ValueAtom<AsyncState<T>> {
   @override
   void dispose() {
     _subscription?.cancel();
+    super.dispose();
+  }
+}
+
+/// An [Atom] that performs heavy computations in a background isolate.
+///
+/// It listens to a [source] atom and re-runs the [worker] task in a background
+/// isolate whenever the source changes. The result is exposed as an [AsyncState].
+///
+/// Example:
+/// ```dart
+/// final heavy = WorkerAtom<int, String>(
+///   source: count,
+///   worker: (c) => computeSomethingHard(c),
+/// );
+/// ```
+class WorkerAtom<P, R> extends AsyncAtom<R> {
+  final Atom<P> source;
+  final R Function(P param) worker;
+
+  WorkerAtom(
+    this.source,
+    this.worker, {
+    super.initial,
+    super.label,
+  }) {
+    _init();
+  }
+
+  void _init() {
+    source.addListener(_execute);
+    _execute();
+  }
+
+  void _execute() {
+    // We use Isolate.run to offload the work.
+    // AsyncAtom.track handles the session management (glitch prevention).
+    track(Isolate.run(() => worker(source.value)));
+  }
+
+  @override
+  void dispose() {
+    source.removeListener(_execute);
     super.dispose();
   }
 }
