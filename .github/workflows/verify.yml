@@ -28,8 +28,13 @@ jobs:
 
       - name: Pub Get (Example)
         run: |
-          cd example
-          flutter pub get
+          for d in example/*/; do
+            if [ -f "$d/pubspec.yaml" ]; then
+              cd $d
+              flutter pub get
+              cd ../..
+            fi
+          done
 
       - name: Pub Get (Packages)
         run: |
@@ -49,8 +54,15 @@ jobs:
 
       - name: Run Tests (Example)
         run: |
-          cd example
-          flutter test
+          for d in example/*/; do
+            if [ -f "$d/pubspec.yaml" ]; then
+              if [ -d "$d/test" ]; then
+                cd $d
+                flutter test
+                cd ../..
+              fi
+            fi
+          done
 
       - name: Report Failure
         if: failure() && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
