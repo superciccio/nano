@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_atom_outside_logic
+
 import 'dart:async';
 import 'dart:isolate';
 import 'package:flutter/foundation.dart';
