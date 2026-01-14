@@ -180,6 +180,46 @@ class ProfileLogic extends NanoLogic<void> {
 }
 ```
 
+### Time Control: Debounce & Throttle
+Any atom can be transformed into a time-aware atom using extensions.
+
+```dart
+// Debounce: Wait 300ms after the LAST update before notifying
+final searchAtom = Atom('').debounce(Duration(milliseconds: 300));
+
+// Throttle: Update at most once every 300ms
+final scrollAtom = Atom(0.0).throttle(Duration(milliseconds: 300));
+```
+
+### `ResourceAtom<T>`
+Manages resources that require explicit cleanup (e.g., Stream subscriptions, Sockets, Timers).
+
+```dart
+final chatAtom = ResourceAtom<List<Message>>((ref) {
+  final sub = socket.messages.listen((msg) => ...);
+  
+  // Register cleanup that runs when the atom is disposed
+  ref.onDispose(() => sub.cancel());
+  
+  return []; // Initial value
+});
+```
+
+### Scope Overrides (Testing)
+You can mock dependencies in a specific subtree by using the `overrides` parameter in `Scope`. Overrides take precedence over `modules`.
+
+```dart
+testWidgets('My Test', (tester) async {
+  await tester.pumpWidget(
+    Scope(
+      modules: [RealApiService()],
+      overrides: [MockApiService()], // This will be resolved instead of the real one
+      child: MyApp(),
+    ),
+  );
+});
+```
+
 **Signature:**
 ```dart
 class AtomFamily<K, T extends Atom> {

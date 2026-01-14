@@ -874,6 +874,97 @@ class DebouncedAtom<T> extends ValueAtom<T> {
   }
 }
 
+/// An [Atom] that automatically throttles its value.
+///
+/// Ensures that updates are performed at most once per [duration].
+class ThrottledAtom<T> extends ValueAtom<T> {
+  final Duration duration;
+  Timer? _timer;
+  T? _pendingValue;
+  bool _isThrottling = false;
+
+  ThrottledAtom(super.value, {required this.duration, super.label});
+
+  @override
+  void set(T newValue) {
+    if (_isThrottling) {
+      _pendingValue = newValue;
+      return;
+    }
+
+    Nano.action(() => super.set(newValue));
+    _isThrottling = true;
+    _timer = Timer(duration, () {
+      _isThrottling = false;
+      if (_pendingValue != null) {
+        set(_pendingValue as T);
+        _pendingValue = null;
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+}
+
+/// A handle for registering disposers within a [ResourceAtom].
+class ResourceRef {
+  final void Function(void Function() disposer) _onDispose;
+  ResourceRef(this._onDispose);
+
+  /// Registers a [disposer] that will be called when the [ResourceAtom] is disposed.
+  void onDispose(void Function() disposer) => _onDispose(disposer);
+}
+
+/// An [Atom] that manages the lifecycle of an external resource.
+///
+/// It provides a [ResourceRef] to its factory for registering cleanup logic.
+class ResourceAtom<T> extends ValueAtom<T> {
+  final List<void Function()> _disposers = [];
+
+  ResourceAtom._(super.value, {super.label});
+
+  factory ResourceAtom(T Function(ResourceRef ref) factory, {String? label}) {
+    final ds = <void Function()>[];
+    final initialValue = factory(ResourceRef(ds.add));
+    final atom = ResourceAtom._(initialValue, label: label);
+    atom._disposers.addAll(ds);
+    return atom;
+  }
+
+  @override
+  void dispose() {
+    for (final d in _disposers) {
+      try {
+        d();
+      } catch (e, s) {
+        Nano.observer.onError(this, e, s);
+      }
+    }
+    super.dispose();
+  }
+}
+
+/// Ergonomic extensions for time-based atom transformations.
+extension AtomTimeControlExtension<T> on Atom<T> {
+  /// Returns a new [Atom] that debounces updates from this atom.
+  Atom<T> debounce(Duration duration) {
+    final debounced = DebouncedAtom<T>(value, duration: duration);
+    addListener(() => debounced.set(value));
+    return debounced;
+  }
+
+  /// Returns a new [Atom] that throttles updates from this atom.
+  Atom<T> throttle(Duration duration) {
+    final throttled = ThrottledAtom<T>(value, duration: duration);
+    addListener(() => throttled.set(value));
+    return throttled;
+  }
+}
+
 /// An [Atom] that persists its value to storage.
 ///
 /// It requires a [key] to identify the value in storage.
