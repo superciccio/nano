@@ -162,6 +162,22 @@ class _NanoViewState<T extends NanoLogic<P>, P> extends State<NanoView<T, P>> {
 }
 
 /// Abstract base class for views that use a [NanoLogic].
+///
+/// This is a convenience wrapper around [NanoView] that reduces boilerplate for
+/// creating stateless screens with Logic.
+///
+/// **Usage:**
+/// ```dart
+/// class MyPage extends View<MyLogic, void> {
+///   @override
+///   MyLogic create(reg) => MyLogic();
+///
+///   @override
+///   Widget buildView(context, logic) {
+///     return Text(logic.state.value);
+///   }
+/// }
+/// ```
 abstract class View<T extends NanoLogic<P>, P> extends StatelessWidget {
   const View({super.key});
 

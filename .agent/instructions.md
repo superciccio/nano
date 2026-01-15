@@ -135,7 +135,34 @@ Watch(logic.firstName, builder: (context, first) {
 })
 ```
 
-### ✅ NanoView Pattern
+### ✅ Nano Compose DSL
+139: 
+140: Use `NanoStack` and `NanoLayout` to reduce nesting.
+141: 
+142: ```dart
+143: // CORRECT - Declarative Layout
+144: NanoStack(
+145:   layout: NanoLayout.all(16, spacing: 8),
+146:   children: [
+147:     Text('Title'),
+148:     Text('Content'),
+149:   ],
+150: )
+151: 
+152: // WRONG - Deep Nesting
+153: Padding(
+154:   padding: EdgeInsets.all(16),
+155:   child: Column(
+156:     children: [
+157:       Text('Title'),
+158:       SizedBox(height: 8),
+159:       Text('Content'),
+160:     ],
+161:   ),
+162: )
+163: ```
+164: 
+165: ### ✅ NanoView Pattern
 
 ```dart
 // CORRECT - Full pattern with DI

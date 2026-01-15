@@ -1,11 +1,36 @@
 import 'package:flutter/material.dart';
 
 /// Configuration for [NanoStack] layout.
+///
+/// **Nano Compose Philosophy:**
+/// Instead of nesting `Padding(Child: Column(children: [SizedBox(height: 10), ...]))`,
+/// define your layout properties once in [NanoLayout] and let [NanoStack] handle the boilerplate.
+///
+/// **Usage:**
+/// ```dart
+/// NanoStack(
+///   layout: NanoLayout(
+///     padding: EdgeInsets.all(16),
+///     spacing: 8, // Adds 8px gap between all children
+///     scrollable: true, // Wraps in SingleChildScrollView
+///   ),
+///   children: [ ... ],
+/// )
+/// ```
 class NanoLayout {
+  /// Padding around the entire stack.
   final EdgeInsetsGeometry? padding;
+
+  /// Gap to insert between every child.
   final double spacing;
+
+  /// If true, wraps the column in a [SingleChildScrollView].
   final bool scrollable;
+
+  /// Horizontal alignment of children.
   final CrossAxisAlignment crossAxisAlignment;
+
+  /// Vertical alignment of children.
   final MainAxisAlignment mainAxisAlignment;
 
   const NanoLayout({
@@ -16,7 +41,7 @@ class NanoLayout {
     this.mainAxisAlignment = MainAxisAlignment.start,
   });
 
-  /// Shorthand for uniform padding.
+  /// Shorthand constructor for uniform padding.
   factory NanoLayout.all(
     double value, {
     double spacing = 0,
@@ -31,8 +56,19 @@ class NanoLayout {
 
 /// A smart container that applies [NanoLayout] properties to its [children].
 ///
-/// It auto-inserts gaps for [NanoLayout.spacing] and wraps the content
+/// It auto-inserts `SizedBox` gaps for [NanoLayout.spacing] and wraps the content
 /// in [Padding] or [SingleChildScrollView] as needed.
+///
+/// **Example:**
+/// ```dart
+/// NanoStack(
+///   layout: NanoLayout.all(16, spacing: 8),
+///   children: [
+///     Text('Header'),
+///     Text('Body'), // 8px gap above
+///   ],
+/// )
+/// ```
 class NanoStack extends StatelessWidget {
   final NanoLayout layout;
   final List<Widget> children;

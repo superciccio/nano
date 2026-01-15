@@ -455,5 +455,60 @@ Nano.batch(() {
 // Listeners are notified exactly once here.
 ```
 
+## 8. Nano Compose DSL 🎨
+
+The Nano Compose DSL allows you to build declarative, concise layouts without the nesting hell of standard Flutter widgets.
+
+### `NanoLayout` & `NanoStack`
+
+Instead of nesting `Padding`, `Column`, `SingleChildScrollView`, and manually adding `SizedBox` for spacing, define your layout properties in `NanoLayout`.
+
+```dart
+// OLD: Nested Hell
+Padding(
+  padding: EdgeInsets.all(16),
+  child: SingleChildScrollView(
+    child: Column(
+      children: [
+        Header(),
+        SizedBox(height: 8),
+        Body(),
+        SizedBox(height: 8),
+        Footer(),
+      ],
+    ),
+  ),
+)
+
+// NEW: Linear & Clean
+NanoStack(
+  layout: NanoLayout(
+    padding: EdgeInsets.all(16),
+    spacing: 8,
+    scrollable: true,
+  ),
+  children: [
+    Header(),
+    Body(),
+    Footer(),
+  ],
+)
+```
+
+### `NanoPage`
+
+A shorthand for `Scaffold` + `AppBar`.
+
+```dart
+NanoPage(
+  title: 'My Profile',
+  actions: [IconButton(icon: Icon(Icons.logout), onPressed: logout)],
+  body: NanoStack(
+    layout: NanoLayout.all(16, spacing: 20),
+    children: [...],
+  ),
+)
+```
+
 If `atom3` depends on `atom1` and `atom2` (via `ComputedAtom`), it will only recompute once after the batch completes, preventing intermediate "glitch" states.
 ```
