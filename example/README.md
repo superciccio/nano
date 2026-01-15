@@ -12,7 +12,14 @@ The flagship showcase application. It demonstrates the full modular capabilities
 - **Persistence**: Saving state to local storage.
 - **Forms**: Reactive form handling.
 
-### 2. [Crypto Tracker](./crypto_tracker)
+### 2. [Excuse Generator](./excuse_generator)
+**The "Compose" DSL Showcase.** A funny IT excuse generator that demonstrates the 100% functional UI syntax:
+- **NanoPage & NanoStack**: Minimalist screen and layout declarations.
+- **Functional Modifiers**: `.padding()`, `.center()`, `.size()`.
+- **String Extensions**: `.text()`, `.bold()`, `.textButton()`.
+- **Reactive Shortcuts**: `.watch()` and `.button()`.
+
+### 3. [Crypto Tracker](./crypto_tracker)
 A simpler example focusing on the core concepts:
 - **Basic Atoms**: Reading and writing state.
 - **NanoLogic**: Organizing business logic.

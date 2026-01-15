@@ -1,3 +1,9 @@
+## [0.7.3]
+- **Example**: Added Interactive Galaxy Explorer (Orrery View) with 60FPS physics engine.
+- **Refactor**: Massive cleanup and standardization of all example apps.
+- **Tests**: Unified test infrastructure and verified strict-mode compliance across the workspace.
+- **Docs**: Updated walkthroughs with surgical performance insights.
+
 ## [0.7.2]
 - Fixed: Infinite loop in `AsyncAtom.track` when reading value inside an `auto` or `computed` callback. Sticky data now uses `untracked`.
 
