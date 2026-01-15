@@ -17,33 +17,39 @@ class NanoGenerator extends GeneratorForAnnotation<Nano> {
       );
     }
 
+    // Input: _PocCounterLogic
+    // Output Mixin: _$PocCounterLogic
+
     final className = element.name;
+    // Remove leading underscore for the public name part if present
+    final publicName = className.startsWith('_') ? className.substring(1) : className;
+
     final fields = element.fields.where(
       (f) => _hasStateAnnotation(f),
     );
 
     final buffer = StringBuffer();
 
-    // Mixin definition
-    buffer.writeln('mixin _\$${className} on $className {');
+    buffer.writeln('mixin _\$${publicName} on $className {');
 
     for (final field in fields) {
       final fieldName = field.name;
       final type = field.type.getDisplayString(withNullability: true);
       final atomName = '_$fieldName\$Atom';
 
-      // Atom field - lazy initialized using super.field value
-      buffer.writeln('  late final $atomName = Atom<$type>(super.$fieldName, label: \'$className.$fieldName\');');
+      // Initialize Atom using super.fieldName (reads the initial value from the base class)
+      buffer.writeln('  late final $atomName = Atom<$type>(super.$fieldName, label: \'$publicName.$fieldName\');');
 
-      // Getter override
+      // Override Getter
       buffer.writeln('  @override');
       buffer.writeln('  $type get $fieldName {');
       buffer.writeln('    return $atomName.value;');
       buffer.writeln('  }');
 
-      // Setter override
+      // Override Setter
       buffer.writeln('  @override');
       buffer.writeln('  set $fieldName($type value) {');
+      buffer.writeln('    super.$fieldName = value;'); // Keep base field in sync
       buffer.writeln('    $atomName.value = value;');
       buffer.writeln('  }');
     }

@@ -41,6 +41,15 @@ This directory demonstrates a Proof of Concept for a code-generation based appro
     *   Requires `build_runner`.
     *   Requires `NanoObserved` wrapper (similar to `Observer` in MobX).
 
+## The Future: Dart Macros
+
+Dart Macros (Experimental) will eliminate both cons of the current PoC:
+
+1.  **No `build_runner`:** Macros run in real-time during compilation.
+2.  **No `NanoObserved` Wrapper:** A macro like `@NanoWidget` can intercept the `build` method of a standard `StatelessWidget` and inject the tracking scope automatically.
+
+See [MACRO_PREVIEW.dart](./MACRO_PREVIEW.dart) for a code example of this future state.
+
 ## How to Run
 
 Since this is a PoC with local package dependencies, ensure you have the environment set up.
