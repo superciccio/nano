@@ -1,0 +1,7 @@
+targets:
+  $default:
+    builders:
+      nano_generator|nanoBuilder:
+        enabled: true
+        generate_for:
+          - lib/*.dart
