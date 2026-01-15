@@ -16,8 +16,9 @@ import 'package:nano/core/nano_middleware.dart';
 /// Scope(
 ///   config: NanoConfig(observer: MyObserver()),
 ///   modules: [
-///     AuthService(),
-///     Database(),
+///     AuthService(), // Singleton (Eager)
+///     NanoLazy((r) => Database()), // Singleton (Lazy)
+///     NanoFactory((r) => LoginLogic()), // Factory (New instance per request)
 ///   ],
 ///   child: MyApp(),
 /// )
@@ -98,14 +99,19 @@ class _ScopeState extends State<Scope> {
   }
 
   void _registerItem(dynamic m) {
+    // 1. Factories: Created every time .get() is called
     if (m is NanoFactory) {
       _registry.registerFactoryDynamic(m.type, (r) => m.create(r) as Object);
-    } else if (m is NanoLazy) {
+    }
+    // 2. Lazy Singletons: Created only when first requested
+    else if (m is NanoLazy) {
       _registry.registerLazySingletonDynamic(
         m.type,
         (r) => m.create(r) as Object,
       );
-    } else {
+    }
+    // 3. Eager Singletons: Created immediately
+    else {
       _registry.register(m);
     }
   }
