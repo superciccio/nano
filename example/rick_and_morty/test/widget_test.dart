@@ -1,10 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import '../lib/main.dart';
-import '../lib/rm_logic.dart';
+import 'package:rick_and_morty/main.dart';
+import 'package:rick_and_morty/rm_logic.dart';
 import 'package:nano/nano.dart';
 
 // Mock Service
@@ -100,13 +99,13 @@ class _TestHttpClient implements HttpClient {
   void addProxyCredentials(String host, int port, String realm, HttpClientCredentials credentials) {}
 
   @override
-  void set authenticate(Future<bool> Function(Uri url, String scheme, String? realm)? f) {}
+  set authenticate(Future<bool> Function(Uri url, String scheme, String? realm)? f) {}
 
   @override
-  void set authenticateProxy(Future<bool> Function(String host, int port, String scheme, String? realm)? f) {}
+  set authenticateProxy(Future<bool> Function(String host, int port, String scheme, String? realm)? f) {}
 
   @override
-  void set badCertificateCallback(bool Function(X509Certificate cert, String host, int port)? callback) {}
+  set badCertificateCallback(bool Function(X509Certificate cert, String host, int port)? callback) {}
 
   @override
   void close({bool force = false}) {}
@@ -156,7 +155,7 @@ class _TestHttpClient implements HttpClient {
   Future<HttpClientRequest> putUrl(Uri url) => throw UnimplementedError();
 
   @override
-  void set findProxy(String Function(Uri url)? f) {}
+  set findProxy(String Function(Uri url)? f) {}
   
   @override
   dynamic noSuchMethod(Invocation invocation) {
