@@ -101,6 +101,9 @@ abstract class NanoLogic<P> extends ChangeNotifier
     });
   }
 
+  @override
+  void initializeDynamic(dynamic params) => initialize(params as P);
+
   /// Called when an [NanoAction] is dispatched from the UI.
   void onAction(NanoAction action) {}
 

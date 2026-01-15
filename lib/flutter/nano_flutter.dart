@@ -2,9 +2,10 @@
 import 'dart:async'; // Add async import for runZoned
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/widgets.dart';
-import 'package:nano/core/nano_config.dart'; // Import NanoConfig
+import 'package:flutter/material.dart';
+import 'package:nano/core/nano_config.dart';
 import 'package:nano/core/nano_core.dart';
+import 'package:nano/core/nano_forms.dart';
 import 'package:nano/core/debug_service.dart'; // Import NanoDebugService
 import 'package:nano/core/nano_di.dart'
     show Registry, NanoException, NanoFactory, NanoLazy;
@@ -595,4 +596,314 @@ class AsyncAtomBuilder<T> extends StatelessWidget {
       },
     );
   }
+}
+
+/// A specialized [TextField] that binds directly to a [FieldAtom<String>].
+///
+/// It manages its own [TextEditingController] and automatically displays
+/// validation errors from the atom.
+class NanoTextField extends StatefulWidget {
+  final FieldAtom<String> field;
+  final String? label;
+  final String? hint;
+  final int maxLines;
+  final bool obscureText;
+  final InputDecoration? decoration;
+  final ValueChanged<String>? onChanged;
+
+  const NanoTextField({
+    super.key,
+    required this.field,
+    this.label,
+    this.hint,
+    this.maxLines = 1,
+    this.obscureText = false,
+    this.decoration,
+    this.onChanged,
+  });
+
+  @override
+  State<NanoTextField> createState() => _NanoTextFieldState();
+}
+
+class _NanoTextFieldState extends State<NanoTextField> {
+  late final TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.field.value);
+    widget.field.addListener(_handleAtomChange);
+    _controller.addListener(_handleControllerChange);
+  }
+
+  void _handleAtomChange() {
+    if (_controller.text != widget.field.value) {
+      _controller.text = widget.field.value;
+    }
+  }
+
+  void _handleControllerChange() {
+    if (widget.field.value != _controller.text) {
+      widget.field.set(_controller.text);
+      widget.onChanged?.call(_controller.text);
+    }
+  }
+
+  @override
+  void didUpdateWidget(NanoTextField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.field != widget.field) {
+      oldWidget.field.removeListener(_handleAtomChange);
+      widget.field.addListener(_handleAtomChange);
+      _controller.text = widget.field.value;
+    }
+  }
+
+  @override
+  void dispose() {
+    widget.field.removeListener(_handleAtomChange);
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final effectiveDecoration =
+        (widget.decoration ?? const InputDecoration()).copyWith(
+      labelText: widget.label,
+      hintText: widget.hint,
+    );
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        TextField(
+          controller: _controller,
+          maxLines: widget.maxLines,
+          obscureText: widget.obscureText,
+          decoration: effectiveDecoration,
+        ),
+        widget.field.errorAtom.watch((context, error) {
+          if (error == null) return const SizedBox.shrink();
+          return Padding(
+            padding: const EdgeInsets.only(top: 4, left: 4),
+            child: Text(
+              error,
+              style: const TextStyle(color: Color(0xFFD32F2F), fontSize: 12),
+            ),
+          );
+        }),
+      ],
+    );
+  }
+}
+
+/// A generic builder widget for any input that binds to a [FieldAtom<T>].
+///
+/// Useful for Checkboxes, Switches, Radio buttons, or custom sliders.
+class NanoField<T> extends StatelessWidget {
+  final FieldAtom<T> field;
+  final Widget Function(BuildContext context, T value, FieldAtom<T> field)
+      builder;
+
+  const NanoField({super.key, required this.field, required this.builder});
+
+  @override
+  Widget build(BuildContext context) {
+    return field.watch((context, value) => builder(context, value, field));
+  }
+}
+
+/// Configuration for [NanoStack] layout.
+class NanoLayout {
+  final EdgeInsetsGeometry? padding;
+  final double spacing;
+  final bool scrollable;
+  final CrossAxisAlignment crossAxisAlignment;
+  final MainAxisAlignment mainAxisAlignment;
+
+  const NanoLayout({
+    this.padding,
+    this.spacing = 0,
+    this.scrollable = false,
+    this.crossAxisAlignment = CrossAxisAlignment.start,
+    this.mainAxisAlignment = MainAxisAlignment.start,
+  });
+
+  /// Shorthand for uniform padding.
+  factory NanoLayout.all(
+    double value, {
+    double spacing = 0,
+    bool scrollable = false,
+  }) =>
+      NanoLayout(
+        padding: EdgeInsets.all(value),
+        spacing: spacing,
+        scrollable: scrollable,
+      );
+}
+
+/// A smart container that applies [NanoLayout] properties to its [children].
+///
+/// It auto-inserts gaps for [NanoLayout.spacing] and wraps the content
+/// in [Padding] or [SingleChildScrollView] as needed.
+class NanoStack extends StatelessWidget {
+  final NanoLayout layout;
+  final List<Widget> children;
+
+  const NanoStack(
+      {super.key, this.layout = const NanoLayout(), required this.children});
+
+  @override
+  Widget build(BuildContext context) {
+    // 1. Filter out null or shrinked widgets (optional logic if we had it)
+    // 2. Insert spacing
+    final items = <Widget>[];
+    for (var i = 0; i < children.length; i++) {
+      items.add(children[i]);
+      if (layout.spacing > 0 && i < children.length - 1) {
+        items.add(SizedBox(height: layout.spacing));
+      }
+    }
+
+    Widget content = Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: layout.crossAxisAlignment,
+      mainAxisAlignment: layout.mainAxisAlignment,
+      children: items,
+    );
+
+    if (layout.padding != null) {
+      content = Padding(padding: layout.padding!, child: content);
+    }
+
+    if (layout.scrollable) {
+      content = SingleChildScrollView(child: content);
+    }
+
+    return content;
+  }
+}
+
+/// A standard screen layout that reduces [Scaffold] boilerplate.
+class NanoPage extends StatelessWidget {
+  final String? title;
+  final Widget body;
+  final List<Widget>? actions;
+  final Widget? floatingActionButton;
+
+  const NanoPage({
+    super.key,
+    this.title,
+    required this.body,
+    this.actions,
+    this.floatingActionButton,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar:
+          title != null ? AppBar(title: Text(title!), actions: actions) : null,
+      body: body,
+      floatingActionButton: floatingActionButton,
+    );
+  }
+}
+
+/// Ambient access to [NanoLogic] from the widget tree.
+extension NanoContextLogicExtension on BuildContext {
+  /// Resolves the nearest [NanoLogic] of type [T].
+  T logic<T>() => Scope.of(this).get<T>();
+}
+
+/// Declarative extensions for [String] to create widgets.
+extension NanoStringExtension on String {
+  /// Returns a [Text] widget.
+  Text text({TextStyle? style}) => Text(this, style: style);
+
+  /// Returns a bold [Text] widget.
+  Text bold() =>
+      Text(this, style: const TextStyle(fontWeight: FontWeight.bold));
+}
+
+/// Declarative extensions for [ValueListenable] to create reactive widgets.
+extension ValueListenableReactiveExtension<T> on ValueListenable<T> {
+  /// Returns a [Text] widget that automatically reacts to this listener.
+  Widget text({TextStyle? style, String Function(T value)? format}) {
+    return watch((context, value) {
+      final label = format?.call(value) ?? value.toString();
+      return Text(label, style: style);
+    });
+  }
+}
+
+/// Specialized reactive extensions for buttons.
+extension ValueListenableButtonExtension on ValueListenable<bool> {
+  /// Returns a [FilledButton] that automatically disables if this listener is false.
+  Widget button(String label, {required VoidCallback? onPressed}) {
+    return watch((context, isValid) {
+      return FilledButton(
+        onPressed: isValid ? onPressed : null,
+        child: Text(label),
+      );
+    });
+  }
+}
+
+/// Specialized reactive extensions for form fields.
+extension FieldAtomReactiveExtension on FieldAtom<String> {
+  /// Returns a [NanoTextField] bound to this field.
+  Widget textField({
+    String? label,
+    String? hint,
+    int maxLines = 1,
+    bool obscureText = false,
+    InputDecoration? decoration,
+  }) {
+    return NanoTextField(
+      field: this,
+      label: label,
+      hint: hint,
+      maxLines: maxLines,
+      obscureText: obscureText,
+      decoration: decoration,
+    );
+  }
+}
+
+/// Chaining modifiers for any [Widget] to reduce nesting.
+extension NanoWidgetModifierExtension on Widget {
+  /// Wraps this widget in [Padding].
+  Padding padding([EdgeInsetsGeometry value = const EdgeInsets.all(8)]) =>
+      Padding(padding: value, child: this);
+
+  /// Wraps this widget in [Center].
+  Center center() => Center(child: this);
+
+  /// Wraps this widget in [Expanded].
+  Expanded expanded({int flex = 1}) => Expanded(flex: flex, child: this);
+
+  /// Wraps this widget in [Flexible].
+  Flexible flexible({int flex = 1, FlexFit fit = FlexFit.loose}) =>
+      Flexible(flex: flex, fit: fit, child: this);
+
+  /// Wraps this widget in an [InkWell] or [GestureDetector].
+  Widget onPressed(VoidCallback? action) {
+    if (action == null) return this;
+    return InkWell(onTap: action, child: this);
+  }
+}
+
+/// Specialized extensions for [String] to create action widgets.
+extension NanoStringActionExtension on String {
+  /// Returns a [TextButton].
+  TextButton textButton({required VoidCallback? onPressed}) =>
+      TextButton(onPressed: onPressed, child: Text(this));
+
+  /// Returns a [FilledButton].
+  FilledButton filledButton({required VoidCallback? onPressed}) =>
+      FilledButton(onPressed: onPressed, child: Text(this));
 }
