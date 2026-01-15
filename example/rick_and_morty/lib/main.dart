@@ -143,7 +143,22 @@ class CharacterListScreen extends StatelessWidget {
                     Text('${char.status} - ${char.species}'),
                   ],
                 ),
-                onTap: () => logic.selectCharacter(char),
+                onTap: () {
+                  logic.selectCharacter(char);
+                  ScaffoldMessenger.of(context).clearSnackBars();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        ['Wubba Lubba Dub Dub!', 'Get Schwifty!', 'I turned myself into a Pickle!', 'Aw jeez, Rick!']
+                            .elementAt(char.id % 4),
+                        style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                      ),
+                      duration: const Duration(milliseconds: 1500),
+                      backgroundColor: const Color(0xFF97ce4c),
+                      behavior: SnackBarBehavior.floating,
+                    ),
+                  );
+                },
               );
             },
           );

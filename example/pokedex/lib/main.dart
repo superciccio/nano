@@ -89,9 +89,20 @@ class PokedexHome extends StatelessWidget {
                 ),
               ),
               idle: (context) => const Center(
-                child: Text(
-                  'Search for a Pokemon to begin!',
-                  style: TextStyle(color: Colors.grey, fontSize: 16),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.help_outline, size: 64, color: Colors.grey),
+                    SizedBox(height: 16),
+                    Text(
+                      "Who's that Pokemon?",
+                      style: TextStyle(color: Colors.grey, fontSize: 24, fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      'Search above to reveal!',
+                      style: TextStyle(color: Colors.grey, fontSize: 16),
+                    ),
+                  ],
                 ),
               ),
               data: (context, pokemon) {

@@ -2,8 +2,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nano/nano.dart';
-import '../lib/crypto/crypto_example.dart';
-import '../lib/crypto/crypto_service.dart';
+import 'package:crypto_tracker/crypto/crypto_example.dart';
+import 'package:crypto_tracker/crypto/crypto_service.dart';
 
 // Mock Service
 class MockCryptoService implements CryptoService {

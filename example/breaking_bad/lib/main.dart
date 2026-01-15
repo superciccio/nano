@@ -131,7 +131,18 @@ class QuoteView extends StatelessWidget {
       builder: (context, logic) {
         return AsyncAtomBuilder<Quote>(
           atom: logic.quote,
-          loading: (context) => const CircularProgressIndicator(color: Color(0xFF369457)),
+          loading: (context) => Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const CircularProgressIndicator(color: Color(0xFF369457)),
+              const SizedBox(height: 16),
+              Text(
+                ['Cooking...', 'Applying Science...', 'Calling Saul...', 'Treading lightly...']
+                    .elementAt(DateTime.now().microsecond % 4),
+                style: const TextStyle(color: Colors.white54),
+              ),
+            ],
+          ),
           error: (context, error) => Column(
             mainAxisSize: MainAxisSize.min,
             children: [

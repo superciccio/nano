@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import '../lib/main.dart';
-import '../lib/pokedex_logic.dart';
+import 'package:pokedex/main.dart';
+import 'package:pokedex/pokedex_logic.dart';
 import 'package:nano/nano.dart';
 
 // Mock Service
