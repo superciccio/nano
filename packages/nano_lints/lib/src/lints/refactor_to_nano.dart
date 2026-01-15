@@ -31,7 +31,32 @@ class RefactorToNano extends DartLintRule {
           final classDeclaration =
               node.thisOrAncestorOfType<ClassDeclaration>();
           if (classDeclaration != null) {
-            reporter.atNode(classDeclaration, _code);
+            final extendsClause = classDeclaration.extendsClause;
+            if (extendsClause != null &&
+                extendsClause.superclass.typeArguments != null &&
+                extendsClause.superclass.typeArguments!.arguments.isNotEmpty) {
+              final widgetType =
+                  extendsClause.superclass.typeArguments!.arguments.first;
+              if (widgetType is NamedType) {
+                final widgetName = widgetType.name.lexeme;
+                final unit = node.thisOrAncestorOfType<CompilationUnit>();
+
+                ClassDeclaration? widgetDeclaration;
+                if (unit != null) {
+                  for (final decl in unit.declarations) {
+                    if (decl is ClassDeclaration &&
+                        decl.name.lexeme == widgetName) {
+                      widgetDeclaration = decl;
+                      break;
+                    }
+                  }
+                }
+
+                if (widgetDeclaration != null) {
+                  reporter.atNode(widgetDeclaration, _code);
+                }
+              }
+            }
           }
         }
       }

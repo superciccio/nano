@@ -9,8 +9,19 @@ class MyCounter extends StatefulWidget {
 class _MyCounterState extends State<MyCounter> {
   int _counter = 0;
 
+  void _increment() {
+    setState(() {
+      _counter++;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Text('$_counter');
+    return Column(
+      children: [
+        Text('$_counter'),
+        TextButton(onPressed: _increment, child: Text('Increment')),
+      ],
+    );
   }
 }
