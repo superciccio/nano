@@ -1,6 +1,6 @@
 part of 'poc_nano_counter.dart';
 
-mixin _$PocCounterLogic on PocCounterLogic {
+mixin _$PocCounterLogic on _PocCounterLogic {
   late final _count$Atom = Atom<int>(super.count, label: 'PocCounterLogic.count');
 
   @override
@@ -10,6 +10,7 @@ mixin _$PocCounterLogic on PocCounterLogic {
 
   @override
   set count(int value) {
+    super.count = value;
     _count$Atom.value = value;
   }
 }

@@ -7,23 +7,25 @@ part 'poc_nano_counter.g.dart';
 
 // PoC Nano: "SwiftUI-style" Simplicity
 
-// 1. Logic: Clean, Annotated
+// 1. Logic: Private base class containing the state and logic
 @nano
-class PocCounterLogic extends NanoLogic with _$PocCounterLogic {
+abstract class _PocCounterLogic extends NanoLogic {
   @state
   int count = 0;
 
   void increment() {
-    count++; // Just standard Dart mutation!
+    count++; // Accesses the overridden 'count' in the concrete class
   }
 }
+
+// 2. The concrete public class that users interact with
+class PocCounterLogic = _PocCounterLogic with _$PocCounterLogic;
 
 class PocNanoCounter extends StatelessWidget {
   const PocNanoCounter({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // 2. Setup: Still need scope/DI (can be lifted up), but here for isolation.
     return Scope(
       modules: [NanoLazy(() => PocCounterLogic())],
       child: const _View(),
@@ -36,10 +38,8 @@ class _View extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 3. View: Observed wrapper, implicit tracking
     return NanoObserved(
       builder: (context) {
-        // "Hooks-like" or "Context-read" access
         final logic = context.use<PocCounterLogic>();
 
         return Scaffold(
@@ -49,7 +49,6 @@ class _View extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 const Text('You have pushed the button this many times:'),
-                // 4. Usage: Direct property access! No .watch()
                 Text(
                   '${logic.count}',
                   style: Theme.of(context).textTheme.headlineMedium,
