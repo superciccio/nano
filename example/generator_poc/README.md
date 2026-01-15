@@ -1,58 +1,45 @@
 # Nano Generator PoC
 
-This directory demonstrates a Proof of Concept for a code-generation based approach to Nano, aiming for higher developer velocity and reduced boilerplate, inspired by SwiftUI's simplicity.
+This directory demonstrates a Proof of Concept for a code-generation based approach to Nano, aiming for high developer velocity and minimal boilerplate.
 
-## Structure
+## The "Today" Solution
 
-*   `nano_annotations`: Defines `@nano` and `@state`.
-*   `nano_generator`: Implements the `build_runner` generator.
-*   `example_app`: A Flutter app comparing Vanilla, Classic Nano, and the new PoC approach.
+This PoC proves that **today** (using `build_runner`), we can achieve a clean, "SwiftUI-like" developer experience where:
+1.  **Logic is simple:** Standard Dart fields, no manual `Atom` boilerplate.
+2.  **UI is implicit:** Widgets track state automatically, no manual `.watch()` calls.
 
 ## Comparison
 
 ### 1. Vanilla Flutter
 *   **Pros:** No dependencies.
-*   **Cons:** `setState` rebuilds entire widget or requires complex `ValueListenableBuilder` nesting. Logic mixed with UI in `State` class.
+*   **Cons:** `setState` is manual and coarse. Logic is coupled to UI.
 
 ### 2. Classic Nano
-*   **Pros:** Explicit, efficient, no codegen required.
-*   **Cons:** Boilerplate.
-    *   Need to define `Atom<T>` manually.
-    *   Need to use `.watch()` or `Watch` widget explicitly.
-    *   `NanoView` setup is verbose.
+*   **Pros:** Explicit control, no codegen.
+*   **Cons:** Verbose. Requires manual `Atom` definition and explicit `Watch` widgets.
 
 ### 3. PoC Nano (Generated)
 *   **Pros:**
-    *   **Logic:** Looks like plain Dart.
+    *   **Clean Logic:**
         ```dart
         @nano
-        class Counter {
-            @state int count = 0;
-            void increment() => count++;
+        abstract class _Counter extends NanoLogic {
+            @state int count = 0; // Standard field!
+            void increment() => count++; // Standard mutation!
         }
+        class Counter = _Counter with _$Counter;
         ```
-    *   **UI:** "SwiftUI-style" implicit tracking.
+    *   **Implicit UI:**
         ```dart
-        NanoObserved(builder: (_) {
+        NanoConsumer(builder: (context) {
+            final logic = context.use<Counter>();
             return Text('${logic.count}'); // Updates automatically!
         })
         ```
 *   **Cons:**
-    *   Requires `build_runner`.
-    *   Requires `NanoObserved` wrapper (similar to `Observer` in MobX).
-
-## The Future: Dart Macros
-
-Dart Macros (Experimental) will eliminate both cons of the current PoC:
-
-1.  **No `build_runner`:** Macros run in real-time during compilation.
-2.  **No `NanoObserved` Wrapper:** A macro like `@NanoWidget` can intercept the `build` method of a standard `StatelessWidget` and inject the tracking scope automatically.
-
-See [MACRO_PREVIEW.dart](./MACRO_PREVIEW.dart) for a code example of this future state.
+    *   Requires `dart run build_runner build`.
 
 ## How to Run
-
-Since this is a PoC with local package dependencies, ensure you have the environment set up.
 
 1.  **Generate Code:**
     ```bash
@@ -60,7 +47,7 @@ Since this is a PoC with local package dependencies, ensure you have the environ
     flutter pub get
     dart run build_runner build
     ```
-    *(Note: `poc_nano_counter.g.dart` is currently checked in for reference so you can run without generating immediately)*
+    *(Note: `poc_nano_counter.g.dart` is currently checked in for reference)*
 
 2.  **Run App:**
     ```bash
