@@ -1,3 +1,6 @@
+/// {@category Core}
+library;
+
 // ignore_for_file: avoid_atom_outside_logic
 
 import 'dart:async';
@@ -12,7 +15,7 @@ abstract class NanoLogicBase {
   bool get isInitializing;
 }
 
-/// [Internal] Context used to track the validity of the synchronous 'onInit' phase.
+/// **Internal** Context used to track the validity of the synchronous 'onInit' phase.
 class NanoInitContext {
   bool _isValid = true;
   bool get isValid => _isValid;
@@ -66,23 +69,23 @@ class Nano {
     return config?.storage ?? _defaultStorage;
   }
 
-  /// [Internal] Returns the current [NanoInitContext].
+  /// **Internal** Returns the current [NanoInitContext].
   static NanoInitContext? get initContext =>
       Zone.current[#nanoInitContext] as NanoInitContext?;
 
-  /// [Internal] A flag to check if an action is running.
+  /// **Internal** A flag to check if an action is running.
   static bool _isInAction = false;
 
-  /// [Internal] Returns true if an action is running.
+  /// **Internal** Returns true if an action is running.
   static bool get isInAction => _isInAction;
 
-  /// [Internal] Global version incremented on every atom change.
+  /// **Internal** Global version incremented on every atom change.
   static int _version = 0;
 
-  /// [Internal] Returns the current global version.
+  /// **Internal** Returns the current global version.
   static int get version => _version;
 
-  /// [Test Only] Resets Nano global state for testing.
+  /// **Test Only** Resets Nano global state for testing.
   @visibleForTesting
   static void reset() {
     _version = 0;
@@ -93,7 +96,7 @@ class Nano {
 
   static Map<String, dynamic>? _savedState;
 
-  /// [Developer-Only] Backups the current state of all registered atoms.
+  /// **Developer-Only** Backups the current state of all registered atoms.
   /// Used to simulate state persistence across Hot Restarts.
   static void backupState() {
     if (!kDebugMode) return;
@@ -114,7 +117,7 @@ class Nano {
     _savedState = state;
   }
 
-  /// [Developer-Only] Restores the previously backed-up state.
+  /// **Developer-Only** Restores the previously backed-up state.
   static void restoreState() {
     if (!kDebugMode || _savedState == null) return;
     action('restoreState', () {
@@ -135,7 +138,7 @@ class Nano {
     });
   }
 
-  /// [Internal] Starts an action.
+  /// **Internal** Starts an action.
   static void _actionStart(String name) {
     _isInAction = true;
     for (final middleware in middlewares) {
@@ -143,7 +146,7 @@ class Nano {
     }
   }
 
-  /// [Internal] Ends an action.
+  /// **Internal** Ends an action.
   static void _actionEnd(String name) {
     for (final middleware in middlewares) {
       middleware.onActionEnd(name);
@@ -173,18 +176,18 @@ class Nano {
     }
   }
 
-  /// [Internal] Stack of currently executing derivations (reactions/computeds)
+  /// **Internal** Stack of currently executing derivations (reactions/computeds)
   /// that want to track dependencies.
   static final List<NanoDerivation> _derivationStack = [];
 
-  /// [Internal] Reports an atom read to the current derivation.
+  /// **Internal** Reports an atom read to the current derivation.
   static void reportRead(Atom atom) {
     if (_derivationStack.isNotEmpty) {
       _derivationStack.last.addDependency(atom);
     }
   }
 
-  /// [Internal] Runs [fn] inside a tracking context.
+  /// **Internal** Runs [fn] inside a tracking context.
   static T track<T>(NanoDerivation derivation, T Function() fn) {
     _derivationStack.add(derivation);
     try {
@@ -206,19 +209,19 @@ class Nano {
     }
   }
 
-  /// [Internal] Batch depth counter.
+  /// **Internal** Batch depth counter.
   static int _batchDepth = 0;
 
-  /// [Internal] Pending atoms to notify.
+  /// **Internal** Pending atoms to notify.
   static final List<Atom> _pendingNotifications = [];
 
-  /// [Internal] Set of atoms currently flushing in the batch.
+  /// **Internal** Set of atoms currently flushing in the batch.
   static final Set<Atom> _flushingAtoms = {};
 
-  /// [Internal] Returns true if Nano is currently flushing a batch.
+  /// **Internal** Returns true if Nano is currently flushing a batch.
   static bool get isFlushing => _flushingAtoms.isNotEmpty;
 
-  /// [Internal] Returns true if the given atom is currently in the flush queue.
+  /// **Internal** Returns true if the given atom is currently in the flush queue.
   static bool isFlushingAtom(Atom atom) => _flushingAtoms.contains(atom);
 
   /// Batches notifications for state updates.
@@ -389,7 +392,7 @@ abstract class Atom<T> extends ChangeNotifier
         label: label ?? '${this.label ?? 'Atom'}.select');
   }
 
-  /// [Internal] Flag to track if this atom is already pending notification in the current batch.
+  /// **Internal** Flag to track if this atom is already pending notification in the current batch.
   bool _isPending = false;
   bool _disposed = false;
 

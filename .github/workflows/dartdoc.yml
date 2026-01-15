@@ -1,35 +1,53 @@
-name: Deploy API Docs
+name: Deploy Documentation
 
 on:
-  workflow_dispatch: # Allows manual trigger
+  push:
+    branches:
+      - main
+  workflow_dispatch:
 
 permissions:
-  contents: write # Needed to push to gh-pages branch
+  contents: write
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
+      # 1. Setup Environment
+      - uses: actions/setup-node@v4
         with:
-          channel: 'stable' # Use stable channel for docs generation
+          node-version: 18
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
 
-      - name: Install dependencies
+      # 2. Build API Reference (Dart)
+      - name: Install Dart dependencies
         run: flutter pub get
-
-      - name: Generate Dartdoc
+      - name: Generate API Docs
         run: dart doc
-        working-directory: ./ # Ensure it runs from root
 
+      # 3. Build Website (Docusaurus)
+      - name: Install Website dependencies
+        run: npm ci
+        working-directory: website
+      - name: Build Website
+        run: npm run build
+        working-directory: website
+
+      # 4. Integrate API Docs into Website
+      - name: Move API Docs to Website
+        run: |
+          mkdir -p website/build/api
+          cp -r doc/api/* website/build/api/
+
+      # 5. Deploy
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./doc/api # The default output directory for dart doc
-          publish_branch: gh-pages # The branch for GitHub Pages
-          force_orphan: true # Overwrites existing gh-pages branch
+          publish_dir: ./website/build
+          publish_branch: gh-pages
+          force_orphan: true

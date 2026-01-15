@@ -215,7 +215,7 @@ class NanoView<T extends NanoLogic<P>, P> extends StatefulWidget {
   ///
   /// - `true` (Default): Coarse updates. The entire [builder] runs on every change.
   ///   Best for small views or when you don't want to use [Watch] everywhere.
-  /// - `false`: Surgical updates. The [builder] runs ONLY when [status] changes.
+  /// - `false`: Surgical updates. The [builder] runs ONLY when `status` changes.
   ///   You MUST use [Watch] or `.watch()` inside the builder to react to other atoms.
   ///   Highly recommended for massive lists or complex screens.
   final bool rebuildOnUpdate;

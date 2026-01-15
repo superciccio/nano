@@ -1,3 +1,6 @@
+/// {@category Logic}
+library;
+
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';

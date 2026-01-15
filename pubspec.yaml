@@ -10,9 +10,11 @@ environment:
 workspace:
   - example/breaking_bad
   - example/crypto_tracker
+  - example/minesweeper
   - example/nano_hub
   - example/pokedex
   - example/rick_and_morty
+  - example/sudoku
   - packages/nano_devtools_extension
   - packages/nano_lints
 
