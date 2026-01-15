@@ -1,22 +1,34 @@
 import 'package:flutter/widgets.dart';
 import 'package:nano/nano.dart';
 
-/// A widget that rebuilds when any Atom read inside [builder] changes.
-class NanoObserved extends StatefulWidget {
+/// A widget that implicitly tracks any [Atom] accessed within its [builder].
+///
+/// This eliminates the need for manual `.watch()` calls.
+///
+/// Example:
+/// ```dart
+/// NanoConsumer(
+///   builder: (context) {
+///     final logic = context.use<MyLogic>();
+///     return Text('${logic.count}'); // Automatically rebuilds when count changes
+///   }
+/// )
+/// ```
+class NanoConsumer extends StatefulWidget {
   final WidgetBuilder builder;
 
-  const NanoObserved({super.key, required this.builder});
+  const NanoConsumer({super.key, required this.builder});
 
   @override
-  State<NanoObserved> createState() => _NanoObservedState();
+  State<NanoConsumer> createState() => _NanoConsumerState();
 }
 
-class _NanoObservedState extends State<NanoObserved> implements NanoDerivation {
+class _NanoConsumerState extends State<NanoConsumer> implements NanoDerivation {
   Set<Atom> _dependencies = {};
   Set<Atom>? _newDependencies;
 
   @override
-  String get debugLabel => 'NanoObserved';
+  String get debugLabel => 'NanoConsumer';
 
   @override
   Iterable<Atom> get dependencies => _dependencies;
@@ -42,7 +54,9 @@ class _NanoObservedState extends State<NanoObserved> implements NanoDerivation {
   }
 
   void _handleChange() {
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   @override
@@ -51,6 +65,7 @@ class _NanoObservedState extends State<NanoObserved> implements NanoDerivation {
     try {
       // Execute the builder within Nano's tracking scope.
       // We pass 'this' as the derivation so 'addDependency' is called on us.
+      // Nano.track returns the result of the closure (Widget).
       return Nano.track(this, () => widget.builder(context));
     } finally {
       // Diff dependencies
@@ -75,9 +90,6 @@ class _NanoObservedState extends State<NanoObserved> implements NanoDerivation {
 /// Helper to access Logic from context (Classic Scope lookup)
 extension NanoContextExtension on BuildContext {
   T use<T extends Object>() {
-    // Currently Nano doesn't have a direct 'context.read<T>' for generic objects unless they are in Scope?
-    // Nano Scope uses `Scope.of(context).get<T>()`.
-    // Let's check `nano_flutter.dart` -> `src/scope.dart`.
     return Scope.of(this).get<T>();
   }
 }
