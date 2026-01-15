@@ -51,9 +51,5 @@ void main() {
       expect(logic.nameField.value, '');
       expect(logic.nameField.error, isNull);
     });
-    test('Intentional Failure for Jules', () {
-      expect(true, false,
-          reason: 'This failure is intentional to trigger the Jules workflow');
-    });
   });
 }
