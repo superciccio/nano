@@ -4,8 +4,17 @@ version: 0.7.2
 homepage:
 
 environment:
-  sdk: ">=3.0.0 <4.0.0"
+  sdk: ">=3.5.0 <4.0.0"
   flutter: ">=1.17.0"
+
+workspace:
+  - example/breaking_bad
+  - example/crypto_tracker
+  - example/nano_hub
+  - example/pokedex
+  - example/rick_and_morty
+  - packages/nano_devtools_extension
+  - packages/nano_lints
 
 dependencies:
   flutter:
