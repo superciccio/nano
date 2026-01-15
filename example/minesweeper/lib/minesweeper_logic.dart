@@ -1,5 +1,4 @@
 import 'dart:math';
-import 'package:flutter/foundation.dart';
 import 'package:nano/nano.dart';
 
 enum GameState { playing, won, lost }
