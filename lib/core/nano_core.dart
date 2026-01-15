@@ -13,6 +13,7 @@ import 'package:nano/core/history_observer.dart';
 
 abstract class NanoLogicBase {
   bool get isInitializing;
+  void initializeDynamic(dynamic params);
 }
 
 /// **Internal** Context used to track the validity of the synchronous 'onInit' phase.

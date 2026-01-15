@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:nano/core/nano_core.dart' show Nano;
+import 'package:nano/core/nano_core.dart' show Nano, NanoLogicBase;
 
 /// A simple registry to hold your dependencies.
 ///
@@ -101,7 +101,11 @@ class Registry with Diagnosticable {
 
       // 2. Check Factories (create new)
       if (_factories.containsKey(T)) {
-        return _factories[T]!(this) as T;
+        final instance = _factories[T]!(this) as T;
+        if (instance is NanoLogicBase) {
+          instance.initializeDynamic(null);
+        }
+        return instance;
       }
 
       // 3. Check Lazy Singletons (create, cache, return)
@@ -109,6 +113,11 @@ class Registry with Diagnosticable {
         final instance = _lazySingletons[T]!(this);
         _services[T] = instance; // Cache it!
         _lazySingletons.remove(T); // Optimization: remove from lazy map
+
+        if (instance is NanoLogicBase) {
+          instance.initializeDynamic(null);
+        }
+
         return instance as T;
       }
 
