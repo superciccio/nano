@@ -20,7 +20,7 @@ jobs:
 
       - name: Request Docs Update
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_PAT }}
         run: |
           TITLE="Docs: Update documentation for recent changes [${{ github.sha }}]"
           BODY="The build passed on main. Please review the recent changes in \`lib/\` and update \`README.md\`, \`NANO_GUIDE.md\`, \`.agent/instructions.md\`, \`CHANGELOG.md\`, and \`MIGRATION_GUIDE.md\` (if applicable) to reflect the current state of the codebase.

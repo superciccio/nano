@@ -67,7 +67,7 @@ jobs:
       - name: Report Failure
         if: failure() && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_PAT }}
         run: |
           TITLE="Build Failed: Verify [${{ github.sha }}]"
           BODY="Build failed on commit ${{ github.sha }}. Check the logs here: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
