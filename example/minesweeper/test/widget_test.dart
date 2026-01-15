@@ -15,6 +15,9 @@ void main() {
       ),
     );
 
+    // Allow onReady to fire and build the board
+    await tester.pump();
+
     // Verify Title
     expect(find.text('Nano Minesweeper'), findsOneWidget);
     
