@@ -46,7 +46,10 @@ class CryptoLogic extends NanoLogic<void> {
         );
       }
     });
+  }
 
+  @override
+  void onReady() {
     // Showcase: Named Actions for DevTools Performance Timeline
     Nano.action(
       'Crypto: Start Price Stream',

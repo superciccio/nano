@@ -3,7 +3,20 @@ import 'package:nano/nano.dart';
 import 'breaking_bad_logic.dart';
 
 void main() {
-  runApp(const BreakingBadApp());
+  runApp(
+    Scope(
+      modules: [
+        QuoteService(),
+        // Eager singleton for StatsLogic so it persists across screen rebuilds if needed,
+        // though here it's fine as a lazy singleton if accessed correctly.
+        // Let's make it a standard singleton (instance) or NanoLazy.
+        // Since we want to share the SAME instance between CharacterCounterWidget and QuoteView,
+        // we should register it as a singleton.
+        NanoLazy((_) => StatsLogic()),
+      ],
+      child: const BreakingBadApp(),
+    ),
+  );
 }
 
 class BreakingBadApp extends StatelessWidget {
@@ -53,8 +66,12 @@ class CharacterCounterWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return NanoView(
-      create: (_) => StatsLogic(),
+    // We use the existing StatsLogic from the scope
+    return NanoView<StatsLogic, void>(
+      create: (reg) => reg.get<StatsLogic>(),
+      // We don't want to dispose StatsLogic when this widget is removed/rebuilt
+      // because it's shared with QuoteLogic.
+      autoDispose: false,
       builder: (context, logic) {
         return (logic.saulCount, logic.jesseCount, logic.waltCount).watch((context, saul, jesse, walt) {
            return Wrap(
@@ -107,7 +124,10 @@ class QuoteView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return NanoView(
-      create: (_) => QuoteLogic(),
+      create: (reg) => QuoteLogic(
+        reg.get<QuoteService>(),
+        reg.get<StatsLogic>(),
+      ),
       builder: (context, logic) {
         return AsyncAtomBuilder<Quote>(
           atom: logic.quote,

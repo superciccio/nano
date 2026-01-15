@@ -1,51 +1,54 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:pokedex/main.dart';
-import 'package:pokedex/pokedex_logic.dart';
+import '../lib/main.dart';
+import '../lib/pokedex_logic.dart';
 import 'package:nano/nano.dart';
 
-class MockPokedexLogic extends PokedexLogic {
+// Mock Service
+class MockPokedexService implements PokedexService {
   @override
-  Future<void> findPokemon(String query) async {
-    // Simulate finding pokemon by updating the AsyncAtom
-    await pokemon.track(() async {
-      await Future.delayed(const Duration(milliseconds: 100)); // Simulate net
+  Future<Pokemon> fetchPokemon(String name) async {
+    await Future.delayed(const Duration(milliseconds: 100)); // Simulate net
 
-      if (query == 'pikachu') {
-        return Pokemon(
-          id: 25,
-          name: 'pikachu',
-          height: 4,
-          weight: 60,
-          spriteUrl: 'https://example.com/pikachu.png',
-          types: ['electric'],
-          flavorText: 'Pika Pika!',
-          isLegendary: false,
-        );
-      } else {
-        throw 'Pokemon "$query" not found!';
-      }
-    }());
+    if (name == 'pikachu') {
+      return Pokemon(
+        id: 25,
+        name: 'pikachu',
+        height: 4,
+        weight: 60,
+        spriteUrl: 'https://example.com/pikachu.png',
+        types: ['electric'],
+        flavorText: 'Pika Pika!',
+        isLegendary: false,
+      );
+    } else {
+      throw 'Pokemon "$name" not found!';
+    }
   }
 }
 
 void main() {
   testWidgets('Pokedex UI starts in idle state', (WidgetTester tester) async {
-    await tester.pumpWidget(const PokedexApp());
+    await tester.pumpWidget(
+      Scope(
+        modules: [
+          NanoFactory<PokedexService>((_) => MockPokedexService()),
+        ],
+        child: const PokedexApp(),
+      ),
+    );
 
     expect(find.text('Nano Pokedex'), findsOneWidget);
     expect(find.text('Search for a Pokemon to begin!'), findsOneWidget);
   });
 
   testWidgets('Search updates state and UI', (WidgetTester tester) async {
-    final logic = MockPokedexLogic();
-
     await tester.pumpWidget(
-      NanoView(
-        create: (_) => logic, // Inject mock logic
-        builder: (context, logic) {
-          return const MaterialApp(home: PokedexHome());
-        },
+      Scope(
+        modules: [
+          NanoFactory<PokedexService>((_) => MockPokedexService()),
+        ],
+        child: const PokedexApp(),
       ),
     );
 

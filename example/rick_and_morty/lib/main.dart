@@ -3,7 +3,14 @@ import 'package:nano/nano.dart';
 import 'rm_logic.dart';
 
 void main() {
-  runApp(const RickAndMortyApp());
+  runApp(
+    Scope(
+      modules: [
+        RickAndMortyService(),
+      ],
+      child: const RickAndMortyApp(),
+    ),
+  );
 }
 
 class RickAndMortyApp extends StatelessWidget {
@@ -31,7 +38,7 @@ class CharacterListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return NanoView(
-      create: (_) => RMLogic(),
+      create: (reg) => RMLogic(reg.get()),
       builder: (context, logic) {
         return Scaffold(
           appBar: AppBar(
@@ -63,19 +70,6 @@ class CharacterListScreen extends StatelessWidget {
                 flex: 2,
                 child: AsyncAtomBuilder<List<Character>>(
                   atom: logic.characters,
-                  // We want to show the list even if loading (sticky data)
-                  // So we handle 'loading' by showing data if available + spinner,
-                  // but AsyncAtomBuilder default loading overrides data.
-                  // We can use .when() manually or just rely on 'data' callback being called if we have sticky data?
-                  // No, AsyncAtomBuilder maps purely on state type.
-
-                  // If we want sticky data support (show list while loading more),
-                  // we should inspect the state manually or check `state.dataOrNull`.
-                  // Let's use `Watch` for full control or assume logic.characters keeps data in loading state
-                  // (which AsyncAtom does by default).
-                  // But AsyncAtom IS `AsyncLoading` type.
-
-                  // Let's manually map to handle "Loading with Data".
                   loading: (context) {
                     final data = logic.characters.value.dataOrNull;
                     if (data != null && data.isNotEmpty) {
@@ -84,7 +78,7 @@ class CharacterListScreen extends StatelessWidget {
                     return const Center(child: CircularProgressIndicator());
                   },
                   error: (context, error) => Center(child: Text('Error: $error')),
-                  idle: (context) => const SizedBox.shrink(), // Should autoswitch to loading in onInit
+                  idle: (context) => const SizedBox.shrink(),
                   data: (context, chars) => _buildList(context, logic, chars),
                 ),
               ),
