@@ -166,5 +166,6 @@ class SudokuLogic extends NanoLogic<void> {
   @override
   void onReady() {
     newGame(Difficulty.easy);
+    status.value = NanoStatus.success;
   }
 }
