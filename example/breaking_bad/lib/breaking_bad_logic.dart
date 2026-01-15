@@ -2,10 +2,39 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:nano/nano.dart';
 
+// -----------------------------------------------------------------------------
+// Service
+// -----------------------------------------------------------------------------
+class QuoteService {
+  Future<Quote> fetchQuote() async {
+    final response = await http.get(Uri.parse('https://api.breakingbadquotes.xyz/v1/quotes'));
+    final data = json.decode(response.body) as List;
+
+    if (data.isNotEmpty) {
+      final q = data[0];
+      return Quote(
+        quote: q['quote'],
+        author: q['author'],
+      );
+    }
+    throw 'No quotes found';
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Models
+// -----------------------------------------------------------------------------
+class Quote {
+  final String quote;
+  final String author;
+  Quote({required this.quote, required this.author});
+}
+
+// -----------------------------------------------------------------------------
+// Logic
+// -----------------------------------------------------------------------------
 class StatsLogic extends NanoLogic<void> {
-  static final StatsLogic _instance = StatsLogic._internal();
-  factory StatsLogic() => _instance;
-  StatsLogic._internal();
+  // Singleton removed! Managed by Scope.
 
   final saulCount = Atom<int>(0, label: 'Saul Count');
   final jesseCount = Atom<int>(0, label: 'Jesse Count');
@@ -25,34 +54,19 @@ class StatsLogic extends NanoLogic<void> {
   }
 }
 
-class Quote {
-  final String quote;
-  final String author;
-  Quote({required this.quote, required this.author});
-}
-
 class QuoteLogic extends NanoLogic<void> {
+  final QuoteService _service;
+  final StatsLogic _statsLogic;
+
+  QuoteLogic(this._service, this._statsLogic);
+
   final quote = AsyncAtom<Quote>(label: 'quote');
 
   Future<void> fetchQuote() async {
     await quote.track(() async {
-      final response = await http.get(Uri.parse('https://api.breakingbadquotes.xyz/v1/quotes'));
-      final data = json.decode(response.body) as List;
-
-      if (data.isNotEmpty) {
-        final q = data[0];
-        final author = q['author'];
-
-        final newQuote = Quote(
-          quote: q['quote'],
-          author: author,
-        );
-
-        StatsLogic().increment(author);
-
-        return newQuote;
-      }
-      throw 'No quotes found';
+      final newQuote = await _service.fetchQuote();
+      _statsLogic.increment(newQuote.author);
+      return newQuote;
     }());
   }
 }

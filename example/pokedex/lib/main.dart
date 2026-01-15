@@ -3,7 +3,14 @@ import 'package:nano/nano.dart';
 import 'pokedex_logic.dart';
 
 void main() {
-  runApp(const PokedexApp());
+  runApp(
+    Scope(
+      modules: [
+        PokedexService(),
+      ],
+      child: const PokedexApp(),
+    ),
+  );
 }
 
 class PokedexApp extends StatelessWidget {
@@ -12,7 +19,7 @@ class PokedexApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return NanoView(
-      create: (reg) => PokedexLogic(),
+      create: (reg) => PokedexLogic(reg.get()),
       builder: (context, logic) {
         return Watch(
           logic.themeColor,
@@ -24,7 +31,7 @@ class PokedexApp extends StatelessWidget {
                 colorScheme: ColorScheme.fromSeed(seedColor: color),
                 useMaterial3: true,
               ),
-              home: const PokedexHome(),
+              home: PokedexHome(logic: logic),
             );
           },
         );
@@ -34,31 +41,12 @@ class PokedexApp extends StatelessWidget {
 }
 
 class PokedexHome extends StatelessWidget {
-  const PokedexHome({super.key});
+  final PokedexLogic logic;
+
+  const PokedexHome({super.key, required this.logic});
 
   @override
   Widget build(BuildContext context) {
-    final logic = context.read<PokedexLogic>();
-
-    // Fix: We can't assign a Widget (Watch) to appBar which expects PreferredSizeWidget.
-    // AppBar implements PreferredSizeWidget.
-    // We can just wrap the specific properties inside AppBar with Watch,
-    // OR wrap the Scaffold itself if we want to rebuild the whole scaffold (easiest for theme).
-
-    // However, PokedexApp already watches themeColor and updates the Theme.
-    // So the Scaffold's AppBar will automatically pick up the primary color from the Theme!
-    // We don't need to manually watch logic.themeColor here for AppBar color unless we want to force it.
-    // But let's assume we want explicitly dynamic AppBar background.
-
-    // Solution: Use PreferredSize wrapper to satisfy type system if we must wrap the whole AppBar.
-    // Better Solution: Use AtomBuilder/Watch INSIDE the AppBar properties.
-
-    // BUT AppBar properties like backgroundColor take a Color, not a Widget.
-    // So we CANNOT use Watch inside backgroundColor: Watch(...)
-
-    // So we MUST wrap the AppBar.
-    // PreferredSize(preferredSize: Size.fromHeight(kToolbarHeight), child: Watch(..., builder: () => AppBar(...)))
-
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),

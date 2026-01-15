@@ -3,6 +3,52 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:nano/nano.dart';
 
+// -----------------------------------------------------------------------------
+// Service
+// -----------------------------------------------------------------------------
+class PokedexService {
+  Future<Pokemon> fetchPokemon(String name) async {
+    final response = await http.get(Uri.parse('https://pokeapi.co/api/v2/pokemon/$name'));
+    if (response.statusCode == 404) {
+      throw 'Pokemon "$name" not found!';
+    }
+
+    final data = json.decode(response.body);
+
+    final speciesUrl = data['species']['url'];
+    final speciesResponse = await http.get(Uri.parse(speciesUrl));
+    final speciesData = json.decode(speciesResponse.body);
+
+    String flavor = "No description available.";
+    for (var entry in speciesData['flavor_text_entries']) {
+      if (entry['language']['name'] == 'en') {
+        flavor = entry['flavor_text'].replaceAll('\n', ' ');
+        break;
+      }
+    }
+
+    String? animated;
+    try {
+      animated = data['sprites']['versions']['generation-v']['black-white']['animated']['front_default'];
+    } catch (_) {}
+
+    return Pokemon(
+      id: data['id'],
+      name: data['name'],
+      height: data['height'],
+      weight: data['weight'],
+      spriteUrl: data['sprites']['front_default'] ?? '',
+      animatedSpriteUrl: animated,
+      types: (data['types'] as List).map((t) => t['type']['name'] as String).toList(),
+      flavorText: flavor,
+      isLegendary: speciesData['is_legendary'] ?? false,
+    );
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Models
+// -----------------------------------------------------------------------------
 class Pokemon {
   final int id;
   final String name;
@@ -27,7 +73,14 @@ class Pokemon {
   });
 }
 
+// -----------------------------------------------------------------------------
+// Logic
+// -----------------------------------------------------------------------------
 class PokedexLogic extends NanoLogic<void> {
+  final PokedexService _service;
+
+  PokedexLogic(this._service);
+
   // AsyncAtom usage
   final pokemon = AsyncAtom<Pokemon>(label: 'pokemon');
 
@@ -78,42 +131,7 @@ class PokedexLogic extends NanoLogic<void> {
 
     // Use track() with an immediate async function execution
     await pokemon.track(() async {
-      final response = await http.get(Uri.parse('https://pokeapi.co/api/v2/pokemon/$name'));
-      if (response.statusCode == 404) {
-        throw 'Pokemon "$query" not found!';
-      }
-
-      final data = json.decode(response.body);
-
-      final speciesUrl = data['species']['url'];
-      final speciesResponse = await http.get(Uri.parse(speciesUrl));
-      final speciesData = json.decode(speciesResponse.body);
-
-      String flavor = "No description available.";
-      for (var entry in speciesData['flavor_text_entries']) {
-        if (entry['language']['name'] == 'en') {
-          flavor = entry['flavor_text'].replaceAll('\n', ' ');
-          break;
-        }
-      }
-
-      String? animated;
-      try {
-        animated = data['sprites']['versions']['generation-v']['black-white']['animated']['front_default'];
-      } catch (_) {}
-
-      final newPokemon = Pokemon(
-        id: data['id'],
-        name: data['name'],
-        height: data['height'],
-        weight: data['weight'],
-        spriteUrl: data['sprites']['front_default'] ?? '',
-        animatedSpriteUrl: animated,
-        types: (data['types'] as List).map((t) => t['type']['name'] as String).toList(),
-        flavorText: flavor,
-        isLegendary: speciesData['is_legendary'] ?? false,
-      );
-
+      final newPokemon = await _service.fetchPokemon(name);
       _cache[name] = newPokemon;
       return newPokemon;
     }());
