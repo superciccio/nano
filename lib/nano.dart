@@ -1,3 +1,4 @@
+/// {@category Core}
 library;
 
 export 'core/nano_core.dart';

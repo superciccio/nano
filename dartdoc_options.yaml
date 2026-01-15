@@ -1,0 +1,11 @@
+dartdoc:
+  categoryOrder:
+    - Core
+    - Logic
+    - Views
+    - Utils
+  linkToSource:
+    root: '.'
+    uriTemplate: 'https://github.com/superciccio/nano/blob/main/%f%#L%l%'
+  errors:
+    - unresolved-doc-reference

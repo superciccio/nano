@@ -184,6 +184,42 @@ class _UserPageState extends State<UserPage> {
 }
 ```
 
+
+### ✅ Lifecycle: onInit vs onReady
+
+**CRITICAL RULE**: DO NOT set Atom values in `onInit`. It is for configuration only.
+
+```dart
+// CORRECT - Logic initialization
+class GameLogic extends NanoLogic<void> {
+  final score = 0.toAtom('score');
+
+  @override
+  void onInit() {
+    // ✅ OK: Configuration / Listeners
+    // ✅ OK: Starting async work (without await)
+  }
+
+  @override
+  void onReady() {
+    // ✅ OK: Side-effects / State Updates
+    score.value = 100; 
+    newGame();
+  }
+}
+
+// WRONG - Side-effects in onInit
+class GameLogic extends NanoLogic<void> {
+  final score = 0.toAtom('score');
+
+  @override
+  void onInit() {
+    score.value = 100; // ❌ ERROR: State updates forbidden in onInit
+    newGame(); // ❌ ERROR: Implicitly updates state
+  }
+}
+```
+
 ---
 
 ## ATOM EXTENSIONS - USE THEM!
@@ -502,6 +538,7 @@ testWidgets('login page', (tester) async {
 | Manual `dispose()` | Let `NanoView` handle it |
 | `ValueListenableBuilder` | Use `Watch` for consistency |
 | Forgetting `super.set()` | Always call in custom Atoms |
+| Updates in `onInit` | Move to `onReady` |
 
 ---
 

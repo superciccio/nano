@@ -9,10 +9,10 @@ class NanoDebugService {
   static final List<Atom> _registeredAtoms = [];
   static final List<NanoDerivation> _registeredDerivations = [];
 
-  /// [Internal] Returns all registered atoms.
+  /// **Internal** Returns all registered atoms.
   static List<Atom> get registeredAtoms => List.unmodifiable(_registeredAtoms);
 
-  /// [Internal] Returns the number of registered atoms. Used for testing.
+  /// **Internal** Returns the number of registered atoms. Used for testing.
   @visibleForTesting
   static int get registeredAtomCount => _registeredAtoms.length;
 

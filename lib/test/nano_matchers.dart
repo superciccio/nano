@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:matcher/matcher.dart' as m;
 import 'package:nano/nano.dart';
 
-/// Waits for [atom] to emit values matching [matchers] in order.
+/// Waits for [atom] to emit values matching matchers in order.
 ///
 /// Example:
 /// ```dart
