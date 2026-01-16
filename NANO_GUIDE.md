@@ -623,3 +623,29 @@ nanoTestWidgets('Clicking updates count',
   },
 );
 ```
+
+## 10. DevTools Extension
+
+Nano includes a powerful DevTools extension to help you debug your application.
+
+**Features:**
+- **Atom Inspector**: View the real-time state of all registered Atoms.
+- **State History**: Track the history of state changes with timestamps.
+- **Time Travel**: Revert your application state to any previous point in time.
+
+To use the DevTools extension, simply run your application in debug mode and open the Flutter DevTools.
+
+## 11. Static Analysis & Lints (`nano_lints`)
+
+The `nano_lints` package provides a set of custom lint rules to help you write correct and idiomatic Nano code.
+
+**Available Rules:**
+- `avoid_atom_outside_logic`: Ensures that Atoms are only created inside `NanoLogic` or `Service` classes.
+- `logic_naming_convention`: Enforces that `NanoLogic` classes are named with a `Logic` suffix.
+- `refactor_to_nano`: Suggests refactoring `StatefulWidget`s to `NanoComponent`s.
+- `migrate_from_provider`: Helps migrate from the `provider` package to Nano.
+- `migrate_from_signals`: Helps migrate from the `signals` package to Nano.
+- `avoid_nested_watch`: Prevents nesting `Watch` widgets and suggests using tuple syntax.
+- `suggest_nano_action`: Suggests creating a `NanoAction` for complex UI callbacks.
+
+To use the lints, add `nano_lints` and `custom_lint` to your `dev_dependencies` in `pubspec.yaml` and enable the plugin in `analysis_options.yaml`.
