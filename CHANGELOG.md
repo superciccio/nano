@@ -8,6 +8,10 @@
     - Added `nanoTestWidgets` for simplified integration testing.
     - Added `NanoTestHarness` for snapshot testing of logic flows.
     - Added `tester.pumpSettled()` to deterministic wait for Nano async operations.
+- **New Feature: DevTools Extension**:
+    - Added a DevTools extension for inspecting and time-travel debugging.
+- **New Feature: Static Analysis**:
+    - Added `nano_lints` package with custom lints for best practices.
 - **Breaking Changes**:
     - `NanoView` and `Scope` API refinements for better type safety.
     - Moved annotations and generator to separate packages (`nano_annotations`, `nano_generator`).

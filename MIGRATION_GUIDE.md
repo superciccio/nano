@@ -1,5 +1,40 @@
 # 🪐 Nano Migration Guide
 
+## 0.8.0 Migration
+
+### `NanoView` and `Scope` API Refinements
+To improve type safety and align with the new `NanoComponent` API, `NanoView` and `Scope` have been refined.
+
+**Before:**
+```dart
+// Old Scope with a single `child`
+Scope(
+  child: MyApp(),
+)
+
+// Old NanoView with `builder`
+NanoView<MyLogic, void>(
+  builder: (context, logic) => MyWidget(),
+)
+```
+
+**After:**
+```dart
+// New Scope with `modules` and `child`
+Scope(
+  modules: [
+    MyService(),
+  ],
+  child: MyApp(),
+)
+
+// New NanoView with `create` and `builder`
+NanoView<MyLogic, void>(
+  create: (reg) => MyLogic(),
+  builder: (context, logic) => MyWidget(),
+)
+```
+
 ## 0.6.0 Migration
 
 ### `SelectorAtom` Deprecation

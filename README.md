@@ -66,6 +66,7 @@ class CounterPage extends StatelessWidget {
 - **Reactive Collections**: Built-in `NanoList`, `NanoMap`, and `NanoSet` for mutable state.
 - **Snapshot Testing**: Record and verify complex user flows with zero manual assertions.
 - **Time-Travel Debugging**: DevTools extension to inspect and revert state changes.
+- **Static Analysis**: Custom lints to enforce best practices and assist with migrations.
 
 ## 🍬 Syntactic Sugar
 
@@ -108,6 +109,14 @@ Nano comes with a powerful DevTools extension to make debugging a breeze.
 - **History View**: See a timeline of all state changes.
 - **Time-Travel**: Revert to any previous state with one click.
 
+## Lints (`nano_lints`)
+
+The `nano_lints` package provides a set of custom lint rules to help you write correct and idiomatic Nano code.
+
+- `avoid_atom_outside_logic`: Ensures that Atoms are only created inside `NanoLogic` or `Service` classes.
+- `logic_naming_convention`: Enforces that `NanoLogic` classes are named with a `Logic` suffix.
+- `refactor_to_nano`: Suggests refactoring `StatefulWidget`s to `NanoComponent`s.
+
 ## 🤖 AI / LLM Usage
 
 Are you an AI? **Read `NANO_GUIDE.md`**.
@@ -128,6 +137,9 @@ dev_dependencies:
     path: ./packages/nano_generator
   nano_test_utils:
     path: ./packages/nano_test_utils
+  nano_lints:
+    path: ./packages/nano_lints
+  custom_lint: ^0.6.4
 ```
 
 ## 📄 License
