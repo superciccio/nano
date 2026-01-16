@@ -185,12 +185,18 @@ abstract class NanoLogic<P> extends ChangeNotifier
     for (final sub in _subscriptions) {
       sub.cancel();
     }
+    _subscriptions.clear();
+
     for (final disposer in _disposers) {
       disposer();
     }
+    _disposers.clear();
+
     for (final unbind in _bindings) {
       unbind();
     }
+    _bindings.clear();
+
     status.dispose();
     error.dispose();
     super.dispose();
