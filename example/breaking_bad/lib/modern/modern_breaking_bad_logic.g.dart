@@ -7,57 +7,64 @@ part of 'modern_breaking_bad_logic.dart';
 // **************************************************************************
 
 mixin _$ModernStatsLogic on _ModernStatsLogic {
-  late final _saulCount$Atom =
+  late final _$saulCountAtom =
       Atom<int>(super.saulCount, label: 'ModernStatsLogic.saulCount');
   @override
-  int get saulCount {
-    return _saulCount$Atom.value;
-  }
-
+  int get saulCount => _$saulCountAtom.value;
   @override
   set saulCount(int value) {
     super.saulCount = value;
-    _saulCount$Atom.value = value;
+    _$saulCountAtom.value = value;
   }
 
-  late final _jesseCount$Atom =
+  Atom<int> get saulCount$ => _$saulCountAtom;
+  late final _$jesseCountAtom =
       Atom<int>(super.jesseCount, label: 'ModernStatsLogic.jesseCount');
   @override
-  int get jesseCount {
-    return _jesseCount$Atom.value;
-  }
-
+  int get jesseCount => _$jesseCountAtom.value;
   @override
   set jesseCount(int value) {
     super.jesseCount = value;
-    _jesseCount$Atom.value = value;
+    _$jesseCountAtom.value = value;
   }
 
-  late final _waltCount$Atom =
+  Atom<int> get jesseCount$ => _$jesseCountAtom;
+  late final _$waltCountAtom =
       Atom<int>(super.waltCount, label: 'ModernStatsLogic.waltCount');
   @override
-  int get waltCount {
-    return _waltCount$Atom.value;
-  }
-
+  int get waltCount => _$waltCountAtom.value;
   @override
   set waltCount(int value) {
     super.waltCount = value;
-    _waltCount$Atom.value = value;
+    _$waltCountAtom.value = value;
   }
 
-  late final _totalQuotes$Atom =
+  Atom<int> get waltCount$ => _$waltCountAtom;
+  late final _$totalQuotesAtom =
       Atom<int>(super.totalQuotes, label: 'ModernStatsLogic.totalQuotes');
   @override
-  int get totalQuotes {
-    return _totalQuotes$Atom.value;
-  }
-
+  int get totalQuotes => _$totalQuotesAtom.value;
   @override
   set totalQuotes(int value) {
     super.totalQuotes = value;
-    _totalQuotes$Atom.value = value;
+    _$totalQuotesAtom.value = value;
   }
+
+  Atom<int> get totalQuotes$ => _$totalQuotesAtom;
 }
 
-mixin _$ModernQuoteLogic on _ModernQuoteLogic {}
+mixin _$ModernQuoteLogic on _ModernQuoteLogic {
+  late final _$quoteAtom =
+      AsyncAtom<Quote>(initial: super.quote, label: 'ModernQuoteLogic.quote');
+  @override
+  AsyncState<Quote> get quote => _$quoteAtom.value;
+  @override
+  set quote(AsyncState<Quote> value) {
+    super.quote = value;
+    _$quoteAtom.value = value;
+  }
+
+  @override
+  AsyncAtom<Quote> get quote$ => _$quoteAtom;
+  Future<void> trackQuote(Future<Quote> future) => _$quoteAtom.track(future);
+}

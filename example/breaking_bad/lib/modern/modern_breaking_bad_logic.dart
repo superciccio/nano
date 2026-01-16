@@ -34,12 +34,14 @@ abstract class _ModernQuoteLogic extends NanoLogic {
 
   _ModernQuoteLogic(this._service, this._statsLogic);
 
-  // Manual AsyncAtom because generator handles @state <T> as Atom<T>.
-  // We want AsyncAtom<Quote> for async state management.
-  late final quote = AsyncAtom<Quote>(label: 'quote');
+  @async
+  AsyncState<Quote> quote = const AsyncIdle();
+
+  // Abstract getter to access the generated Atom
+  AsyncAtom<Quote> get quote$;
 
   Future<void> fetchQuote() async {
-    await quote.track(() async {
+    await quote$.track(() async {
       final newQuote = await _service.fetchQuote();
       _statsLogic.increment(newQuote.author);
       return newQuote;

@@ -11,3 +11,17 @@ class State {
 }
 
 const state = State();
+
+class AsyncStateAnnotation {
+  const AsyncStateAnnotation();
+}
+
+/// Annotation for AsyncAtom.
+const async = AsyncStateAnnotation();
+
+class StreamStateAnnotation {
+  const StreamStateAnnotation();
+}
+
+/// Annotation for StreamAtom.
+const stream = StreamStateAnnotation();
