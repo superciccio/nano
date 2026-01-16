@@ -2,6 +2,7 @@
 library;
 
 export 'core/nano_core.dart';
+export 'core/nano_collection.dart';
 export 'core/nano_logic.dart';
 export 'core/nano_di.dart';
 export 'core/nano_config.dart';

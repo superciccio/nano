@@ -122,9 +122,15 @@ class _ScopeState extends State<Scope> {
     if (!listEquals(oldWidget.modules, widget.modules) ||
         !listEquals(oldWidget.overrides, widget.overrides) ||
         oldWidget.config != widget.config) {
-      _registry.clear();
+      _registry.dispose();
       _registerModules();
     }
+  }
+
+  @override
+  void dispose() {
+    _registry.dispose();
+    super.dispose();
   }
 
   @override

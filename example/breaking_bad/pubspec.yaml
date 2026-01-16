@@ -13,12 +13,17 @@ dependencies:
     sdk: flutter
   nano:
     path: ../../
+  nano_annotations:
+    path: ../../packages/nano_annotations
   http: ^1.1.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
+  build_runner: ^2.4.6
+  nano_generator:
+    path: ../../packages/nano_generator
 
 flutter:
   uses-material-design: true
