@@ -1,12 +1,12 @@
 name: Update Docs Request
 
 on:
-  push:
+  workflow_run:
+    workflows: ["Verify"]
+    types:
+      - completed
     branches:
       - main
-    paths:
-      - 'lib/**'
-      - 'pubspec.yaml'
 
 permissions:
   issues: write
@@ -15,6 +15,7 @@ permissions:
 jobs:
   request-docs-update:
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - uses: actions/checkout@v4
 
