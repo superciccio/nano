@@ -77,3 +77,9 @@ To make this PoC a production-ready testing library for Nano, the following task
     *   `DebouncedAtom` timers.
     *   Microtasks and standard Futures.
     *   Timeout safety (throw if logic hangs).
+
+## CI / Continuous Integration
+
+⚠️ **CRITICAL: Protection Against "Lazy Updates"**
+
+In a CI environment, the `UPDATE_GOLDENS` flag should **never** be used. This ensures that the Git repository remains the "Source of Truth". Developers must update goldens locally, verify the JSON diff, and commit the changes to ensure logic shifts are caught during Code Review.
