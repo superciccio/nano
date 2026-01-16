@@ -8,127 +8,105 @@ Nano is designed to be **minimalist**, **atomic**, and **testable**. It combines
 
 ---
 
-## ✨ Why Nano?
+## ✨ Choose Your Style
 
-- **Atomic**: State is broken down into small, independent `Atom`s.
-- **Surgical**: `.watch()` extension rebuilds only what changed.
-- **Smart**: `NanoView` handles Loading/Error/Empty states automatically.
-- **Clean**: Dependency Injection via `Scope` and `Registry` is built-in.
-- **Action-Based**: Optional `Action`s provide a structured way to manage state changes.
-- **Time-Travel Debugging**: The DevTools extension allows you to inspect and revert state changes.
-- **Magic**: Syntactic sugar makes code concise (`count()`, `count(5)`, `count.increment()`).
+Nano supports two development styles. Both share the same high-performance engine.
 
-## 🚀 Quick Start
-
-### 1. The Logic (`NanoLogic`)
-Create your business logic. Use `Atom` for state and `Action`s for events.
+### 1. Modern Nano (Generated) 🚀
+**Best for: Maximum velocity and minimal boilerplate.** Uses code generation to hide Atoms and automate UI tracking.
 
 ```dart
-// 1. Define your actions
-class Increment extends NanoAction {}
+@nano
+abstract class _CounterLogic extends NanoLogic {
+  @state int count = 0;
+  void increment() => count++;
+}
 
-// 2. Create your logic
-class CounterLogic extends NanoLogic<void> {
-  // Sugar: .toAtom() creates an Atom<int>
-  final count = 0.toAtom(label: 'count');
+class CounterPage extends NanoComponent {
+  @override
+  List<Object> get modules => [NanoLazy((_) => CounterLogic())];
 
   @override
-  void onAction(NanoAction action) {
-    if (action is Increment) {
-      count.increment();
-    }
+  Widget view(context) {
+    final logic = context.use<CounterLogic>();
+    return Text('Count: ${logic.count}'); // Automatically tracks usage!
   }
 }
 ```
 
-### 2. The Injection (`Scope`)
-Wrap your app (or feature) in a `Scope`.
+### 2. Classic Nano (Manual) 🛠️
+**Best for: Full control and zero build steps.** Uses explicit Atoms and standard widgets.
 
 ```dart
-void main() {
-  runApp(
-    Scope(
-      modules: [
-        // Factory: New instance every time
-        NanoFactory((r) => CounterLogic()),
-      ],
-      child: MyApp(),
-    ),
-  );
+class CounterLogic extends NanoLogic {
+  final count = Atom(0);
+  void increment() => count.value++;
 }
-```
 
-### 3. The View (`NanoView`)
-Bind logic to UI. `NanoView` handles creation and disposal.
-
-```dart
 class CounterPage extends StatelessWidget {
   @override
-  Widget build(BuildContext context) {
+  Widget build(context) {
     return NanoView<CounterLogic, void>(
-      create: (reg) => reg.get<CounterLogic>(), // Inject!
+      create: (r) => CounterLogic(),
       builder: (context, logic) {
-        return Scaffold(
-          // Surgical: Only this Text rebuilds!
-          body: logic.count.watch((context, value) {
-            return Text('Count: $value');
-          }),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () => logic.dispatch(Increment()), // Dispatch an action
-            child: Icon(Icons.add),
-          ),
-        );
+        return logic.count.watch((context, value) => Text('Count: $value'));
       },
     );
   }
 }
 ```
 
+---
+
+## ✨ Why Nano?
+
+- **Atomic**: State is broken down into small, independent `Atom`s.
+- **Surgical**: Rebuilds only what changed, either implicitly (Modern) or explicitly (Classic).
+- **Component-Based**: `NanoComponent` merges DI and View into a single, clean class.
+- **Reactive Collections**: Built-in `NanoList`, `NanoMap`, and `NanoSet` for mutable state.
+- **Snapshot Testing**: Record and verify complex user flows with zero manual assertions.
+- **Time-Travel Debugging**: DevTools extension to inspect and revert state changes.
+
 ## 🍬 Syntactic Sugar
 
 Nano loves clean code.
 
-| Operation | Standard | Nano Sugar |
+| Operation | Classic | Modern (Generated) |
 | :--- | :--- | :--- |
-| **Create** | `Atom<int>(0)` | `0.toAtom()` |
-| **Get** | `atom.value` | `atom()` |
-| **Set** | `atom.set(5)` | `atom(5)` |
-| **Update** | `atom.update((x) => x + 1)` | `atom((x) => x + 1)` |
-| **Watch** | `Watch(atom, builder: ...)` | `atom.watch(...)` |
-| **Watch Many** | Nested `Watch` widgets | `(atom1, atom2).watch(...)` |
-| **Math** | `atom.value++` | `atom.increment()` |
-| **Bool** | `atom.value = !atom.value` | `atom.toggle()` |
-| **Collections** | `atom.set([...atom.value, item])` | `atom.add(item)` |
+| **Logic** | `final count = Atom(0)` | `@state int count = 0` |
+| **Mutation** | `count.value++` | `count++` |
+| **Read** | `count.value` | `count` |
+| **UI** | `logic.count.watch(...)` | `logic.count` (inside `NanoComponent`) |
+| **Async** | `final data = AsyncAtom()` | `@async AsyncState data = ...` |
 
 ## ⚡ Advanced Features
 
-### Batch Updates
-Group multiple updates into a single notification to improve performance and prevent glitches.
+### Reactive Collections
+Use mutable collections that trigger UI updates automatically.
 
 ```dart
-Nano.batch(() {
-  // These updates won't trigger listeners immediately
-  count.increment();
-  status.set(NanoStatus.loading);
-});
-// Listeners notified once here
+final todos = NanoList<String>();
+todos.add('New Item'); // UI updates automatically!
 ```
 
-### Persistence
-Automatically save state to storage (defaults to in-memory, swappable with SharedPreferences/Hive).
+### Snapshot Testing
+Test complex flows by comparing state history against a "Golden" JSON.
 
 ```dart
-// Auto-saves to storage whenever value changes
-final themeMode = PersistAtom('light', key: 'theme_mode');
+test('Login flow', () async {
+  final harness = NanoTestHarness(MyLogic());
+  await harness.record((logic) => logic.login());
+  harness.expectSnapshot('login_success');
+});
 ```
 
 ## 🛠️ DevTools Extension
 
 Nano comes with a powerful DevTools extension to make debugging a breeze.
 
-- **Atoms View**: Inspect the live state of all registered `Atom`s in your application.
+- **Atoms View**: Inspect the live state of all registered `Atom`s.
 - **History View**: See a timeline of all state changes.
-- **Time-Travel**: Revert to any previous state by clicking the "Revert" button next to a state change in the history view.
+- **Time-Travel**: Revert to any previous state with one click.
 
 ## 🤖 AI / LLM Usage
 
@@ -140,7 +118,16 @@ It contains the full technical specification, API signatures, and architectural 
 ```yaml
 dependencies:
   nano:
-    path: ./ # Or git url
+    path: ./
+  nano_annotations:
+    path: ./packages/nano_annotations
+
+dev_dependencies:
+  build_runner: ^2.4.6
+  nano_generator:
+    path: ./packages/nano_generator
+  nano_test_utils:
+    path: ./packages/nano_test_utils
 ```
 
 ## 📄 License
