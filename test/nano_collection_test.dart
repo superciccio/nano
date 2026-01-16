@@ -8,7 +8,7 @@ void main() {
 
     final disposer = autorun(() {
       // Just accessing length should track
-      final len = list.length; 
+      list.length; 
       calls++;
     });
 
@@ -45,7 +45,7 @@ void main() {
     
     final disposer = autorun(() {
       // Accessing keys tracks
-      final keys = map.keys.toList(); 
+      map.keys.toList(); 
       calls++;
     });
     

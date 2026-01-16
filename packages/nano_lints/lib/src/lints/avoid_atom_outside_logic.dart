@@ -25,12 +25,12 @@ class AvoidAtomOutsideLogic extends DartLintRule {
     }
 
     context.registry.addInstanceCreationExpression((node) {
-      final element = node.constructorName.element;
+      final element = node.constructorName.staticElement;
       if (element == null) return;
 
       final enclosing = element.enclosingElement;
       if (['Atom', 'ComputedAtom', 'AsyncAtom', 'StreamAtom', 'DebouncedAtom']
-              .contains(enclosing.name!) &&
+              .contains(enclosing.name) &&
           (enclosing.library.name == 'nano' ||
               enclosing.library.identifier.contains('package:nano/') == true)) {
         // Enforce that atoms are defined inside NanoLogic
@@ -41,12 +41,12 @@ class AvoidAtomOutsideLogic extends DartLintRule {
           return;
         }
 
-        final classElement = classDeclaration.declaredFragment?.element;
+        final classElement = classDeclaration.declaredElement;
         if (classElement == null) return;
 
         // Check if it extends NanoLogic or has a valid suffix
         final name = classElement.name;
-        final isValidSuffix = name != null &&
+        final isValidSuffix = 
             (name.endsWith('Service') ||
                 name.endsWith('Logic') ||
                 name.endsWith('Runner') ||
@@ -63,7 +63,7 @@ class AvoidAtomOutsideLogic extends DartLintRule {
     // Also check for .toAtom() extension calls
     context.registry.addMethodInvocation((node) {
       if (node.methodName.name == 'toAtom') {
-        final element = node.methodName.element;
+        final element = node.methodName.staticElement;
         if (element == null) return;
 
         // Verify it's the nano extension
@@ -78,11 +78,11 @@ class AvoidAtomOutsideLogic extends DartLintRule {
             return;
           }
 
-          final classElement = classDeclaration.declaredFragment?.element;
+          final classElement = classDeclaration.declaredElement;
           if (classElement == null) return;
 
           final name = classElement.name;
-          final isValidSuffix = name != null &&
+          final isValidSuffix = 
               (name.endsWith('Service') ||
                   name.endsWith('Logic') ||
                   name.endsWith('Runner') ||

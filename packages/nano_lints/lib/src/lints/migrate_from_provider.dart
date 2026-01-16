@@ -19,7 +19,7 @@ class MigrateFromProvider extends DartLintRule {
     context.registry.addInstanceCreationExpression((node) {
       if (!_isProviderImported(node)) return;
 
-      final typeName = node.constructorName.type.name.lexeme;
+      final typeName = node.constructorName.type.name2.lexeme;
       if (['ChangeNotifierProvider', 'Consumer', 'MultiProvider']
           .contains(typeName)) {
         reporter.atNode(node, _code);

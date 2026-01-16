@@ -50,7 +50,7 @@ class _AtomUpdateVisitor extends RecursiveAstVisitor<void> {
   void visitMethodInvocation(MethodInvocation node) {
     super.visitMethodInvocation(node);
 
-    final element = node.methodName.element;
+    final element = node.methodName.staticElement;
     if (element == null) return;
 
     // Check if the target is an Atom
