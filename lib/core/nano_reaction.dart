@@ -45,16 +45,16 @@ ReactionDisposer reaction<T>(
 
   final r = _Reaction(() {
     final newValue = tracker();
-    if (!firstRun) {
-      if (newValue != previousValue) {
+    if (firstRun) {
+      if (fireImmediately) {
         sideEffect(newValue);
       }
-    } else if (fireImmediately) {
+    } else if (newValue != previousValue) {
       sideEffect(newValue);
     }
     previousValue = newValue;
     firstRun = false;
-  });
+  }, label: label);
 
   r.schedule();
   return r.dispose;
