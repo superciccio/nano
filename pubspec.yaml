@@ -20,6 +20,9 @@ workspace:
   - example/kanban_studio
   - packages/nano_devtools_extension
   - packages/nano_lints
+  - packages/nano_annotations
+  - packages/nano_generator
+  - packages/nano_test_utils
 
 dependencies:
   flutter:
@@ -33,6 +36,8 @@ dev_dependencies:
   custom_lint: ^0.6.4
   nano_lints:
     path: packages/nano_lints
+
+# For information on the generic Dart part of this file, see the
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
