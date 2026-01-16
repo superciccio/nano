@@ -31,3 +31,16 @@ build/
 node_modules/
 .docusaurus/
 /coverage/
+
+# Flutter Ephemeral
+**/ephemeral/
+**/generated_plugin_registrant.dart
+**/generated_plugin_registrant.cc
+**/generated_plugin_registrant.h
+**/generated_plugins.cmake
+
+# Binaries
+**/*.so
+**/*.dll
+**/*.dylib
+
