@@ -22,3 +22,5 @@ dev_dependencies:
   build_runner: ^2.4.6
   nano_generator:
     path: ../../packages/nano_generator
+  nano_test_utils:
+    path: ../../packages/nano_test_utils

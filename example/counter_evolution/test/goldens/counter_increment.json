@@ -1,0 +1,14 @@
+[
+  {
+    "type": "change",
+    "label": "ModernCounterLogic.count",
+    "old": 0,
+    "new": 1
+  },
+  {
+    "type": "change",
+    "label": "ModernCounterLogic.count",
+    "old": 1,
+    "new": 2
+  }
+]
