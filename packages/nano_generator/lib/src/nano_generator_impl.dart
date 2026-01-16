@@ -19,7 +19,8 @@ class NanoGenerator extends GeneratorForAnnotation<Nano> {
     }
 
     final className = element.name;
-    final actualPublicName = className.startsWith('_') ? className.substring(1) : className;
+    final actualPublicName =
+        className.startsWith('_') ? className.substring(1) : className;
 
     final fields = element.fields.where(_isNanoField);
 
@@ -84,10 +85,11 @@ class NanoGenerator extends GeneratorForAnnotation<Nano> {
     buffer.writeln(
         "  late final $atomName = AsyncAtom<$innerType>(initial: super.${field.name}, label: '$publicName.${field.name}');");
     _generateAccessors(buffer, field, type, atomName, 'AsyncAtom', innerType);
-    
+
     // Add track[Name] helper (experimental)
     final capitalized = field.name[0].toUpperCase() + field.name.substring(1);
-    buffer.writeln('  Future<void> track$capitalized(Future<$innerType> future) => $atomName.track(future);');
+    buffer.writeln(
+        '  Future<void> track$capitalized(Future<$innerType> future) => $atomName.track(future);');
   }
 
   void _generateStreamAtom(StringBuffer buffer, FieldElement field, String type,
@@ -98,8 +100,13 @@ class NanoGenerator extends GeneratorForAnnotation<Nano> {
     );
   }
 
-  void _generateAccessors(StringBuffer buffer, FieldElement field,
-      String fieldType, String atomName, String atomClass, String atomGenericType) {
+  void _generateAccessors(
+      StringBuffer buffer,
+      FieldElement field,
+      String fieldType,
+      String atomName,
+      String atomClass,
+      String atomGenericType) {
     final fieldName = field.name;
     buffer.writeln('  @override');
     buffer.writeln('  $fieldType get $fieldName => $atomName.value;');
@@ -108,15 +115,17 @@ class NanoGenerator extends GeneratorForAnnotation<Nano> {
     buffer.writeln('    super.$fieldName = value;');
     buffer.writeln('    $atomName.value = value;');
     buffer.writeln('  }');
-    
+
     // Check if the base class defines the $ getter already (common pattern for Logic access)
-    final hasBaseGetter = field.enclosingElement is ClassElement && 
-        (field.enclosingElement as ClassElement).getGetter('${fieldName}\$') != null;
+    final enclosingClass = field.enclosingElement3;
+    final hasBaseGetter = enclosingClass is ClassElement &&
+        enclosingClass.getGetter('${fieldName}\$') != null;
 
     if (hasBaseGetter) {
       buffer.writeln('  @override');
     }
-    buffer.writeln('  $atomClass<$atomGenericType> get ${fieldName}\$ => $atomName;');
+    buffer.writeln(
+        '  $atomClass<$atomGenericType> get ${fieldName}\$ => $atomName;');
   }
 
   String _getGenericType(DartType type, String expectedWrapper) {

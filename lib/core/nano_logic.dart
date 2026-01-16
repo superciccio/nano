@@ -74,9 +74,12 @@ abstract class NanoLogic<P> extends ChangeNotifier
   bool _isInitializing = false;
   bool get isInitializing => _isInitializing;
 
+  bool _isDisposed = false;
+  bool get isDisposed => _isDisposed;
+
   /// Internal method to ensure onInit and onReady are called correctly.
   void initialize(P params) {
-    if (_initialized) return;
+    if (_initialized || _isDisposed) return;
     _initialized = true;
 
     // Phase 1: Synchronous Init (Field setup)
@@ -95,8 +98,8 @@ abstract class NanoLogic<P> extends ChangeNotifier
       initContext.invalidate();
     }
 
-    // Phase 2: Asynchronous Ready (Side-effects)
     Future.microtask(() {
+      if (_isDisposed) return;
       runZoned(() => onReady(), zoneValues: {#nanoLogic: this});
     });
   }
@@ -109,6 +112,7 @@ abstract class NanoLogic<P> extends ChangeNotifier
 
   /// Dispatches an [NanoAction] to the logic.
   void dispatch(NanoAction action) {
+    if (_isDisposed) return;
     Nano.action(() => onAction(action));
   }
 
@@ -182,6 +186,8 @@ abstract class NanoLogic<P> extends ChangeNotifier
   @override
   @mustCallSuper
   void dispose() {
+    if (_isDisposed) return;
+    _isDisposed = true;
     for (final sub in _subscriptions) {
       sub.cancel();
     }

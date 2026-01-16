@@ -408,6 +408,7 @@ abstract class Atom<T> extends ChangeNotifier
 
   @override
   void dispose() {
+    if (_disposed) return;
     _disposed = true;
     super.dispose();
   }
@@ -851,10 +852,12 @@ class AsyncAtom<T> extends ValueAtom<AsyncState<T>> {
     Nano.action(() => set(AsyncLoading<T>(previousData)));
 
     return future.then((data) {
+      if (_disposed) return;
       if (_session == currentSession) {
         Nano.action(() => set(AsyncData<T>(data)));
       }
     }).catchError((e, s) {
+      if (_disposed) return;
       if (_session == currentSession) {
         Nano.action(() {
           set(AsyncError<T>(e, s, previousData));

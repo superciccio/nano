@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+void main() {
+  test('Lint placeholder', () {});
+}
 
 // expect_lint: refactor_to_nano
 class MyCounter extends StatefulWidget {

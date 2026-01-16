@@ -179,6 +179,7 @@ todos.add('New Todo'); // Triggers rebuild in NanoComponent/NanoConsumer
 4.  **Use `context.use<T>()`** to resolve dependencies in widgets.
 5.  **Always call `super.set()`** when overriding custom atoms.
 6.  **CI Safety**: Never use `UPDATE_GOLDENS=true` in CI environments.
+7.  **Disposal is Idempotent**: `Atom.dispose()` and `NanoLogic.dispose()` are safe to call multiple times. `AsyncAtom.track()` automatically checks disposal state before updating.
 
 ---
 

@@ -25,6 +25,9 @@ class Atom<T> extends ValueNotifier<T> {
 
   void set(T newValue);
   void update(T Function(T current) fn);
+
+  // Disposal
+  void dispose(); // Safe to call multiple times (idempotent)
 }
 ```
 
@@ -115,7 +118,7 @@ Manages asynchronous state (`AsyncIdle`, `AsyncLoading`, `AsyncData`, `AsyncErro
 ```dart
 class AsyncAtom<T> extends Atom<AsyncState<T>> {
   AsyncAtom({bool keepPreviousData = true}); // Default: true (Sticky Data)
-  Future<void> track(Future<T> future);
+  Future<void> track(Future<T> future); // Safe even if atom is disposed before completion
 }
 ```
 
@@ -263,7 +266,7 @@ Base class for Business Logic Components (BLoC/ViewModel).
 - `error`: `Atom<Object?>`.
 - `bind(Listenable, listener)`: Auto-manages subscriptions (e.g., `TextEditingController`).
 - `bindStream(stream, atom)`: Auto-manages stream subscriptions.
-- `dispose()`: Auto-called by `NanoView`.
+- `dispose()`: Auto-called by `NanoView`. Safe to call multiple times (idempotent). Prevents further `initialize()` and `dispatch()` calls after disposal.
 
 **NanoStatus Enum:**
 - `loading`: Initial state or active loading.

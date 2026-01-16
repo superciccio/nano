@@ -1,4 +1,17 @@
+## [0.9.0]
+- **Stability & Robustness Improvements**:
+    - **Idempotent Disposal**: `Atom.dispose()` and `NanoLogic.dispose()` are now safe to call multiple times, preventing crashes in scenarios where disposal is triggered from multiple sources (e.g., both a `Scope` and a widget).
+    - **Async-Safe Disposal**: `AsyncAtom.track()` now checks disposal state before updating, preventing "used after being disposed" errors from race conditions where async operations complete after disposal.
+    - **Disposal Guards**: Added `_isDisposed` checks to `NanoLogic.initialize()` and `NanoLogic.dispatch()` to prevent operations on disposed instances.
+- **Developer Experience**:
+    - Resolved workspace dependency conflicts between `nano_generator` and `custom_lint` by adjusting `analyzer`, `source_gen`, and `dart_style` constraints.
+    - Fixed compilation error in `nano_lints` test file to ensure `flutter test` runs cleanly across the entire workspace.
+- **Testing**:
+    - All 155+ tests in the core library pass.
+    - All 13 example applications and packages verified.
+
 ## [0.8.0]
+
 - **New Feature: Modern Nano (Code Generation)**:
     - Introduced `@nano` and `@state` annotations for boilerplate-free logic.
     - Added `nano_generator` to automate `Atom` creation and UI binding.
