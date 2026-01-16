@@ -1,3 +1,19 @@
+## [0.8.0]
+- **New Feature: Modern Nano (Code Generation)**:
+    - Introduced `@nano` and `@state` annotations for boilerplate-free logic.
+    - Added `nano_generator` to automate `Atom` creation and UI binding.
+    - Added `NanoComponent` for a cleaner, "SwiftUI-like" developer experience.
+    - Added `@async` support for generated `AsyncAtom`s.
+- **New Feature: Nano Test Utils**:
+    - Added `nanoTestWidgets` for simplified integration testing.
+    - Added `NanoTestHarness` for snapshot testing of logic flows.
+    - Added `tester.pumpSettled()` to deterministic wait for Nano async operations.
+- **Breaking Changes**:
+    - `NanoView` and `Scope` API refinements for better type safety.
+    - Moved annotations and generator to separate packages (`nano_annotations`, `nano_generator`).
+- **Examples**:
+    - Added `breaking_bad` example showcasing both Classic and Modern Nano.
+
 ## [0.7.3]
 - **Example**: Added Interactive Galaxy Explorer (Orrery View) with 60FPS physics engine.
 - **Refactor**: Massive cleanup and standardization of all example apps.

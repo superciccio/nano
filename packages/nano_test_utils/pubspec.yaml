@@ -9,7 +9,7 @@ resolution: workspace
 dependencies:
   flutter:
     sdk: flutter
-  nano: ^0.7.3
+  nano: ^0.8.0
   meta: ^1.17.0
   path: ^1.9.0
 
