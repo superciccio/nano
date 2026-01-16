@@ -10,13 +10,10 @@ class LogicNamingConvention extends DartLintRule {
   );
 
   @override
-  void run(
-    CustomLintResolver resolver,
-    dynamic reporter,
-    CustomLintContext context,
-  ) {
+  void run(CustomLintResolver resolver, dynamic reporter,
+      CustomLintContext context) {
     context.registry.addClassDeclaration((node) {
-      final element = node.declaredFragment?.element;
+      final element = node.declaredElement;
       if (element == null) return;
 
       if (TypeCheckers.nanoLogic.isSuperOf(element)) {

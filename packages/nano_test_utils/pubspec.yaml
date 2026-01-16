@@ -1,0 +1,18 @@
+name: nano_test_utils
+description: Snapshot testing and recording utilities for Nano.
+version: 0.0.1
+environment:
+  sdk: '>=3.5.0 <4.0.0'
+
+resolution: workspace
+
+dependencies:
+  flutter:
+    sdk: flutter
+  nano: ^0.7.3
+  meta: ^1.17.0
+  path: ^1.9.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter

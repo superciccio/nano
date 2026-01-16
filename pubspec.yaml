@@ -9,6 +9,7 @@ environment:
 
 workspace:
   - example/breaking_bad
+  - example/counter_evolution
   - example/crypto_tracker
   - example/minesweeper
   - example/nano_hub
@@ -19,6 +20,9 @@ workspace:
   - example/kanban_studio
   - packages/nano_devtools_extension
   - packages/nano_lints
+  - packages/nano_annotations
+  - packages/nano_generator
+  - packages/nano_test_utils
 
 dependencies:
   flutter:
@@ -29,7 +33,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
-  custom_lint: ^0.8.0
+  custom_lint: ^0.6.4
   nano_lints:
     path: packages/nano_lints
 

@@ -7,6 +7,8 @@ extension NanoContextExtension on BuildContext {
   ///
   /// Short for `Scope.of(this).get<T>()`.
   T read<T>() => Scope.of(this).get<T>();
+  /// Alias for [read]. Often used in functional components.
+  T use<T>() => read<T>();
 }
 
 /// Extensions for functional logic access.

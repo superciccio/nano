@@ -1,6 +1,7 @@
 # Nano Library - AI Agent Instructions
 
 > **Target Audience:** AI coding assistants (Claude, GPT, Gemini, etc.)  
+<<<<<<< HEAD
 > **Purpose:** Generate correct, idiomatic Nano code following best practices
 
 ## What is Nano?
@@ -68,149 +69,97 @@ class UserLogic extends NanoLogic<String> {
     } finally {
       isLoading.set(false);
     }
-  }
-}
-```
+=======
+> **Purpose:** Generate correct, idiomatic Nano code following best practices. This guide covers both **Modern** (Generated) and **Classic** (Manual) styles.
 
-### ✅ Derived State with ComputedAtom
+## Core Mandate: Choose the Vision
+Nano supports two development visions. **Modern Nano is preferred for new code.**
+
+1.  **Modern Nano (Preferred):** High velocity, minimal boilerplate, requires `build_runner`.
+2.  **Classic Nano:** Full control, zero build steps, explicit reactivity.
+
+---
+
+## 1. MODERN NANO (GENERATED) 🚀
+
+### ✅ State Declaration
+Use the `abstract class _Name extends NanoLogic` pattern with `@nano` and `@state`.
 
 ```dart
 // CORRECT
-class FormLogic extends NanoLogic<void> {
-  final email = ''.toAtom('email');
-  final password = ''.toAtom('password');
+@nano
+abstract class _CounterLogic extends NanoLogic {
+  @state int count = 0; // Standard field, generated as Atom
+  @state String name = 'John';
   
-  late final isValid = ComputedAtom(
-    [email, password],
-    () => email().contains('@') && password().length >= 8,
-    label: 'isValid',
-  );
+  void increment() => count++; // Direct mutation!
 }
 
-// WRONG - Manual recomputation
-class FormLogic extends NanoLogic<void> {
-  final email = ''.toAtom('email');
-  final password = ''.toAtom('password');
-  final isValid = false.toAtom('isValid');
-  
-  void updateEmail(String value) {
-    email.set(value);
-    _updateValid(); // ❌ Manual sync
-  }
-  
-  void _updateValid() {
-    isValid.set(email().contains('@') && password().length >= 8);
-  }
+// Concrete class forwards constructor
+class CounterLogic extends _CounterLogic with _$CounterLogic {
+  CounterLogic();
 }
 ```
 
-### ✅ Surgical Rebuilds with Watch
+### ✅ Async State (@async)
+Use `@async` on `AsyncState<T>` fields.
 
 ```dart
-// CORRECT - Only rebuilds when count changes
-Watch(logic.count, builder: (context, value) {
-  return Text('Count: $value');
-})
+@nano
+abstract class _UserLogic extends NanoLogic {
+  @async AsyncState<User> user = const AsyncIdle();
+  
+  // Required if using user$ inside the class
+  AsyncAtom<User> get user$;
 
-// WRONG - Rebuilds entire widget tree
-ValueListenableBuilder(
-  valueListenable: logic.count,
-  builder: (context, value, _) => Text('Count: $value'),
-)
+  @override
+  void onInit(String userId) {
+    user$.track(api.fetchUser(userId));
+  }
+}
 ```
 
-### ✅ Multiple Atoms with Tuple Watch
+### ✅ UI with NanoComponent
+Merges DI (`Scope`) and View into one clean class.
 
 ```dart
-// CORRECT - Watch multiple atoms efficiently using tuple syntax
-(logic.firstName, logic.lastName).watch((context, first, last) {
-  return Text('$first $last');
-})
+class CounterPage extends NanoComponent {
+  @override
+  List<Object> get modules => [NanoLazy((_) => CounterLogic())];
 
-// WRONG - Nested Watch widgets (triggers lint error)
-Watch(logic.firstName, builder: (context, first) {
-  return Watch(logic.lastName, builder: (context, last) {
-    return Text('$first $last'); // ❌ avoid_nested_watch lint
-  });
-})
+  @override
+  Widget view(BuildContext context) {
+    final logic = context.use<CounterLogic>();
+    return Text('Count: ${logic.count}'); // Automatically tracks!
+  }
+}
 ```
 
-### ✅ Nano Compose DSL
-139: 
-140: Use `NanoStack` and `NanoLayout` to reduce nesting.
-141: 
-142: ```dart
-143: // CORRECT - Declarative Layout
-144: NanoStack(
-145:   layout: NanoLayout.all(16, spacing: 8),
-146:   children: [
-147:     Text('Title'),
-148:     Text('Content'),
-149:   ],
-150: )
-151: 
-152: // WRONG - Deep Nesting
-153: Padding(
-154:   padding: EdgeInsets.all(16),
-155:   child: Column(
-156:     children: [
-157:       Text('Title'),
-158:       SizedBox(height: 8),
-159:       Text('Content'),
-160:     ],
-161:   ),
-162: )
-163: ```
-164: 
-165: ### ✅ NanoView Pattern
+---
 
+## 2. CLASSIC NANO (MANUAL) 🛠️
+
+### ✅ State Declaration
 ```dart
-// CORRECT - Full pattern with DI
-class UserPage extends StatelessWidget {
-  final String userId;
-  
-  const UserPage({required this.userId});
-  
+class CounterLogic extends NanoLogic<void> {
+  final count = 0.toAtom('count');
+}
+```
+
+### ✅ UI with NanoView & Watch
+```dart
+class CounterPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return NanoView<UserLogic, String>(
-      params: userId,
-      create: (reg) => UserLogic(api: reg.get<ApiService>()),
+    return NanoView<CounterLogic, void>(
+      create: (r) => CounterLogic(),
       builder: (context, logic) {
-        return logic.user.when(
-          loading: (context) => CircularProgressIndicator(),
-          error: (context, err) => ErrorView(err),
-          data: (context, user) => UserProfile(user),
-        );
+        return logic.count.watch((context, value) => Text('$value'));
       },
     );
   }
 }
-
-// WRONG - Manual logic management
-class UserPage extends StatefulWidget {
-  @override
-  _UserPageState createState() => _UserPageState();
-}
-
-class _UserPageState extends State<UserPage> {
-  late UserLogic logic;
-  
-  @override
-  void initState() {
-    super.initState();
-    logic = UserLogic(); // ❌ Manual creation
-    logic.onInit(widget.userId); // ❌ Manual lifecycle
-  }
-  
-  @override
-  void dispose() {
-    logic.dispose(); // ❌ Manual disposal
-    super.dispose();
-  }
-}
 ```
-
 
 ### ✅ Lifecycle: onInit vs onReady
 
@@ -249,239 +198,73 @@ class GameLogic extends NanoLogic<void> {
 
 ---
 
-## ATOM EXTENSIONS - USE THEM!
+## 3. ADVANCED TESTING 🧪
+
+### ✅ Snapshot Testing
+Use `NanoTestHarness` to verify complex user flows with zero manual assertions.
 
 ```dart
-// Conversion
-final count = 0.toAtom('count');
-final name = 'John'.toAtom('name');
-
-// Integer operations
-count.increment(); // count++
-count.increment(5); // count += 5
-count.decrement(); // count--
-
-// Boolean operations
-final isEnabled = true.toAtom('isEnabled');
-isEnabled.toggle(); // !isEnabled
-
-// Derived atoms
-final doubled = count.select((value) => value * 2);
-
-// Stream conversion
-final stream = count.stream; // Stream<int>
-```
-
----
-
-## DEPENDENCY INJECTION
-
-### Setup in main.dart
-
-```dart
-void main() {
-  runApp(
-    Scope(
-      modules: [
-        // Eager singleton (created immediately)
-        ApiService(),
-        
-        // Lazy singleton (created on first access)
-        NanoLazy((reg) => Database()),
-        
-        // Factory (new instance each time)
-        NanoFactory((reg) => LoginLogic()),
-      ],
-      child: MyApp(),
-    ),
-  );
-}
-```
-
-### Access in NanoView
-
-```dart
-NanoView<LoginLogic, void>(
-  create: (reg) => LoginLogic(
-    api: reg.get<ApiService>(),
-    db: reg.get<Database>(),
-  ),
-  builder: (context, logic) => LoginForm(),
-)
-```
-
-### Testing with Mocks
-
-```dart
-testWidgets('login test', (tester) async {
-  await tester.pumpWidget(
-    Scope(
-      modules: [
-        MockApiService(), // Inject mock
-      ],
-      child: MaterialApp(home: LoginPage()),
-    ),
-  );
-  
-  // Test with mocked dependencies
+test('Login flow', () async {
+  final harness = NanoTestHarness(MyLogic());
+  await harness.record((logic) => logic.login());
+  harness.expectSnapshot('login_success');
 });
 ```
 
----
-
-## CUSTOM ATOMS
-
-When creating custom Atom subclasses:
-
-1. **ALWAYS override `set(T newValue)`**
-2. **ALWAYS call `super.set(newValue)` to trigger notifications**
-3. **Override `dispose()` if you have resources to clean up**
+### ✅ Modern Widget Tests
+Use `nanoTestWidgets` and `pumpSettled()`.
 
 ```dart
-class DebouncedAtom<T> extends Atom<T> {
-  final Duration duration;
-  Timer? _debounce;
-  
-  DebouncedAtom(T value, {required this.duration, String? label})
-      : super(value, label: label);
-  
-  @override
-  void set(T newValue) {
-    _debounce?.cancel();
-    _debounce = Timer(duration, () {
-      super.set(newValue); // ✅ CRITICAL: Must call super.set()
-    });
-  }
-  
-  @override
-  void dispose() {
-    _debounce?.cancel();
-    super.dispose();
-  }
-}
-```
-
----
-
-## ASYNC PATTERNS
-
-### AsyncAtom State Handling
-
-```dart
-// Pattern 1: switch expression (preferred)
-return switch (logic.data()) {
-  AsyncLoading() => CircularProgressIndicator(),
-  AsyncError(:final error) => Text('Error: $error'),
-  AsyncData(:final data) => DataView(data),
-  _ => SizedBox(),
-};
-
-// Pattern 2: .when() extension
-return logic.data.when(
-  loading: (context) => CircularProgressIndicator(),
-  error: (context, error) => Text('Error: $error'),
-  data: (context, data) => DataView(data),
-);
-
-// Pattern 3: if/is checks
-final state = logic.data();
-if (state is AsyncLoading) return CircularProgressIndicator();
-if (state is AsyncError) return Text('Error: ${state.error}');
-if (state is AsyncData<MyData>) return DataView(state.data);
-```
-
-### Stream Binding
-
-```dart
-class ChatLogic extends NanoLogic<String> {
-  final messages = <Message>[].toAtom('messages');
-  
-  @override
-  void onInit(String chatId) {
-    // Auto-manages subscription lifecycle
-    bindStream(
-      chatStream(chatId),
-      messages,
-    );
-  }
-  // No need to manually cancel - handled by NanoLogic
-}
-```
-
----
-
-## BUILD AND TEST
-
-Before finalizing your changes, you must verify them by running the project's validation commands. This ensures your code is clean, correct, and adheres to the project standards.
-
-**The exact commands for linting, testing, and dependency management are documented in the [CONTRIBUTING.md](./CONTRIBUTING.md) file.** Refer to the "Development Workflow" section in that document.
-
----
-
-## LINT RULES (Active in Project)
-
-### 1. `avoid_nested_watch`
-
-**Problem:** Nested Watch widgets are inefficient and hard to read.
-
-```dart
-// ❌ WRONG - Triggers lint
-Watch(atom1, builder: (context, val1) {
-  return Watch(atom2, builder: (context, val2) {
-    return Text('$val1 - $val2');
-  });
-})
-
-// ✅ CORRECT - Use tuple watch syntax
-(atom1, atom2).watch((context, val1, val2) {
-  return Text('$val1 - $val2');
-})
-```
-
-### 2. `suggest_nano_action`
-
-**Problem:** Complex UI logic should be extracted to Logic methods or NanoAction.
-
-```dart
-// ❌ WRONG - Complex logic in UI
-ElevatedButton(
-  onPressed: () {
-    if (logic.email().contains('@')) {
-      logic.status.set(NanoStatus.loading);
-      api.login(logic.email()).then((user) {
-        logic.user.set(user);
-        logic.status.set(NanoStatus.success);
-      });
-    }
-  },
-  child: Text('Login'),
-)
-
-// ✅ CORRECT - Extract to Logic method
-class LoginLogic extends NanoLogic<void> {
-  Future<void> login() async {
-    if (!email().contains('@')) return;
+nanoTestWidgets('Clicking increments',
+  builder: () => const CounterPage(),
+  verify: (tester) async {
+    await tester.tap(find.byType(ElevatedButton));
+    await tester.pumpSettled(); // Waits for Nano reactive chains
     
-    status.set(NanoStatus.loading);
-    try {
-      final user = await api.login(email());
-      this.user.set(user);
-      status.set(NanoStatus.success);
-    } catch (e) {
-      error.set(e);
-      status.set(NanoStatus.error);
-    }
+    final logic = tester.read<CounterLogic>(); // Direct access
+    expect(logic.count, 1);
   }
-}
-
-// In UI
-ElevatedButton(
-  onPressed: logic.login,
-  child: Text('Login'),
-)
+);
 ```
 
 ---
+
+## 4. REACTIVE COLLECTIONS
+
+Use `NanoList`, `NanoMap`, or `NanoSet` for mutable state that triggers UI updates.
+
+```dart
+final todos = NanoList<String>();
+todos.add('New Todo'); // Triggers rebuild in NanoComponent/NanoConsumer
+```
+
+---
+
+## MANDATORY RULES
+
+1.  **NO Side-effects in `onInit`**: Never update an Atom in `onInit`. Use `onReady`.
+2.  **Use `NanoComponent`** for feature-level widgets.
+3.  **Use `NanoStatelessWidget`** for lightweight reactive items.
+4.  **Use `context.use<T>()`** to resolve dependencies in widgets.
+5.  **Always call `super.set()`** when overriding custom atoms.
+6.  **CI Safety**: Never use `UPDATE_GOLDENS=true` in CI environments.
+
+---
+
+## QUICK REFERENCE
+
+| Task | Modern Solution | Classic Solution |
+|------|-----------------|------------------|
+| State | `@state int x = 0` | `final x = 0.toAtom()` |
+| Logic Class | `abstract class _L ...` | `class L extends NanoLogic` |
+| Rebuild UI | `NanoComponent` (Implicit) | `Watch(atom, builder: ...)` |
+| DI | `modules` override | `NanoView.create` |
+| Async | `@async AsyncState x` | `AsyncAtom<T> x` |
+| Testing | `expectSnapshot` | `expect(atom.value, ...)` |
+
+---
+
+**Remember:** Modern Nano is the production standard. Aim for minimal boilerplate and declarative UI.
 
 ## CODE GENERATION CHECKLIST
 
@@ -497,23 +280,6 @@ When generating Nano code, ensure:
 - [ ] Async initialization happens in `onInit()`
 - [ ] Streams use `bindStream()` for auto-cleanup
 - [ ] Custom Atoms call `super.set()` in overridden `set()`
-
----
-
-## QUICK REFERENCE
-
-| Task | Solution |
-|------|----------|
-| Reactive state | `final x = value.toAtom('label');` |
-| Derived state | `ComputedAtom([deps], () => compute())` |
-| Async state | `AsyncAtom<T>()` + `atom.track(future)` |
-| Rebuild on change | `Watch(atom, builder: ...)` |
-| Multiple atoms | `(a1, a2).watch((ctx, v1, v2) => ...)` |
-| Business logic | `class MyLogic extends NanoLogic<P>` |
-| Bind to UI | `NanoView<MyLogic, P>(...)` |
-| DI registration | `Scope(modules: [...])` |
-| DI access | `reg.get<T>()` in `create` |
-| Stream binding | `bindStream(stream, atom)` |
 
 ---
 
@@ -577,15 +343,3 @@ testWidgets('login page', (tester) async {
 4. **Avoid rebuilding entire screens** - use `Watch` for specific parts
 5. **Use `autoDispose: false`** only for app-level persistent state
 
----
-
-## DOCUMENTATION
-
-- **Full Guide:** `NANO_GUIDE.md`
-- **Migration Guide:** `MIGRATION_GUIDE.md`
-- **Examples:** `example/` directory
-- **Lint Examples:** `lint_examples/` directory
-
----
-
-**Remember:** When in doubt, check the examples in the project. They demonstrate all patterns correctly.

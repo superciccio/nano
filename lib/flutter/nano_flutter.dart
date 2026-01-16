@@ -7,6 +7,8 @@ export 'src/scope.dart';
 export 'src/testing.dart';
 export 'src/view.dart';
 export 'src/watch.dart';
+export 'src/nano_widget.dart';
+export 'src/nano_component.dart';
 export 'src/layout.dart';
 export 'src/forms.dart';
 export 'src/extensions/context.dart';

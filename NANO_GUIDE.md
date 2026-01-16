@@ -271,7 +271,75 @@ Base class for Business Logic Components (BLoC/ViewModel).
 - `error`: Operation failed.
 - `empty`: No data available.
 
-## 2. Dependency Injection
+## 2. Modern Nano (Generated) 🚀
+
+Modern Nano uses code generation to provide a "SwiftUI-like" developer experience. It eliminates the need for manual `Atom` definitions and explicit `.watch()` calls.
+
+### `@nano` & `@state`
+Annotate your logic base class with `@nano`. Use `@state` for standard fields.
+
+```dart
+@nano
+abstract class _UserLogic extends NanoLogic {
+  @state String name = '';
+  @state int age = 0;
+  
+  void birthday() => age++; // Direct mutation!
+}
+
+class UserLogic extends _UserLogic with _$UserLogic {
+  UserLogic();
+}
+```
+
+**Generated Features:**
+- **Property Unwrapping**: The generator creates a private `Atom` and overrides the field getter/setter to use it.
+- **Atom Access**: Use the `$` suffix to access the underlying Atom instance (e.g., `name$`).
+
+### `@async` (AsyncAtom)
+For asynchronous state, use `@async` on a field of type `AsyncState<T>`.
+
+```dart
+@nano
+abstract class _QuoteLogic extends NanoLogic {
+  @async AsyncState<Quote> quote = const AsyncIdle();
+  
+  // Required: abstract getter if you want to use quote$ inside this class
+  AsyncAtom<Quote> get quote$;
+
+  void fetch() => quote$.track(api.getQuote());
+}
+```
+
+### `NanoComponent`
+A self-contained widget that combines Dependency Injection (`Scope`) and a reactive View.
+
+```dart
+class ProfilePage extends NanoComponent {
+  @override
+  List<Object> get modules => [NanoLazy((_) => UserLogic())];
+
+  @override
+  Widget view(BuildContext context) {
+    final logic = context.use<UserLogic>();
+    return Text('Name: ${logic.name}'); // Automatically tracks usage!
+  }
+}
+```
+
+### Reactive Collections
+Built-in mutable collections that trigger UI updates automatically without needing to replace the whole collection.
+
+- `NanoList<E>`
+- `NanoMap<K, V>`
+- `NanoSet<E>`
+
+```dart
+final items = NanoList<String>();
+items.add('A'); // UI re-renders automatically
+```
+
+## 3. Dependency Injection
 
 ### `Scope`
 InheritedWidget that provides the `Registry` to the tree.
@@ -510,5 +578,48 @@ NanoPage(
 )
 ```
 
-If `atom3` depends on `atom1` and `atom2` (via `ComputedAtom`), it will only recompute once after the batch completes, preventing intermediate "glitch" states.
+## 9. Advanced Testing 🧪
+
+Nano provides powerful tools for high-velocity and regression-safe testing.
+
+### Snapshot Testing
+Record entire user flows and verify them against a "Golden" JSON state history.
+
+```dart
+test('Search flow', () async {
+  final harness = NanoTestHarness(SearchLogic());
+  
+  await harness.record((logic) async {
+    logic.updateQuery('Flutter');
+    await harness.settled(); // Wait for async results
+  });
+
+  harness.expectSnapshot('search_results');
+});
+```
+
+**Workflow:**
+1. **Creation**: Run test once to generate `test/goldens/search_results.json`.
+2. **Regression**: Subsequent runs fail if logic changes.
+3. **Update**: Run with `--dart-define=UPDATE_GOLDENS=true` to accept new changes.
+
+### `NanoWidgetTester` Helpers
+Extensions for `WidgetTester` to make integration tests cleaner.
+
+- `tester.pumpSettled()`: Deterministically waits for all Nano async operations to finish.
+- `tester.read<T>()`: Resolves a Logic/Service from the active Scope.
+- `find.atom(atom)`: Verifies if any widget in the tree is watching a specific atom.
+
+```dart
+nanoTestWidgets('Clicking updates count',
+  builder: () => const MyPage(),
+  verify: (tester) async {
+    await tester.tap(find.byType(ElevatedButton));
+    await tester.pumpSettled();
+    
+    final logic = tester.read<MyLogic>();
+    expect(logic.count, 1);
+    expect(find.atom(logic.count$), findsOneWidget);
+  },
+);
 ```

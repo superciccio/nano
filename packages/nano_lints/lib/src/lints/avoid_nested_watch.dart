@@ -35,7 +35,7 @@ class AvoidNestedWatch extends DartLintRule {
     // Check for .watch() extension
     context.registry.addMethodInvocation((node) {
       if (node.methodName.name == 'watch') {
-        final element = node.methodName.element;
+        final element = node.methodName.staticElement;
         if (element == null) return;
 
         // Verify it's the nano watch extension

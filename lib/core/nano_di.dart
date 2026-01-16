@@ -72,6 +72,20 @@ class Registry with Diagnosticable {
     _lazySingletons.clear();
   }
 
+  /// Disposes all registered services that implement [ChangeNotifier].
+  void dispose() {
+    for (final service in _services.values) {
+      if (service is ChangeNotifier) {
+        try {
+          service.dispose();
+        } catch (e) {
+          debugPrint('Error disposing service ${service.runtimeType}: $e');
+        }
+      }
+    }
+    clear();
+  }
+
   /// Retrieves the registered instance of type [T].
   ///
   /// Throws [NanoException] if the type is not registered.

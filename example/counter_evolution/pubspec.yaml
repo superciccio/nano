@@ -1,0 +1,26 @@
+name: counter_evolution
+description: A hybrid example showing Classic and Modern Nano side-by-side.
+publish_to: 'none'
+version: 1.0.0
+
+environment:
+  sdk: '>=3.5.0 <4.0.0'
+
+resolution: workspace
+
+dependencies:
+  flutter:
+    sdk: flutter
+  nano:
+    path: ../../
+  nano_annotations:
+    path: ../../packages/nano_annotations
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  build_runner: ^2.4.6
+  nano_generator:
+    path: ../../packages/nano_generator
+  nano_test_utils:
+    path: ../../packages/nano_test_utils

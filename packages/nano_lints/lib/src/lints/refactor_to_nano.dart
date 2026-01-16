@@ -21,7 +21,7 @@ class RefactorToNano extends DartLintRule {
   ) {
     context.registry.addMethodInvocation((node) {
       if (node.methodName.name == 'setState') {
-        final element = node.methodName.element;
+        final element = node.methodName.staticElement;
         if (element == null) return;
 
         // Check if it's the State.setState method
@@ -38,7 +38,7 @@ class RefactorToNano extends DartLintRule {
               final widgetType =
                   extendsClause.superclass.typeArguments!.arguments.first;
               if (widgetType is NamedType) {
-                final widgetName = widgetType.name.lexeme;
+                final widgetName = widgetType.name2.lexeme;
                 final unit = node.thisOrAncestorOfType<CompilationUnit>();
 
                 ClassDeclaration? widgetDeclaration;
@@ -77,7 +77,8 @@ class _RefactorToNanoFix extends DartFix {
     List<analyzer.Diagnostic> others,
   ) {
     context.registry.addClassDeclaration((node) {
-      if (!diagnostic.sourceRange.intersects(node.sourceRange)) return;
+      final diagnosticOffset = diagnostic.problemMessage.offset;
+      if (diagnosticOffset < node.offset || diagnosticOffset > node.end) return;
 
       final className = node.name.lexeme;
       final logicClassName = '${className}Logic';
