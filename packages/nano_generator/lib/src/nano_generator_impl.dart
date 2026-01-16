@@ -117,7 +117,7 @@ class NanoGenerator extends GeneratorForAnnotation<Nano> {
     buffer.writeln('  }');
 
     // Check if the base class defines the $ getter already (common pattern for Logic access)
-    final enclosingClass = field.enclosingElement3;
+    final enclosingClass = field.enclosingElement;
     final hasBaseGetter = enclosingClass is ClassElement &&
         enclosingClass.getGetter('${fieldName}\$') != null;
 
