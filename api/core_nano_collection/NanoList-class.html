@@ -1,0 +1,2724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the NanoList class from the nano_collection library, for the Dart programming language.">
+  <title>NanoList class - nano_collection library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../static-assets/styles.css?v1">
+  <link rel="icon" href="../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../index.html">nano</a></li>
+    <li><a href="../core_nano_collection/">core&#47;nano_collection.dart</a></li>
+    <li class="self-crumb">NanoList<span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span> class</li>
+  </ol>
+  <div class="self-name">NanoList</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
+</header>
+<main>
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar="core_nano_collection&#47;core_nano_collection-library-sidebar.html"
+    data-below-sidebar="core_nano_collection&#47;NanoList-class-sidebar.html">
+    <div>
+  <div id="external-links" class="btn-group"><a title="View source code" class="source-link" href="https://github.com/superciccio/nano/blob/main/lib/core/nano_collection.dart#L7"><span class="material-symbols-outlined">description</span></a></div>
+<h1><span class="kind-class">NanoList&lt;<wbr><span class="type-parameter">E</span>&gt;</span> class 
+ 
+</h1></div>
+
+    
+<section class="desc markdown">
+  <p>A <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a> that automatically tracks reads and notifies on writes.</p>
+<p>Use this when you want mutable lists that trigger UI updates.</p>
+</section>
+
+
+    <section>
+      <dl class="dl-horizontal">
+        
+
+        
+        
+  <dt>Mixed-in types</dt>
+  <dd>
+    <ul class="comma-separated clazz-relationships">
+        <li><a href="https://api.flutter.dev/flutter/dart-collection/ListMixin.html">ListMixin</a><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span></li>
+    </ul>
+  </dd>
+
+
+        
+  <dt>Available extensions</dt>
+  <dd><ul class="comma-separated clazz-relationships">
+      <li><a href="https://api.flutter.dev/flutter/dart-core/EnumByName.html">EnumByName</a></li>
+      <li><a href="https://api.flutter.dev/flutter/dart-core/FutureIterable.html">FutureIterable</a></li>
+      <li><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableComparableExtension.html">IterableComparableExtension</a></li>
+      <li><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableDoubleExtension.html">IterableDoubleExtension</a></li>
+      <li><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension.html">IterableExtension</a></li>
+      <li><a href="https://api.flutter.dev/flutter/dart-core/IterableExtensions.html">IterableExtensions</a></li>
+      <li><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableIntegerExtension.html">IterableIntegerExtension</a></li>
+      <li><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableIterableExtension.html">IterableIterableExtension</a></li>
+      <li><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableNullableExtension.html">IterableNullableExtension</a></li>
+      <li><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableNumberExtension.html">IterableNumberExtension</a></li>
+      <li><a href="https://pub.dev/documentation/collection/1.19.1/collection/ListComparableExtensions.html">ListComparableExtensions</a></li>
+      <li><a href="https://pub.dev/documentation/collection/1.19.1/collection/ListExtensions.html">ListExtensions</a></li>
+      <li><a href="https://api.flutter.dev/flutter/dart-js_interop/ListToJSArray.html">ListToJSArray</a></li>
+      <li><a href="https://api.flutter.dev/flutter/dart-core/NullableIterableExtensions.html">NullableIterableExtensions</a></li>
+  </ul></dd>
+        
+
+
+      </dl>
+    </section>
+
+    
+  <section class="summary offset-anchor" id="constructors">
+    <h2>Constructors</h2>
+    <dl class="constructor-summary-list">
+        <dt id="NanoList.new" class="callable">
+          <span class="name"><a href="../core_nano_collection/NanoList/NanoList.html">NanoList</a></span><span class="signature">([<span class="parameter" id="-param-initial"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span>?</span> <span class="parameter-name">initial</span>, </span><span class="parameter" id="-param-label"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">label</span></span>])</span>
+        </dt>
+        <dd>
+          
+        </dd>
+    </dl>
+  </section>
+    
+  <section
+      class="summary offset-anchor"
+      id="instance-properties">
+    <h2>Properties</h2>
+    <dl class="properties">
+        <dt id="average" class="property">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableIntegerExtension/average.html">average</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableIntegerExtension.html">IterableIntegerExtension</a> extension</span>
+      </p>
+  The arithmetic mean of the elements of a non-empty iterable.
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+        <dt id="average" class="property">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableNumberExtension/average.html">average</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/num-class.html">num</a></span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableNumberExtension.html">IterableNumberExtension</a> extension</span>
+      </p>
+  The arithmetic mean of the elements of a non-empty iterable.
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+        <dt id="first" class="property inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-collection/ListBase/first.html">first</a></span>
+  <span class="signature">&#8596; E</span>
+  
+
+</dt>
+<dd class="inherited">
+  The first element.
+  <div class="features"><span class="feature">getter/setter pair</span><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="firstOrNull" class="property">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension/firstOrNull.html">firstOrNull</a></span>
+  <span class="signature">&#8594; T?</span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension.html">IterableExtension</a> extension</span>
+      </p>
+  The first element, or <code>null</code> if the iterable is empty.
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+        <dt id="firstOrNull" class="property">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/IterableExtensions/firstOrNull.html">firstOrNull</a></span>
+  <span class="signature">&#8594; T?</span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="https://api.flutter.dev/flutter/dart-core/IterableExtensions.html">IterableExtensions</a> extension</span>
+      </p>
+  The first element of this iterator, or <code>null</code> if the iterable is empty.
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+        <dt id="flattened" class="property">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableIterableExtension/flattened.html">flattened</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableIterableExtension.html">IterableIterableExtension</a> extension</span>
+      </p>
+  The sequential elements of each iterable in this iterable.
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+        <dt id="flattenedToList" class="property">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableIterableExtension/flattenedToList.html">flattenedToList</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableIterableExtension.html">IterableIterableExtension</a> extension</span>
+      </p>
+  The sequential elements of each iterable in this iterable.
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+        <dt id="flattenedToSet" class="property">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableIterableExtension/flattenedToSet.html">flattenedToSet</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Set-class.html">Set</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableIterableExtension.html">IterableIterableExtension</a> extension</span>
+      </p>
+  The unique sequential elements of each iterable in this iterable.
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+        <dt id="hashCode" class="property inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>
+  
+
+</dt>
+<dd class="inherited">
+  The hash code for this object.
+  <div class="features"><span class="feature">no setter</span><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="indexed" class="property">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/IterableExtensions/indexed.html">indexed</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">(<span class="field"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>, </span><span class="field"><span class="type-annotation">T</span></span>)</span>&gt;</span></span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="https://api.flutter.dev/flutter/dart-core/IterableExtensions.html">IterableExtensions</a> extension</span>
+      </p>
+  Pairs of elements of the indices and elements of this iterable.
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+        <dt id="isEmpty" class="property inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-collection/ListBase/isEmpty.html">isEmpty</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
+  
+
+</dt>
+<dd class="inherited">
+  Whether this collection has no elements.
+  <div class="features"><span class="feature">no setter</span><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="isNotEmpty" class="property inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-collection/ListBase/isNotEmpty.html">isNotEmpty</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
+  
+
+</dt>
+<dd class="inherited">
+  Whether this collection has at least one element.
+  <div class="features"><span class="feature">no setter</span><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="iterator" class="property inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-collection/ListBase/iterator.html">iterator</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Iterator-class.html">Iterator</a><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span></span>
+  
+
+</dt>
+<dd class="inherited">
+  A new <code>Iterator</code> that allows iterating the elements of this <code>Iterable</code>.
+  <div class="features"><span class="feature">no setter</span><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="last" class="property inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-collection/ListBase/last.html">last</a></span>
+  <span class="signature">&#8596; E</span>
+  
+
+</dt>
+<dd class="inherited">
+  The last element.
+  <div class="features"><span class="feature">getter/setter pair</span><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="lastOrNull" class="property">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension/lastOrNull.html">lastOrNull</a></span>
+  <span class="signature">&#8594; T?</span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension.html">IterableExtension</a> extension</span>
+      </p>
+  The last element, or <code>null</code> if the iterable is empty.
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+        <dt id="lastOrNull" class="property">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/IterableExtensions/lastOrNull.html">lastOrNull</a></span>
+  <span class="signature">&#8594; T?</span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="https://api.flutter.dev/flutter/dart-core/IterableExtensions.html">IterableExtensions</a> extension</span>
+      </p>
+  The last element of this iterable, or <code>null</code> if the iterable is empty.
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+        <dt id="length" class="property">
+  <span class="name"><a href="../core_nano_collection/NanoList/length.html">length</a></span>
+  <span class="signature">&#8596; <a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>
+  
+
+</dt>
+<dd>
+  The number of objects in this list.
+  <div class="features"><span class="feature">getter/setter pair</span><span class="feature">override</span></div>
+
+</dd>
+
+        <dt id="max" class="property">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableNumberExtension/max.html">max</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/num-class.html">num</a></span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/num-class.html">num</a></span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableNumberExtension.html">IterableNumberExtension</a> extension</span>
+      </p>
+  A maximal element of the iterable.
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+        <dt id="max" class="property">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableComparableExtension/max.html">max</a></span>
+  <span class="signature">&#8594; T</span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableComparableExtension.html">IterableComparableExtension</a> extension</span>
+      </p>
+  A maximal element of the iterable.
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+        <dt id="max" class="property">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableDoubleExtension/max.html">max</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableDoubleExtension.html">IterableDoubleExtension</a> extension</span>
+      </p>
+  A maximal element of the iterable.
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+        <dt id="max" class="property">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableIntegerExtension/max.html">max</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableIntegerExtension.html">IterableIntegerExtension</a> extension</span>
+      </p>
+  A maximal element of the iterable.
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+        <dt id="maxOrNull" class="property">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableIntegerExtension/maxOrNull.html">maxOrNull</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a>?</span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableIntegerExtension.html">IterableIntegerExtension</a> extension</span>
+      </p>
+  A maximal element of the iterable, or <code>null</code> if the iterable is empty.
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+        <dt id="maxOrNull" class="property">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableDoubleExtension/maxOrNull.html">maxOrNull</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a>?</span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableDoubleExtension.html">IterableDoubleExtension</a> extension</span>
+      </p>
+  A maximal element of the iterable, or <code>null</code> if the iterable is empty.
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+        <dt id="maxOrNull" class="property">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableComparableExtension/maxOrNull.html">maxOrNull</a></span>
+  <span class="signature">&#8594; T?</span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableComparableExtension.html">IterableComparableExtension</a> extension</span>
+      </p>
+  A maximal element of the iterable, or <code>null</code> if the iterable is empty.
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+        <dt id="maxOrNull" class="property">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableNumberExtension/maxOrNull.html">maxOrNull</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/num-class.html">num</a>?</span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/num-class.html">num</a></span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableNumberExtension.html">IterableNumberExtension</a> extension</span>
+      </p>
+  A maximal element of the iterable, or <code>null</code> if the iterable is empty.
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+        <dt id="min" class="property">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableNumberExtension/min.html">min</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/num-class.html">num</a></span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/num-class.html">num</a></span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableNumberExtension.html">IterableNumberExtension</a> extension</span>
+      </p>
+  A minimal element of the iterable.
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+        <dt id="min" class="property">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableDoubleExtension/min.html">min</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableDoubleExtension.html">IterableDoubleExtension</a> extension</span>
+      </p>
+  A minimal element of the iterable.
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+        <dt id="min" class="property">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableIntegerExtension/min.html">min</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableIntegerExtension.html">IterableIntegerExtension</a> extension</span>
+      </p>
+  A minimal element of the iterable.
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+        <dt id="min" class="property">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableComparableExtension/min.html">min</a></span>
+  <span class="signature">&#8594; T</span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableComparableExtension.html">IterableComparableExtension</a> extension</span>
+      </p>
+  A minimal element of the iterable.
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+        <dt id="minOrNull" class="property">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableNumberExtension/minOrNull.html">minOrNull</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/num-class.html">num</a>?</span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/num-class.html">num</a></span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableNumberExtension.html">IterableNumberExtension</a> extension</span>
+      </p>
+  A minimal element of the iterable, or <code>null</code> it the iterable is empty.
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+        <dt id="minOrNull" class="property">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableComparableExtension/minOrNull.html">minOrNull</a></span>
+  <span class="signature">&#8594; T?</span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableComparableExtension.html">IterableComparableExtension</a> extension</span>
+      </p>
+  A minimal element of the iterable, or <code>null</code> it the iterable is empty.
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+        <dt id="minOrNull" class="property">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableIntegerExtension/minOrNull.html">minOrNull</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a>?</span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableIntegerExtension.html">IterableIntegerExtension</a> extension</span>
+      </p>
+  A minimal element of the iterable, or <code>null</code> it the iterable is empty.
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+        <dt id="minOrNull" class="property">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableDoubleExtension/minOrNull.html">minOrNull</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a>?</span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableDoubleExtension.html">IterableDoubleExtension</a> extension</span>
+      </p>
+  A minimal element of the iterable, or <code>null</code> it the iterable is empty.
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+        <dt id="nonNulls" class="property">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/NullableIterableExtensions/nonNulls.html">nonNulls</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T?</span>&gt;</span>,
+        provided by the <a href="https://api.flutter.dev/flutter/dart-core/NullableIterableExtensions.html">NullableIterableExtensions</a> extension</span>
+      </p>
+  The non-<code>null</code> elements of this iterable.
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+        <dt id="reversed" class="property inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-collection/ListBase/reversed.html">reversed</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span></span>
+  
+
+</dt>
+<dd class="inherited">
+  An <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a> of the objects in this list in reverse order.
+  <div class="features"><span class="feature">no setter</span><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="runtimeType" class="property inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Type-class.html">Type</a></span>
+  
+
+</dt>
+<dd class="inherited">
+  A representation of the runtime type of the object.
+  <div class="features"><span class="feature">no setter</span><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="single" class="property inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-collection/ListBase/single.html">single</a></span>
+  <span class="signature">&#8594; E</span>
+  
+
+</dt>
+<dd class="inherited">
+  Checks that this iterable has only one element, and returns that element.
+  <div class="features"><span class="feature">no setter</span><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="singleOrNull" class="property">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/IterableExtensions/singleOrNull.html">singleOrNull</a></span>
+  <span class="signature">&#8594; T?</span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="https://api.flutter.dev/flutter/dart-core/IterableExtensions.html">IterableExtensions</a> extension</span>
+      </p>
+  The single element of this iterator, or <code>null</code>.
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+        <dt id="singleOrNull" class="property">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension/singleOrNull.html">singleOrNull</a></span>
+  <span class="signature">&#8594; T?</span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension.html">IterableExtension</a> extension</span>
+      </p>
+  The single element of the iterable, or <code>null</code>.
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+        <dt id="sum" class="property">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableDoubleExtension/sum.html">sum</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableDoubleExtension.html">IterableDoubleExtension</a> extension</span>
+      </p>
+  The sum of the elements.
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+        <dt id="sum" class="property">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableNumberExtension/sum.html">sum</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/num-class.html">num</a></span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/num-class.html">num</a></span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableNumberExtension.html">IterableNumberExtension</a> extension</span>
+      </p>
+  The sum of the elements.
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+        <dt id="sum" class="property">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableIntegerExtension/sum.html">sum</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableIntegerExtension.html">IterableIntegerExtension</a> extension</span>
+      </p>
+  The sum of the elements.
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+        <dt id="toJS" class="property">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-js_interop/ListToJSArray/toJS.html">toJS</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-js_interop/JSArray-extension-type.html">JSArray</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="https://api.flutter.dev/flutter/dart-js_interop/ListToJSArray.html">ListToJSArray</a> extension</span>
+      </p>
+  Converts this <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a> to a <a href="https://api.flutter.dev/flutter/dart-js_interop/JSArray-extension-type.html">JSArray</a> by either casting, unwrapping, or
+cloning the <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a>.
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+        <dt id="toJSProxyOrRef" class="property">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-js_interop/ListToJSArray/toJSProxyOrRef.html">toJSProxyOrRef</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-js_interop/JSArray-extension-type.html">JSArray</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="https://api.flutter.dev/flutter/dart-js_interop/ListToJSArray.html">ListToJSArray</a> extension</span>
+      </p>
+  Converts this <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a> to a <a href="https://api.flutter.dev/flutter/dart-js_interop/JSArray-extension-type.html">JSArray</a> by either casting, unwrapping, or
+proxying the <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a>.
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+        <dt id="wait" class="property">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/FutureIterable/wait.html">wait</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/flutter_test/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>&gt;</span></span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/flutter_test/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>&gt;</span>,
+        provided by the <a href="https://api.flutter.dev/flutter/dart-core/FutureIterable.html">FutureIterable</a> extension</span>
+      </p>
+  Waits for futures in parallel.
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+    </dl>
+  </section>
+
+    
+  <section
+      class="summary offset-anchor"
+      id="instance-methods">
+    <h2>Methods</h2>
+    <dl class="callables">
+        <dt id="add" class="callable">
+  <span class="name"><a href="../core_nano_collection/NanoList/add.html">add</a></span><span class="signature">(<wbr><span class="parameter" id="add-param-element"><span class="type-annotation">E</span> <span class="parameter-name">element</span></span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Adds <code>value</code> to the end of this list,
+extending the length by one.
+  <div class="features"><span class="feature">override</span></div>
+
+</dd>
+
+        <dt id="addAll" class="callable">
+  <span class="name"><a href="../core_nano_collection/NanoList/addAll.html">addAll</a></span><span class="signature">(<wbr><span class="parameter" id="addAll-param-iterable"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span></span> <span class="parameter-name">iterable</span></span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Appends all objects of <code>iterable</code> to the end of this list.
+  <div class="features"><span class="feature">override</span></div>
+
+</dd>
+
+        <dt id="any" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-collection/ListBase/any.html">any</a></span><span class="signature">(<wbr><span class="parameter" id="any-param-test"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">test</span>(<span class="parameter" id="param-element"><span class="type-annotation">E</span> <span class="parameter-name">element</span></span>)</span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Checks whether any element of this iterable satisfies <code>test</code>.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="asMap" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-collection/ListBase/asMap.html">asMap</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>, <span class="type-parameter">E</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  An unmodifiable <a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a> view of this list.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="asNameMap" class="callable">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/EnumByName/asNameMap.html">asNameMap</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter">T</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="https://api.flutter.dev/flutter/dart-core/EnumByName.html">EnumByName</a> extension</span>
+      </p>
+  Creates a map from the names of enum values to the values.
+  
+
+</dd>
+
+        <dt id="binarySearch" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/ListExtensions/binarySearch.html">binarySearch</a></span><span class="signature">(<wbr><span class="parameter" id="binarySearch-param-element"><span class="type-annotation">E</span> <span class="parameter-name">element</span>, </span><span class="parameter" id="binarySearch-param-compare"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">compare</span>(<span class="parameter" id="param-"><span class="type-annotation">E</span>, </span><span class="parameter" id="param-"><span class="type-annotation">E</span></span>)</span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/ListExtensions.html">ListExtensions</a> extension</span>
+      </p>
+  Returns the index of <code>element</code> in this sorted list.
+  
+
+</dd>
+
+        <dt id="binarySearch" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/ListComparableExtensions/binarySearch.html">binarySearch</a></span><span class="signature">(<wbr><span class="parameter" id="binarySearch-param-element"><span class="type-annotation">E</span> <span class="parameter-name">element</span>, [</span><span class="parameter" id="binarySearch-param-compare"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">compare</span>(<span class="parameter" id="param-"><span class="type-annotation">E</span>, </span><span class="parameter" id="param-"><span class="type-annotation">E</span></span>)?</span>])
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/ListComparableExtensions.html">ListComparableExtensions</a> extension</span>
+      </p>
+  Returns the index of <code>element</code> in this sorted list.
+  
+
+</dd>
+
+        <dt id="binarySearchBy" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/ListExtensions/binarySearchBy.html">binarySearchBy</a></span><span class="signature">&lt;<wbr><span class="type-parameter">K extends <a href="https://api.flutter.dev/flutter/dart-core/Comparable-class.html">Comparable</a><span class="signature">&lt;<wbr><span class="type-parameter">K</span>&gt;</span></span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="binarySearchBy-param-element"><span class="type-annotation">E</span> <span class="parameter-name">element</span>, </span><span class="parameter" id="binarySearchBy-param-keyOf"><span class="type-annotation">K</span> <span class="parameter-name">keyOf</span>(<span class="parameter" id="param-element"><span class="type-annotation">E</span> <span class="parameter-name">element</span></span>), [</span><span class="parameter" id="binarySearchBy-param-start"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">start</span> = <span class="default-value">0</span>, </span><span class="parameter" id="binarySearchBy-param-end"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a>?</span> <span class="parameter-name">end</span></span>])
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/ListExtensions.html">ListExtensions</a> extension</span>
+      </p>
+  Returns the index of <code>element</code> in this sorted list.
+  
+
+</dd>
+
+        <dt id="binarySearchByCompare" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/ListExtensions/binarySearchByCompare.html">binarySearchByCompare</a></span><span class="signature">&lt;<wbr><span class="type-parameter">K</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="binarySearchByCompare-param-element"><span class="type-annotation">E</span> <span class="parameter-name">element</span>, </span><span class="parameter" id="binarySearchByCompare-param-keyOf"><span class="type-annotation">K</span> <span class="parameter-name">keyOf</span>(<span class="parameter" id="param-element"><span class="type-annotation">E</span> <span class="parameter-name">element</span></span>), </span><span class="parameter" id="binarySearchByCompare-param-compare"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">compare</span>(<span class="parameter" id="param-"><span class="type-annotation">K</span>, </span><span class="parameter" id="param-"><span class="type-annotation">K</span></span>), [</span><span class="parameter" id="binarySearchByCompare-param-start"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">start</span> = <span class="default-value">0</span>, </span><span class="parameter" id="binarySearchByCompare-param-end"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a>?</span> <span class="parameter-name">end</span></span>])
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/ListExtensions.html">ListExtensions</a> extension</span>
+      </p>
+  Returns the index of <code>element</code> in this sorted list.
+  
+
+</dd>
+
+        <dt id="byName" class="callable">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/EnumByName/byName.html">byName</a></span><span class="signature">(<wbr><span class="parameter" id="byName-param-name"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">name</span></span>)
+    <span class="returntype parameter">&#8594; T</span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="https://api.flutter.dev/flutter/dart-core/EnumByName.html">EnumByName</a> extension</span>
+      </p>
+  Finds the enum value in this list with name <code>name</code>.
+  
+
+</dd>
+
+        <dt id="cast" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-collection/ListBase/cast.html">cast</a></span><span class="signature">&lt;<wbr><span class="type-parameter">R</span>&gt;</span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">R</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Returns a view of this list as a list of <code>R</code> instances.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="clear" class="callable">
+  <span class="name"><a href="../core_nano_collection/NanoList/clear.html">clear</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Removes all objects from this list; the length of the list becomes zero.
+  <div class="features"><span class="feature">override</span></div>
+
+</dd>
+
+        <dt id="contains" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-collection/ListBase/contains.html">contains</a></span><span class="signature">(<wbr><span class="parameter" id="contains-param-element"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a>?</span> <span class="parameter-name">element</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Whether the collection contains an element equal to <code>element</code>.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="elementAt" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-collection/ListBase/elementAt.html">elementAt</a></span><span class="signature">(<wbr><span class="parameter" id="elementAt-param-index"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">index</span></span>)
+    <span class="returntype parameter">&#8594; E</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Returns the <code>index</code>th element.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="elementAtOrNull" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension/elementAtOrNull.html">elementAtOrNull</a></span><span class="signature">(<wbr><span class="parameter" id="elementAtOrNull-param-index"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">index</span></span>)
+    <span class="returntype parameter">&#8594; T?</span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension.html">IterableExtension</a> extension</span>
+      </p>
+  The <code>index</code>th element, or <code>null</code> if there is no such element.
+  
+
+</dd>
+
+        <dt id="elementAtOrNull" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/ListExtensions/elementAtOrNull.html">elementAtOrNull</a></span><span class="signature">(<wbr><span class="parameter" id="elementAtOrNull-param-index"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">index</span></span>)
+    <span class="returntype parameter">&#8594; E?</span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/ListExtensions.html">ListExtensions</a> extension</span>
+      </p>
+  The <code>index</code>th element, or <code>null</code> if there is no such element.
+  
+
+</dd>
+
+        <dt id="elementAtOrNull" class="callable">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/IterableExtensions/elementAtOrNull.html">elementAtOrNull</a></span><span class="signature">(<wbr><span class="parameter" id="elementAtOrNull-param-index"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">index</span></span>)
+    <span class="returntype parameter">&#8594; T?</span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="https://api.flutter.dev/flutter/dart-core/IterableExtensions.html">IterableExtensions</a> extension</span>
+      </p>
+  The element at position <code>index</code> of this iterable, or <code>null</code>.
+  
+
+</dd>
+
+        <dt id="equals" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/ListExtensions/equals.html">equals</a></span><span class="signature">(<wbr><span class="parameter" id="equals-param-other"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span></span> <span class="parameter-name">other</span>, [</span><span class="parameter" id="equals-param-equality"><span class="type-annotation"><a href="https://pub.dev/documentation/collection/1.19.1/collection/Equality-class.html">Equality</a><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span></span> <span class="parameter-name">equality</span> = <span class="default-value">const DefaultEquality()</span></span>])
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/ListExtensions.html">ListExtensions</a> extension</span>
+      </p>
+  Whether <code>other</code> has the same elements as this list.
+  
+
+</dd>
+
+        <dt id="every" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-collection/ListBase/every.html">every</a></span><span class="signature">(<wbr><span class="parameter" id="every-param-test"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">test</span>(<span class="parameter" id="param-element"><span class="type-annotation">E</span> <span class="parameter-name">element</span></span>)</span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Checks whether every element of this iterable satisfies <code>test</code>.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="expand" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-collection/ListBase/expand.html">expand</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="expand-param-f"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">f</span>(<span class="parameter" id="param-element"><span class="type-annotation">E</span> <span class="parameter-name">element</span></span>)</span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Expands each element of this <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a> into zero or more elements.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="expandIndexed" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension/expandIndexed.html">expandIndexed</a></span><span class="signature">&lt;<wbr><span class="type-parameter">R</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="expandIndexed-param-expand"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">R</span>&gt;</span></span> <span class="parameter-name">expand</span>(<span class="parameter" id="param-index"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">index</span>, </span><span class="parameter" id="param-element"><span class="type-annotation">T</span> <span class="parameter-name">element</span></span>)</span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">R</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension.html">IterableExtension</a> extension</span>
+      </p>
+  Expands each element and index to a number of elements in a new iterable.
+  
+
+</dd>
+
+        <dt id="expandIndexed" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/ListExtensions/expandIndexed.html">expandIndexed</a></span><span class="signature">&lt;<wbr><span class="type-parameter">R</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="expandIndexed-param-expand"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">R</span>&gt;</span></span> <span class="parameter-name">expand</span>(<span class="parameter" id="param-index"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">index</span>, </span><span class="parameter" id="param-element"><span class="type-annotation">E</span> <span class="parameter-name">element</span></span>)</span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">R</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/ListExtensions.html">ListExtensions</a> extension</span>
+      </p>
+  Expands each element and index to a number of elements in a new iterable.
+  
+
+</dd>
+
+        <dt id="fillRange" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-collection/ListBase/fillRange.html">fillRange</a></span><span class="signature">(<wbr><span class="parameter" id="fillRange-param-start"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">start</span>, </span><span class="parameter" id="fillRange-param-end"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">end</span>, [</span><span class="parameter" id="fillRange-param-fill"><span class="type-annotation">E?</span> <span class="parameter-name">fill</span></span>])
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Overwrites a range of elements with <code>fillValue</code>.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="firstWhere" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-collection/ListBase/firstWhere.html">firstWhere</a></span><span class="signature">(<wbr><span class="parameter" id="firstWhere-param-test"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">test</span>(<span class="parameter" id="param-element"><span class="type-annotation">E</span> <span class="parameter-name">element</span></span>), {</span><span class="parameter" id="firstWhere-param-orElse"><span class="type-annotation">E</span> <span class="parameter-name">orElse</span>()?</span>})
+    <span class="returntype parameter">&#8594; E</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  The first element that satisfies the given predicate <code>test</code>.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="firstWhereIndexedOrNull" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension/firstWhereIndexedOrNull.html">firstWhereIndexedOrNull</a></span><span class="signature">(<wbr><span class="parameter" id="firstWhereIndexedOrNull-param-test"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">test</span>(<span class="parameter" id="param-index"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">index</span>, </span><span class="parameter" id="param-element"><span class="type-annotation">T</span> <span class="parameter-name">element</span></span>)</span>)
+    <span class="returntype parameter">&#8594; T?</span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension.html">IterableExtension</a> extension</span>
+      </p>
+  The first element whose value and index satisfies <code>test</code>.
+  
+
+</dd>
+
+        <dt id="firstWhereOrNull" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension/firstWhereOrNull.html">firstWhereOrNull</a></span><span class="signature">(<wbr><span class="parameter" id="firstWhereOrNull-param-test"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">test</span>(<span class="parameter" id="param-element"><span class="type-annotation">T</span> <span class="parameter-name">element</span></span>)</span>)
+    <span class="returntype parameter">&#8594; T?</span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension.html">IterableExtension</a> extension</span>
+      </p>
+  The first element satisfying <code>test</code>, or <code>null</code> if there are none.
+  
+
+</dd>
+
+        <dt id="fold" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-collection/ListBase/fold.html">fold</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="fold-param-initialValue"><span class="type-annotation">T</span> <span class="parameter-name">initialValue</span>, </span><span class="parameter" id="fold-param-combine"><span class="type-annotation">T</span> <span class="parameter-name">combine</span>(<span class="parameter" id="param-previousValue"><span class="type-annotation">T</span> <span class="parameter-name">previousValue</span>, </span><span class="parameter" id="param-element"><span class="type-annotation">E</span> <span class="parameter-name">element</span></span>)</span>)
+    <span class="returntype parameter">&#8594; T</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Reduces a collection to a single value by iteratively combining each
+element of the collection with an existing value
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="foldIndexed" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension/foldIndexed.html">foldIndexed</a></span><span class="signature">&lt;<wbr><span class="type-parameter">R</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="foldIndexed-param-initialValue"><span class="type-annotation">R</span> <span class="parameter-name">initialValue</span>, </span><span class="parameter" id="foldIndexed-param-combine"><span class="type-annotation">R</span> <span class="parameter-name">combine</span>(<span class="parameter" id="param-index"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">index</span>, </span><span class="parameter" id="param-previous"><span class="type-annotation">R</span> <span class="parameter-name">previous</span>, </span><span class="parameter" id="param-element"><span class="type-annotation">T</span> <span class="parameter-name">element</span></span>)</span>)
+    <span class="returntype parameter">&#8594; R</span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension.html">IterableExtension</a> extension</span>
+      </p>
+  Combine the elements with a value and the current index.
+  
+
+</dd>
+
+        <dt id="followedBy" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-collection/ListBase/followedBy.html">followedBy</a></span><span class="signature">(<wbr><span class="parameter" id="followedBy-param-other"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span></span> <span class="parameter-name">other</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Creates the lazy concatenation of this iterable and <code>other</code>.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="forEach" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-collection/ListBase/forEach.html">forEach</a></span><span class="signature">(<wbr><span class="parameter" id="forEach-param-action"><span class="type-annotation">void</span> <span class="parameter-name">action</span>(<span class="parameter" id="param-element"><span class="type-annotation">E</span> <span class="parameter-name">element</span></span>)</span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Invokes <code>action</code> on each element of this iterable in iteration order.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="forEachIndexed" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/ListExtensions/forEachIndexed.html">forEachIndexed</a></span><span class="signature">(<wbr><span class="parameter" id="forEachIndexed-param-action"><span class="type-annotation">void</span> <span class="parameter-name">action</span>(<span class="parameter" id="param-index"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">index</span>, </span><span class="parameter" id="param-element"><span class="type-annotation">E</span> <span class="parameter-name">element</span></span>)</span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/ListExtensions.html">ListExtensions</a> extension</span>
+      </p>
+  Takes an action for each element.
+  
+
+</dd>
+
+        <dt id="forEachIndexed" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension/forEachIndexed.html">forEachIndexed</a></span><span class="signature">(<wbr><span class="parameter" id="forEachIndexed-param-action"><span class="type-annotation">void</span> <span class="parameter-name">action</span>(<span class="parameter" id="param-index"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">index</span>, </span><span class="parameter" id="param-element"><span class="type-annotation">T</span> <span class="parameter-name">element</span></span>)</span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension.html">IterableExtension</a> extension</span>
+      </p>
+  Takes an action for each element.
+  
+
+</dd>
+
+        <dt id="forEachIndexedWhile" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/ListExtensions/forEachIndexedWhile.html">forEachIndexedWhile</a></span><span class="signature">(<wbr><span class="parameter" id="forEachIndexedWhile-param-action"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">action</span>(<span class="parameter" id="param-index"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">index</span>, </span><span class="parameter" id="param-element"><span class="type-annotation">E</span> <span class="parameter-name">element</span></span>)</span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/ListExtensions.html">ListExtensions</a> extension</span>
+      </p>
+  Takes an action for each element and index as long as desired.
+  
+
+</dd>
+
+        <dt id="forEachIndexedWhile" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension/forEachIndexedWhile.html">forEachIndexedWhile</a></span><span class="signature">(<wbr><span class="parameter" id="forEachIndexedWhile-param-action"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">action</span>(<span class="parameter" id="param-index"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">index</span>, </span><span class="parameter" id="param-element"><span class="type-annotation">T</span> <span class="parameter-name">element</span></span>)</span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension.html">IterableExtension</a> extension</span>
+      </p>
+  Takes an action for each element and index as long as desired.
+  
+
+</dd>
+
+        <dt id="forEachWhile" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/ListExtensions/forEachWhile.html">forEachWhile</a></span><span class="signature">(<wbr><span class="parameter" id="forEachWhile-param-action"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">action</span>(<span class="parameter" id="param-element"><span class="type-annotation">E</span> <span class="parameter-name">element</span></span>)</span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/ListExtensions.html">ListExtensions</a> extension</span>
+      </p>
+  Takes an action for each element as long as desired.
+  
+
+</dd>
+
+        <dt id="forEachWhile" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension/forEachWhile.html">forEachWhile</a></span><span class="signature">(<wbr><span class="parameter" id="forEachWhile-param-action"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">action</span>(<span class="parameter" id="param-element"><span class="type-annotation">T</span> <span class="parameter-name">element</span></span>)</span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension.html">IterableExtension</a> extension</span>
+      </p>
+  Takes an action for each element as long as desired.
+  
+
+</dd>
+
+        <dt id="getRange" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-collection/ListBase/getRange.html">getRange</a></span><span class="signature">(<wbr><span class="parameter" id="getRange-param-start"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">start</span>, </span><span class="parameter" id="getRange-param-end"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">end</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Creates an <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a> that iterates over a range of elements.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="groupFoldBy" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension/groupFoldBy.html">groupFoldBy</a></span><span class="signature">&lt;<wbr><span class="type-parameter">K</span>, <span class="type-parameter">G</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="groupFoldBy-param-keyOf"><span class="type-annotation">K</span> <span class="parameter-name">keyOf</span>(<span class="parameter" id="param-element"><span class="type-annotation">T</span> <span class="parameter-name">element</span></span>), </span><span class="parameter" id="groupFoldBy-param-combine"><span class="type-annotation">G</span> <span class="parameter-name">combine</span>(<span class="parameter" id="param-previous"><span class="type-annotation">G?</span> <span class="parameter-name">previous</span>, </span><span class="parameter" id="param-element"><span class="type-annotation">T</span> <span class="parameter-name">element</span></span>)</span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter">K</span>, <span class="type-parameter">G</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension.html">IterableExtension</a> extension</span>
+      </p>
+  Groups elements by <code>keyOf</code> then folds the elements in each group.
+  
+
+</dd>
+
+        <dt id="groupListsBy" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension/groupListsBy.html">groupListsBy</a></span><span class="signature">&lt;<wbr><span class="type-parameter">K</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="groupListsBy-param-keyOf"><span class="type-annotation">K</span> <span class="parameter-name">keyOf</span>(<span class="parameter" id="param-element"><span class="type-annotation">T</span> <span class="parameter-name">element</span></span>)</span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter">K</span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension.html">IterableExtension</a> extension</span>
+      </p>
+  Groups elements into lists by <code>keyOf</code>.
+  
+
+</dd>
+
+        <dt id="groupSetsBy" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension/groupSetsBy.html">groupSetsBy</a></span><span class="signature">&lt;<wbr><span class="type-parameter">K</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="groupSetsBy-param-keyOf"><span class="type-annotation">K</span> <span class="parameter-name">keyOf</span>(<span class="parameter" id="param-element"><span class="type-annotation">T</span> <span class="parameter-name">element</span></span>)</span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter">K</span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Set-class.html">Set</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension.html">IterableExtension</a> extension</span>
+      </p>
+  Groups elements into sets by <code>keyOf</code>.
+  
+
+</dd>
+
+        <dt id="indexOf" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-collection/ListBase/indexOf.html">indexOf</a></span><span class="signature">(<wbr><span class="parameter" id="indexOf-param-element"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a>?</span> <span class="parameter-name">element</span>, [</span><span class="parameter" id="indexOf-param-start"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">start</span> = <span class="default-value">0</span></span>])
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  The first index of <code>element</code> in this list.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="indexWhere" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-collection/ListBase/indexWhere.html">indexWhere</a></span><span class="signature">(<wbr><span class="parameter" id="indexWhere-param-test"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">test</span>(<span class="parameter" id="param-element"><span class="type-annotation">E</span> <span class="parameter-name">element</span></span>), [</span><span class="parameter" id="indexWhere-param-start"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">start</span> = <span class="default-value">0</span></span>])
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  The first index in the list that satisfies the provided <code>test</code>.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="insert" class="callable">
+  <span class="name"><a href="../core_nano_collection/NanoList/insert.html">insert</a></span><span class="signature">(<wbr><span class="parameter" id="insert-param-index"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">index</span>, </span><span class="parameter" id="insert-param-element"><span class="type-annotation">E</span> <span class="parameter-name">element</span></span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Inserts <code>element</code> at position <code>index</code> in this list.
+  <div class="features"><span class="feature">override</span></div>
+
+</dd>
+
+        <dt id="insertAll" class="callable">
+  <span class="name"><a href="../core_nano_collection/NanoList/insertAll.html">insertAll</a></span><span class="signature">(<wbr><span class="parameter" id="insertAll-param-index"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">index</span>, </span><span class="parameter" id="insertAll-param-iterable"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span></span> <span class="parameter-name">iterable</span></span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Inserts all objects of <code>iterable</code> at position <code>index</code> in this list.
+  <div class="features"><span class="feature">override</span></div>
+
+</dd>
+
+        <dt id="isSorted" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableComparableExtension/isSorted.html">isSorted</a></span><span class="signature">(<wbr>[<span class="parameter" id="isSorted-param-compare"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Comparator.html">Comparator</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">compare</span></span>])
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableComparableExtension.html">IterableComparableExtension</a> extension</span>
+      </p>
+  Whether the elements are sorted by the <code>compare</code> ordering.
+  
+
+</dd>
+
+        <dt id="isSorted" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension/isSorted.html">isSorted</a></span><span class="signature">(<wbr><span class="parameter" id="isSorted-param-compare"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Comparator.html">Comparator</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">compare</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension.html">IterableExtension</a> extension</span>
+      </p>
+  Whether the elements are sorted by the <code>compare</code> ordering.
+  
+
+</dd>
+
+        <dt id="isSortedBy" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension/isSortedBy.html">isSortedBy</a></span><span class="signature">&lt;<wbr><span class="type-parameter">K extends <a href="https://api.flutter.dev/flutter/dart-core/Comparable-class.html">Comparable</a><span class="signature">&lt;<wbr><span class="type-parameter">K</span>&gt;</span></span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="isSortedBy-param-keyOf"><span class="type-annotation">K</span> <span class="parameter-name">keyOf</span>(<span class="parameter" id="param-element"><span class="type-annotation">T</span> <span class="parameter-name">element</span></span>)</span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension.html">IterableExtension</a> extension</span>
+      </p>
+  Whether the elements are sorted by their <code>keyOf</code> property.
+  
+
+</dd>
+
+        <dt id="isSortedByCompare" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension/isSortedByCompare.html">isSortedByCompare</a></span><span class="signature">&lt;<wbr><span class="type-parameter">K</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="isSortedByCompare-param-keyOf"><span class="type-annotation">K</span> <span class="parameter-name">keyOf</span>(<span class="parameter" id="param-element"><span class="type-annotation">T</span> <span class="parameter-name">element</span></span>), </span><span class="parameter" id="isSortedByCompare-param-compare"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Comparator.html">Comparator</a><span class="signature">&lt;<wbr><span class="type-parameter">K</span>&gt;</span></span> <span class="parameter-name">compare</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension.html">IterableExtension</a> extension</span>
+      </p>
+  Whether the elements are <code>compare</code>-sorted by their <code>keyOf</code> property.
+  
+
+</dd>
+
+        <dt id="join" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-collection/ListBase/join.html">join</a></span><span class="signature">(<wbr>[<span class="parameter" id="join-param-separator"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">separator</span> = <span class="default-value">&quot;&quot;</span></span>])
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Converts each element to a <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a> and concatenates the strings.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="lastBy" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension/lastBy.html">lastBy</a></span><span class="signature">&lt;<wbr><span class="type-parameter">K</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="lastBy-param-key"><span class="type-annotation">K</span> <span class="parameter-name">key</span>(<span class="parameter" id="param-"><span class="type-annotation">T</span></span>)</span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter">K</span>, <span class="type-parameter">T</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension.html">IterableExtension</a> extension</span>
+      </p>
+  Associates the elements in <code>this</code> by the value returned by <code>key</code>.
+  
+
+</dd>
+
+        <dt id="lastIndexOf" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-collection/ListBase/lastIndexOf.html">lastIndexOf</a></span><span class="signature">(<wbr><span class="parameter" id="lastIndexOf-param-element"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a>?</span> <span class="parameter-name">element</span>, [</span><span class="parameter" id="lastIndexOf-param-start"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a>?</span> <span class="parameter-name">start</span></span>])
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  The last index of <code>element</code> in this list.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="lastIndexWhere" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-collection/ListBase/lastIndexWhere.html">lastIndexWhere</a></span><span class="signature">(<wbr><span class="parameter" id="lastIndexWhere-param-test"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">test</span>(<span class="parameter" id="param-element"><span class="type-annotation">E</span> <span class="parameter-name">element</span></span>), [</span><span class="parameter" id="lastIndexWhere-param-start"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a>?</span> <span class="parameter-name">start</span></span>])
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  The last index in the list that satisfies the provided <code>test</code>.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="lastWhere" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-collection/ListBase/lastWhere.html">lastWhere</a></span><span class="signature">(<wbr><span class="parameter" id="lastWhere-param-test"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">test</span>(<span class="parameter" id="param-element"><span class="type-annotation">E</span> <span class="parameter-name">element</span></span>), {</span><span class="parameter" id="lastWhere-param-orElse"><span class="type-annotation">E</span> <span class="parameter-name">orElse</span>()?</span>})
+    <span class="returntype parameter">&#8594; E</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  The last element that satisfies the given predicate <code>test</code>.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="lastWhereIndexedOrNull" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension/lastWhereIndexedOrNull.html">lastWhereIndexedOrNull</a></span><span class="signature">(<wbr><span class="parameter" id="lastWhereIndexedOrNull-param-test"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">test</span>(<span class="parameter" id="param-index"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">index</span>, </span><span class="parameter" id="param-element"><span class="type-annotation">T</span> <span class="parameter-name">element</span></span>)</span>)
+    <span class="returntype parameter">&#8594; T?</span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension.html">IterableExtension</a> extension</span>
+      </p>
+  The last element whose index and value satisfies <code>test</code>.
+  
+
+</dd>
+
+        <dt id="lastWhereOrNull" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension/lastWhereOrNull.html">lastWhereOrNull</a></span><span class="signature">(<wbr><span class="parameter" id="lastWhereOrNull-param-test"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">test</span>(<span class="parameter" id="param-element"><span class="type-annotation">T</span> <span class="parameter-name">element</span></span>)</span>)
+    <span class="returntype parameter">&#8594; T?</span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension.html">IterableExtension</a> extension</span>
+      </p>
+  The last element satisfying <code>test</code>, or <code>null</code> if there are none.
+  
+
+</dd>
+
+        <dt id="lowerBound" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/ListComparableExtensions/lowerBound.html">lowerBound</a></span><span class="signature">(<wbr><span class="parameter" id="lowerBound-param-element"><span class="type-annotation">E</span> <span class="parameter-name">element</span>, [</span><span class="parameter" id="lowerBound-param-compare"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">compare</span>(<span class="parameter" id="param-"><span class="type-annotation">E</span>, </span><span class="parameter" id="param-"><span class="type-annotation">E</span></span>)?</span>])
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/ListComparableExtensions.html">ListComparableExtensions</a> extension</span>
+      </p>
+  Returns the index where <code>element</code> should be in this sorted list.
+  
+
+</dd>
+
+        <dt id="lowerBound" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/ListExtensions/lowerBound.html">lowerBound</a></span><span class="signature">(<wbr><span class="parameter" id="lowerBound-param-element"><span class="type-annotation">E</span> <span class="parameter-name">element</span>, </span><span class="parameter" id="lowerBound-param-compare"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">compare</span>(<span class="parameter" id="param-"><span class="type-annotation">E</span>, </span><span class="parameter" id="param-"><span class="type-annotation">E</span></span>)</span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/ListExtensions.html">ListExtensions</a> extension</span>
+      </p>
+  Returns the index where <code>element</code> should be in this sorted list.
+  
+
+</dd>
+
+        <dt id="lowerBoundBy" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/ListExtensions/lowerBoundBy.html">lowerBoundBy</a></span><span class="signature">&lt;<wbr><span class="type-parameter">K extends <a href="https://api.flutter.dev/flutter/dart-core/Comparable-class.html">Comparable</a><span class="signature">&lt;<wbr><span class="type-parameter">K</span>&gt;</span></span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="lowerBoundBy-param-element"><span class="type-annotation">E</span> <span class="parameter-name">element</span>, </span><span class="parameter" id="lowerBoundBy-param-keyOf"><span class="type-annotation">K</span> <span class="parameter-name">keyOf</span>(<span class="parameter" id="param-"><span class="type-annotation">E</span></span>), [</span><span class="parameter" id="lowerBoundBy-param-start"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">start</span> = <span class="default-value">0</span>, </span><span class="parameter" id="lowerBoundBy-param-end"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a>?</span> <span class="parameter-name">end</span></span>])
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/ListExtensions.html">ListExtensions</a> extension</span>
+      </p>
+  Returns the index where <code>element</code> should be in this sorted list.
+  
+
+</dd>
+
+        <dt id="lowerBoundByCompare" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/ListExtensions/lowerBoundByCompare.html">lowerBoundByCompare</a></span><span class="signature">&lt;<wbr><span class="type-parameter">K</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="lowerBoundByCompare-param-element"><span class="type-annotation">E</span> <span class="parameter-name">element</span>, </span><span class="parameter" id="lowerBoundByCompare-param-keyOf"><span class="type-annotation">K</span> <span class="parameter-name">keyOf</span>(<span class="parameter" id="param-"><span class="type-annotation">E</span></span>), </span><span class="parameter" id="lowerBoundByCompare-param-compare"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">compare</span>(<span class="parameter" id="param-"><span class="type-annotation">K</span>, </span><span class="parameter" id="param-"><span class="type-annotation">K</span></span>), [</span><span class="parameter" id="lowerBoundByCompare-param-start"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">start</span> = <span class="default-value">0</span>, </span><span class="parameter" id="lowerBoundByCompare-param-end"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a>?</span> <span class="parameter-name">end</span></span>])
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/ListExtensions.html">ListExtensions</a> extension</span>
+      </p>
+  Returns the index where <code>element</code> should be in this sorted list.
+  
+
+</dd>
+
+        <dt id="map" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-collection/ListBase/map.html">map</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="map-param-f"><span class="type-annotation">T</span> <span class="parameter-name">f</span>(<span class="parameter" id="param-element"><span class="type-annotation">E</span> <span class="parameter-name">element</span></span>)</span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  The current elements of this iterable modified by <code>toElement</code>.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="mapIndexed" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension/mapIndexed.html">mapIndexed</a></span><span class="signature">&lt;<wbr><span class="type-parameter">R</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="mapIndexed-param-convert"><span class="type-annotation">R</span> <span class="parameter-name">convert</span>(<span class="parameter" id="param-index"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">index</span>, </span><span class="parameter" id="param-element"><span class="type-annotation">T</span> <span class="parameter-name">element</span></span>)</span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">R</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension.html">IterableExtension</a> extension</span>
+      </p>
+  Maps each element and its index to a new value.
+  
+
+</dd>
+
+        <dt id="mapIndexed" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/ListExtensions/mapIndexed.html">mapIndexed</a></span><span class="signature">&lt;<wbr><span class="type-parameter">R</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="mapIndexed-param-convert"><span class="type-annotation">R</span> <span class="parameter-name">convert</span>(<span class="parameter" id="param-index"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">index</span>, </span><span class="parameter" id="param-element"><span class="type-annotation">E</span> <span class="parameter-name">element</span></span>)</span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">R</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/ListExtensions.html">ListExtensions</a> extension</span>
+      </p>
+  Maps each element and its index to a new value.
+  
+
+</dd>
+
+        <dt id="none" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension/none.html">none</a></span><span class="signature">(<wbr><span class="parameter" id="none-param-test"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">test</span>(<span class="parameter" id="param-"><span class="type-annotation">T</span></span>)</span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension.html">IterableExtension</a> extension</span>
+      </p>
+  Whether no element satisfies <code>test</code>.
+  
+
+</dd>
+
+        <dt id="noSuchMethod" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></span><span class="signature">(<wbr><span class="parameter" id="noSuchMethod-param-invocation"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Invocation-class.html">Invocation</a></span> <span class="parameter-name">invocation</span></span>)
+    <span class="returntype parameter">&#8594; dynamic</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Invoked when a nonexistent method or property is accessed.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="reduce" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-collection/ListBase/reduce.html">reduce</a></span><span class="signature">(<wbr><span class="parameter" id="reduce-param-combine"><span class="type-annotation">E</span> <span class="parameter-name">combine</span>(<span class="parameter" id="param-previousValue"><span class="type-annotation">E</span> <span class="parameter-name">previousValue</span>, </span><span class="parameter" id="param-element"><span class="type-annotation">E</span> <span class="parameter-name">element</span></span>)</span>)
+    <span class="returntype parameter">&#8594; E</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Reduces a collection to a single value by iteratively combining elements
+of the collection using the provided function.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="reduceIndexed" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension/reduceIndexed.html">reduceIndexed</a></span><span class="signature">(<wbr><span class="parameter" id="reduceIndexed-param-combine"><span class="type-annotation">T</span> <span class="parameter-name">combine</span>(<span class="parameter" id="param-index"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">index</span>, </span><span class="parameter" id="param-previous"><span class="type-annotation">T</span> <span class="parameter-name">previous</span>, </span><span class="parameter" id="param-element"><span class="type-annotation">T</span> <span class="parameter-name">element</span></span>)</span>)
+    <span class="returntype parameter">&#8594; T</span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension.html">IterableExtension</a> extension</span>
+      </p>
+  Combine the elements with each other and the current index.
+  
+
+</dd>
+
+        <dt id="remove" class="callable">
+  <span class="name"><a href="../core_nano_collection/NanoList/remove.html">remove</a></span><span class="signature">(<wbr><span class="parameter" id="remove-param-element"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a>?</span> <span class="parameter-name">element</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Removes the first occurrence of <code>value</code> from this list.
+  <div class="features"><span class="feature">override</span></div>
+
+</dd>
+
+        <dt id="removeAt" class="callable">
+  <span class="name"><a href="../core_nano_collection/NanoList/removeAt.html">removeAt</a></span><span class="signature">(<wbr><span class="parameter" id="removeAt-param-index"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">index</span></span>)
+    <span class="returntype parameter">&#8594; E</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Removes the object at position <code>index</code> from this list.
+  <div class="features"><span class="feature">override</span></div>
+
+</dd>
+
+        <dt id="removeLast" class="callable">
+  <span class="name"><a href="../core_nano_collection/NanoList/removeLast.html">removeLast</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; E</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Removes and returns the last object in this list.
+  <div class="features"><span class="feature">override</span></div>
+
+</dd>
+
+        <dt id="removeRange" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-collection/ListBase/removeRange.html">removeRange</a></span><span class="signature">(<wbr><span class="parameter" id="removeRange-param-start"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">start</span>, </span><span class="parameter" id="removeRange-param-end"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">end</span></span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Removes a range of elements from the list.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="removeWhere" class="callable">
+  <span class="name"><a href="../core_nano_collection/NanoList/removeWhere.html">removeWhere</a></span><span class="signature">(<wbr><span class="parameter" id="removeWhere-param-test"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">test</span>(<span class="parameter" id="param-element"><span class="type-annotation">E</span> <span class="parameter-name">element</span></span>)</span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Removes all objects from this list that satisfy <code>test</code>.
+  <div class="features"><span class="feature">override</span></div>
+
+</dd>
+
+        <dt id="replaceRange" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-collection/ListBase/replaceRange.html">replaceRange</a></span><span class="signature">(<wbr><span class="parameter" id="replaceRange-param-start"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">start</span>, </span><span class="parameter" id="replaceRange-param-end"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">end</span>, </span><span class="parameter" id="replaceRange-param-newContents"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span></span> <span class="parameter-name">newContents</span></span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Replaces a range of elements with the elements of <code>replacements</code>.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="retainWhere" class="callable">
+  <span class="name"><a href="../core_nano_collection/NanoList/retainWhere.html">retainWhere</a></span><span class="signature">(<wbr><span class="parameter" id="retainWhere-param-test"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">test</span>(<span class="parameter" id="param-element"><span class="type-annotation">E</span> <span class="parameter-name">element</span></span>)</span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Removes all objects from this list that fail to satisfy <code>test</code>.
+  <div class="features"><span class="feature">override</span></div>
+
+</dd>
+
+        <dt id="reverseRange" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/ListExtensions/reverseRange.html">reverseRange</a></span><span class="signature">(<wbr><span class="parameter" id="reverseRange-param-start"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">start</span>, </span><span class="parameter" id="reverseRange-param-end"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">end</span></span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/ListExtensions.html">ListExtensions</a> extension</span>
+      </p>
+  Reverses the elements in a range of the list.
+  
+
+</dd>
+
+        <dt id="sample" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension/sample.html">sample</a></span><span class="signature">(<wbr><span class="parameter" id="sample-param-count"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">count</span>, [</span><span class="parameter" id="sample-param-random"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-math/Random-class.html">Random</a>?</span> <span class="parameter-name">random</span></span>])
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension.html">IterableExtension</a> extension</span>
+      </p>
+  Selects <code>count</code> elements at random from this iterable.
+  
+
+</dd>
+
+        <dt id="setAll" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-collection/ListBase/setAll.html">setAll</a></span><span class="signature">(<wbr><span class="parameter" id="setAll-param-index"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">index</span>, </span><span class="parameter" id="setAll-param-iterable"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span></span> <span class="parameter-name">iterable</span></span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Overwrites elements with the objects of <code>iterable</code>.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="setRange" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-collection/ListBase/setRange.html">setRange</a></span><span class="signature">(<wbr><span class="parameter" id="setRange-param-start"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">start</span>, </span><span class="parameter" id="setRange-param-end"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">end</span>, </span><span class="parameter" id="setRange-param-iterable"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span></span> <span class="parameter-name">iterable</span>, [</span><span class="parameter" id="setRange-param-skipCount"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">skipCount</span> = <span class="default-value">0</span></span>])
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Writes some elements of <code>iterable</code> into a range of this list.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="shuffle" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-collection/ListBase/shuffle.html">shuffle</a></span><span class="signature">(<wbr>[<span class="parameter" id="shuffle-param-random"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-math/Random-class.html">Random</a>?</span> <span class="parameter-name">random</span></span>])
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Shuffles the elements of this list randomly.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="shuffled" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension/shuffled.html">shuffled</a></span><span class="signature">(<wbr>[<span class="parameter" id="shuffled-param-random"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-math/Random-class.html">Random</a>?</span> <span class="parameter-name">random</span></span>])
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension.html">IterableExtension</a> extension</span>
+      </p>
+  Creates a shuffled list of the elements of the iterable.
+  
+
+</dd>
+
+        <dt id="shuffleRange" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/ListExtensions/shuffleRange.html">shuffleRange</a></span><span class="signature">(<wbr><span class="parameter" id="shuffleRange-param-start"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">start</span>, </span><span class="parameter" id="shuffleRange-param-end"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">end</span>, [</span><span class="parameter" id="shuffleRange-param-random"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-math/Random-class.html">Random</a>?</span> <span class="parameter-name">random</span></span>])
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/ListExtensions.html">ListExtensions</a> extension</span>
+      </p>
+  Shuffle a range of elements.
+  
+
+</dd>
+
+        <dt id="singleWhere" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-collection/ListBase/singleWhere.html">singleWhere</a></span><span class="signature">(<wbr><span class="parameter" id="singleWhere-param-test"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">test</span>(<span class="parameter" id="param-element"><span class="type-annotation">E</span> <span class="parameter-name">element</span></span>), {</span><span class="parameter" id="singleWhere-param-orElse"><span class="type-annotation">E</span> <span class="parameter-name">orElse</span>()?</span>})
+    <span class="returntype parameter">&#8594; E</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  The single element that satisfies <code>test</code>.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="singleWhereIndexedOrNull" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension/singleWhereIndexedOrNull.html">singleWhereIndexedOrNull</a></span><span class="signature">(<wbr><span class="parameter" id="singleWhereIndexedOrNull-param-test"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">test</span>(<span class="parameter" id="param-index"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">index</span>, </span><span class="parameter" id="param-element"><span class="type-annotation">T</span> <span class="parameter-name">element</span></span>)</span>)
+    <span class="returntype parameter">&#8594; T?</span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension.html">IterableExtension</a> extension</span>
+      </p>
+  The single element satisfying <code>test</code>.
+  
+
+</dd>
+
+        <dt id="singleWhereOrNull" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension/singleWhereOrNull.html">singleWhereOrNull</a></span><span class="signature">(<wbr><span class="parameter" id="singleWhereOrNull-param-test"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">test</span>(<span class="parameter" id="param-element"><span class="type-annotation">T</span> <span class="parameter-name">element</span></span>)</span>)
+    <span class="returntype parameter">&#8594; T?</span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension.html">IterableExtension</a> extension</span>
+      </p>
+  The single element satisfying <code>test</code>.
+  
+
+</dd>
+
+        <dt id="skip" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-collection/ListBase/skip.html">skip</a></span><span class="signature">(<wbr><span class="parameter" id="skip-param-count"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">count</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Creates an <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a> that provides all but the first <code>count</code> elements.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="skipWhile" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-collection/ListBase/skipWhile.html">skipWhile</a></span><span class="signature">(<wbr><span class="parameter" id="skipWhile-param-test"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">test</span>(<span class="parameter" id="param-element"><span class="type-annotation">E</span> <span class="parameter-name">element</span></span>)</span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Creates an <code>Iterable</code> that skips leading elements while <code>test</code> is satisfied.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="slice" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/ListExtensions/slice.html">slice</a></span><span class="signature">(<wbr><span class="parameter" id="slice-param-start"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">start</span>, [</span><span class="parameter" id="slice-param-end"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a>?</span> <span class="parameter-name">end</span></span>])
+    <span class="returntype parameter">&#8594; <a href="https://pub.dev/documentation/collection/1.19.1/collection/ListSlice-class.html">ListSlice</a><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/ListExtensions.html">ListExtensions</a> extension</span>
+      </p>
+  A fixed length view of a range of this list.
+  
+
+</dd>
+
+        <dt id="slices" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/ListExtensions/slices.html">slices</a></span><span class="signature">(<wbr><span class="parameter" id="slices-param-length"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">length</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/ListExtensions.html">ListExtensions</a> extension</span>
+      </p>
+  Contiguous <a href="https://pub.dev/documentation/collection/1.19.1/collection/ListExtensions/slice.html">slice</a>s of <code>this</code> with the given <code>length</code>.
+  
+
+</dd>
+
+        <dt id="slices" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension/slices.html">slices</a></span><span class="signature">(<wbr><span class="parameter" id="slices-param-length"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">length</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension.html">IterableExtension</a> extension</span>
+      </p>
+  Contiguous slices of <code>this</code> with the given <code>length</code>.
+  
+
+</dd>
+
+        <dt id="sort" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-collection/ListBase/sort.html">sort</a></span><span class="signature">(<wbr>[<span class="parameter" id="sort-param-compare"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">compare</span>(<span class="parameter" id="param-a"><span class="type-annotation">E</span> <span class="parameter-name">a</span>, </span><span class="parameter" id="param-b"><span class="type-annotation">E</span> <span class="parameter-name">b</span></span>)?</span>])
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Sorts this list according to the order specified by the <code>compare</code> function.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="sortBy" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/ListExtensions/sortBy.html">sortBy</a></span><span class="signature">&lt;<wbr><span class="type-parameter">K extends <a href="https://api.flutter.dev/flutter/dart-core/Comparable-class.html">Comparable</a><span class="signature">&lt;<wbr><span class="type-parameter">K</span>&gt;</span></span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="sortBy-param-keyOf"><span class="type-annotation">K</span> <span class="parameter-name">keyOf</span>(<span class="parameter" id="param-element"><span class="type-annotation">E</span> <span class="parameter-name">element</span></span>), [</span><span class="parameter" id="sortBy-param-start"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">start</span> = <span class="default-value">0</span>, </span><span class="parameter" id="sortBy-param-end"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a>?</span> <span class="parameter-name">end</span></span>])
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/ListExtensions.html">ListExtensions</a> extension</span>
+      </p>
+  Sorts elements by the natural order of their <code>keyOf</code> property.
+  
+
+</dd>
+
+        <dt id="sortByCompare" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/ListExtensions/sortByCompare.html">sortByCompare</a></span><span class="signature">&lt;<wbr><span class="type-parameter">K</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="sortByCompare-param-keyOf"><span class="type-annotation">K</span> <span class="parameter-name">keyOf</span>(<span class="parameter" id="param-element"><span class="type-annotation">E</span> <span class="parameter-name">element</span></span>), </span><span class="parameter" id="sortByCompare-param-compare"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">compare</span>(<span class="parameter" id="param-a"><span class="type-annotation">K</span> <span class="parameter-name">a</span>, </span><span class="parameter" id="param-b"><span class="type-annotation">K</span> <span class="parameter-name">b</span></span>), [</span><span class="parameter" id="sortByCompare-param-start"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">start</span> = <span class="default-value">0</span>, </span><span class="parameter" id="sortByCompare-param-end"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a>?</span> <span class="parameter-name">end</span></span>])
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/ListExtensions.html">ListExtensions</a> extension</span>
+      </p>
+  Sorts elements by the <code>compare</code> of their <code>keyOf</code> property.
+  
+
+</dd>
+
+        <dt id="sorted" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension/sorted.html">sorted</a></span><span class="signature">(<wbr><span class="parameter" id="sorted-param-compare"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Comparator.html">Comparator</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">compare</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension.html">IterableExtension</a> extension</span>
+      </p>
+  Creates a sorted list of the elements of the iterable.
+  
+
+</dd>
+
+        <dt id="sorted" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableComparableExtension/sorted.html">sorted</a></span><span class="signature">(<wbr>[<span class="parameter" id="sorted-param-compare"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Comparator.html">Comparator</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">compare</span></span>])
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableComparableExtension.html">IterableComparableExtension</a> extension</span>
+      </p>
+  Creates a sorted list of the elements of the iterable.
+  
+
+</dd>
+
+        <dt id="sortedBy" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension/sortedBy.html">sortedBy</a></span><span class="signature">&lt;<wbr><span class="type-parameter">K extends <a href="https://api.flutter.dev/flutter/dart-core/Comparable-class.html">Comparable</a><span class="signature">&lt;<wbr><span class="type-parameter">K</span>&gt;</span></span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="sortedBy-param-keyOf"><span class="type-annotation">K</span> <span class="parameter-name">keyOf</span>(<span class="parameter" id="param-element"><span class="type-annotation">T</span> <span class="parameter-name">element</span></span>)</span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension.html">IterableExtension</a> extension</span>
+      </p>
+  Creates a sorted list of the elements of the iterable.
+  
+
+</dd>
+
+        <dt id="sortedByCompare" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension/sortedByCompare.html">sortedByCompare</a></span><span class="signature">&lt;<wbr><span class="type-parameter">K</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="sortedByCompare-param-keyOf"><span class="type-annotation">K</span> <span class="parameter-name">keyOf</span>(<span class="parameter" id="param-element"><span class="type-annotation">T</span> <span class="parameter-name">element</span></span>), </span><span class="parameter" id="sortedByCompare-param-compare"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Comparator.html">Comparator</a><span class="signature">&lt;<wbr><span class="type-parameter">K</span>&gt;</span></span> <span class="parameter-name">compare</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension.html">IterableExtension</a> extension</span>
+      </p>
+  Creates a sorted list of the elements of the iterable.
+  
+
+</dd>
+
+        <dt id="sortRange" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/ListExtensions/sortRange.html">sortRange</a></span><span class="signature">(<wbr><span class="parameter" id="sortRange-param-start"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">start</span>, </span><span class="parameter" id="sortRange-param-end"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">end</span>, </span><span class="parameter" id="sortRange-param-compare"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">compare</span>(<span class="parameter" id="param-a"><span class="type-annotation">E</span> <span class="parameter-name">a</span>, </span><span class="parameter" id="param-b"><span class="type-annotation">E</span> <span class="parameter-name">b</span></span>)</span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/ListExtensions.html">ListExtensions</a> extension</span>
+      </p>
+  Sort a range of elements by <code>compare</code>.
+  
+
+</dd>
+
+        <dt id="sortRange" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/ListComparableExtensions/sortRange.html">sortRange</a></span><span class="signature">(<wbr><span class="parameter" id="sortRange-param-start"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">start</span>, </span><span class="parameter" id="sortRange-param-end"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">end</span>, [</span><span class="parameter" id="sortRange-param-compare"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">compare</span>(<span class="parameter" id="param-a"><span class="type-annotation">E</span> <span class="parameter-name">a</span>, </span><span class="parameter" id="param-b"><span class="type-annotation">E</span> <span class="parameter-name">b</span></span>)?</span>])
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/ListComparableExtensions.html">ListComparableExtensions</a> extension</span>
+      </p>
+  Sort a range of elements by <code>compare</code>.
+  
+
+</dd>
+
+        <dt id="splitAfter" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension/splitAfter.html">splitAfter</a></span><span class="signature">(<wbr><span class="parameter" id="splitAfter-param-test"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">test</span>(<span class="parameter" id="param-element"><span class="type-annotation">T</span> <span class="parameter-name">element</span></span>)</span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension.html">IterableExtension</a> extension</span>
+      </p>
+  Splits the elements into chunks after some elements.
+  
+
+</dd>
+
+        <dt id="splitAfterIndexed" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension/splitAfterIndexed.html">splitAfterIndexed</a></span><span class="signature">(<wbr><span class="parameter" id="splitAfterIndexed-param-test"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">test</span>(<span class="parameter" id="param-index"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">index</span>, </span><span class="parameter" id="param-element"><span class="type-annotation">T</span> <span class="parameter-name">element</span></span>)</span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension.html">IterableExtension</a> extension</span>
+      </p>
+  Splits the elements into chunks after some elements and indices.
+  
+
+</dd>
+
+        <dt id="splitBefore" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension/splitBefore.html">splitBefore</a></span><span class="signature">(<wbr><span class="parameter" id="splitBefore-param-test"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">test</span>(<span class="parameter" id="param-element"><span class="type-annotation">T</span> <span class="parameter-name">element</span></span>)</span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension.html">IterableExtension</a> extension</span>
+      </p>
+  Splits the elements into chunks before some elements.
+  
+
+</dd>
+
+        <dt id="splitBeforeIndexed" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension/splitBeforeIndexed.html">splitBeforeIndexed</a></span><span class="signature">(<wbr><span class="parameter" id="splitBeforeIndexed-param-test"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">test</span>(<span class="parameter" id="param-index"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">index</span>, </span><span class="parameter" id="param-element"><span class="type-annotation">T</span> <span class="parameter-name">element</span></span>)</span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension.html">IterableExtension</a> extension</span>
+      </p>
+  Splits the elements into chunks before some elements and indices.
+  
+
+</dd>
+
+        <dt id="splitBetween" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension/splitBetween.html">splitBetween</a></span><span class="signature">(<wbr><span class="parameter" id="splitBetween-param-test"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">test</span>(<span class="parameter" id="param-first"><span class="type-annotation">T</span> <span class="parameter-name">first</span>, </span><span class="parameter" id="param-second"><span class="type-annotation">T</span> <span class="parameter-name">second</span></span>)</span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension.html">IterableExtension</a> extension</span>
+      </p>
+  Splits the elements into chunks between some elements.
+  
+
+</dd>
+
+        <dt id="splitBetweenIndexed" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension/splitBetweenIndexed.html">splitBetweenIndexed</a></span><span class="signature">(<wbr><span class="parameter" id="splitBetweenIndexed-param-test"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">test</span>(<span class="parameter" id="param-index"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">index</span>, </span><span class="parameter" id="param-first"><span class="type-annotation">T</span> <span class="parameter-name">first</span>, </span><span class="parameter" id="param-second"><span class="type-annotation">T</span> <span class="parameter-name">second</span></span>)</span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension.html">IterableExtension</a> extension</span>
+      </p>
+  Splits the elements into chunks between some elements and indices.
+  
+
+</dd>
+
+        <dt id="sublist" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-collection/ListBase/sublist.html">sublist</a></span><span class="signature">(<wbr><span class="parameter" id="sublist-param-start"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">start</span>, [</span><span class="parameter" id="sublist-param-end"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a>?</span> <span class="parameter-name">end</span></span>])
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Returns a new list containing the elements between <code>start</code> and <code>end</code>.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="swap" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/ListExtensions/swap.html">swap</a></span><span class="signature">(<wbr><span class="parameter" id="swap-param-index1"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">index1</span>, </span><span class="parameter" id="swap-param-index2"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">index2</span></span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/ListExtensions.html">ListExtensions</a> extension</span>
+      </p>
+  Swaps two elements of this list.
+  
+
+</dd>
+
+        <dt id="take" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-collection/ListBase/take.html">take</a></span><span class="signature">(<wbr><span class="parameter" id="take-param-count"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">count</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Creates a lazy iterable of the <code>count</code> first elements of this iterable.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="takeWhile" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-collection/ListBase/takeWhile.html">takeWhile</a></span><span class="signature">(<wbr><span class="parameter" id="takeWhile-param-test"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">test</span>(<span class="parameter" id="param-element"><span class="type-annotation">E</span> <span class="parameter-name">element</span></span>)</span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Creates a lazy iterable of the leading elements satisfying <code>test</code>.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="toList" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-collection/ListBase/toList.html">toList</a></span><span class="signature">(<wbr>{<span class="parameter" id="toList-param-growable"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">growable</span> = <span class="default-value">true</span></span>})
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Creates a <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a> containing the elements of this <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a>.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="toSet" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-collection/ListBase/toSet.html">toSet</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Set-class.html">Set</a><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Creates a <a href="https://api.flutter.dev/flutter/dart-core/Set-class.html">Set</a> containing the same elements as this iterable.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="toString" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-collection/ListBase/toString.html">toString</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  A string representation of this object.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="where" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-collection/ListBase/where.html">where</a></span><span class="signature">(<wbr><span class="parameter" id="where-param-test"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">test</span>(<span class="parameter" id="param-element"><span class="type-annotation">E</span> <span class="parameter-name">element</span></span>)</span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Creates a new lazy <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a> with all elements that satisfy the
+predicate <code>test</code>.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="whereIndexed" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/ListExtensions/whereIndexed.html">whereIndexed</a></span><span class="signature">(<wbr><span class="parameter" id="whereIndexed-param-test"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">test</span>(<span class="parameter" id="param-index"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">index</span>, </span><span class="parameter" id="param-element"><span class="type-annotation">E</span> <span class="parameter-name">element</span></span>)</span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/ListExtensions.html">ListExtensions</a> extension</span>
+      </p>
+  The elements whose value and index satisfies <code>test</code>.
+  
+
+</dd>
+
+        <dt id="whereIndexed" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension/whereIndexed.html">whereIndexed</a></span><span class="signature">(<wbr><span class="parameter" id="whereIndexed-param-test"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">test</span>(<span class="parameter" id="param-index"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">index</span>, </span><span class="parameter" id="param-element"><span class="type-annotation">T</span> <span class="parameter-name">element</span></span>)</span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension.html">IterableExtension</a> extension</span>
+      </p>
+  The elements whose value and index satisfies <code>test</code>.
+  
+
+</dd>
+
+        <dt id="whereNot" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension/whereNot.html">whereNot</a></span><span class="signature">(<wbr><span class="parameter" id="whereNot-param-test"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">test</span>(<span class="parameter" id="param-element"><span class="type-annotation">T</span> <span class="parameter-name">element</span></span>)</span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension.html">IterableExtension</a> extension</span>
+      </p>
+  The elements that do not satisfy <code>test</code>.
+  
+
+</dd>
+
+        <dt id="whereNotIndexed" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/ListExtensions/whereNotIndexed.html">whereNotIndexed</a></span><span class="signature">(<wbr><span class="parameter" id="whereNotIndexed-param-test"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">test</span>(<span class="parameter" id="param-index"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">index</span>, </span><span class="parameter" id="param-element"><span class="type-annotation">E</span> <span class="parameter-name">element</span></span>)</span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/ListExtensions.html">ListExtensions</a> extension</span>
+      </p>
+  The elements whose value and index do not satisfy <code>test</code>.
+  
+
+</dd>
+
+        <dt id="whereNotIndexed" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension/whereNotIndexed.html">whereNotIndexed</a></span><span class="signature">(<wbr><span class="parameter" id="whereNotIndexed-param-test"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">test</span>(<span class="parameter" id="param-index"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">index</span>, </span><span class="parameter" id="param-element"><span class="type-annotation">T</span> <span class="parameter-name">element</span></span>)</span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableExtension.html">IterableExtension</a> extension</span>
+      </p>
+  The elements whose value and index do not satisfy <code>test</code>.
+  
+
+</dd>
+
+        <dt id="whereNotNull" class="callable">
+  <span class="name deprecated"><a class="deprecated" href="https://pub.dev/documentation/collection/1.19.1/collection/IterableNullableExtension/whereNotNull.html">whereNotNull</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T?</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/collection/1.19.1/collection/IterableNullableExtension.html">IterableNullableExtension</a> extension</span>
+      </p>
+  The non-<code>null</code> elements of this <code>Iterable</code>.
+  
+
+</dd>
+
+        <dt id="whereType" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-collection/ListBase/whereType.html">whereType</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Creates a new lazy <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a> with all elements that have type <code>T</code>.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+    </dl>
+  </section>
+    
+  <section
+      class="summary offset-anchor"
+      id="operators">
+    <h2>Operators</h2>
+    <dl class="callables">
+        <dt id="operator +" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-collection/ListBase/operator_plus.html">operator +</a></span><span class="signature">(<wbr><span class="parameter" id="+-param-other"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span></span> <span class="parameter-name">other</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Returns the concatenation of this list and <code>other</code>.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="operator ==" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/operator_equals.html">operator ==</a></span><span class="signature">(<wbr><span class="parameter" id="==-param-other"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a></span> <span class="parameter-name">other</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  The equality operator.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="operator []" class="callable">
+  <span class="name"><a href="../core_nano_collection/NanoList/operator_get.html">operator []</a></span><span class="signature">(<wbr><span class="parameter" id="[]-param-index"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">index</span></span>)
+    <span class="returntype parameter">&#8594; E</span>
+  </span>
+  
+
+</dt>
+<dd>
+  The object at the given <code>index</code> in the list.
+  <div class="features"><span class="feature">override</span></div>
+
+</dd>
+
+        <dt id="operator []=" class="callable">
+  <span class="name"><a href="../core_nano_collection/NanoList/operator_put.html">operator []=</a></span><span class="signature">(<wbr><span class="parameter" id="[]=-param-index"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">index</span>, </span><span class="parameter" id="[]=-param-value"><span class="type-annotation">E</span> <span class="parameter-name">value</span></span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Sets the value at the given <code>index</code> in the list to <code>value</code>.
+  <div class="features"><span class="feature">override</span></div>
+
+</dd>
+
+    </dl>
+  </section>
+    
+    
+    
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../index.html">nano</a></li>
+    <li><a href="../core_nano_collection/">nano_collection</a></li>
+    <li class="self-crumb">NanoList<span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span> class</li>
+</ol>
+
+    <h5>nano_collection library</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div>
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    nano
+      0.9.0
+  </span>
+  
+</footer>
+
+
+<script src="../static-assets/highlight.pack.js?v1"></script>
+<script src="../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

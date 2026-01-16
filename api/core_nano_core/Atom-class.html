@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the Atom class from the nano_core library, for the Dart programming language.">
+  <title>Atom class - nano_core library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../static-assets/styles.css?v1">
+  <link rel="icon" href="../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../index.html">nano</a></li>
+    <li><a href="../core_nano_core/">core&#47;nano_core.dart</a></li>
+    <li class="self-crumb">Atom<span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span> class</li>
+  </ol>
+  <div class="self-name">Atom</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
+</header>
+<main>
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar="core_nano_core&#47;core_nano_core-library-sidebar.html"
+    data-below-sidebar="core_nano_core&#47;Atom-class-sidebar.html">
+    <div>
+  <div id="external-links" class="btn-group"><a title="View source code" class="source-link" href="https://github.com/superciccio/nano/blob/main/lib/core/nano_core.dart#L374"><span class="material-symbols-outlined">description</span></a></div>
+<h1><span class="kind-class">Atom&lt;<wbr><span class="type-parameter">T</span>&gt;</span> class 
+    <a href="https://dart.dev/language/class-modifiers#abstract" class="feature feature-abstract" title="This type can not be directly constructed.">abstract</a>
+ 
+</h1></div>
+
+    
+<section class="desc markdown">
+  <p>The atomic unit of state.
+Implements <a href="https://api.flutter.dev/flutter/foundation/ValueListenable-class.html">ValueListenable</a> with extra powers:</p>
+<ol>
+<li>Logging via <a href="../core_nano_core/NanoObserver-class.html">NanoObserver</a>.</li>
+<li>Helper methods like <a href="../core_nano_core/Atom/update.html">update</a>.</li>
+</ol>
+<p>Example:</p>
+<pre class="language-dart"><code class="language-dart">final count = Atom(0, label: 'counter');
+count.set(10);
+count.update((v) =&gt; v + 1);
+</code></pre>
+</section>
+
+
+    <section>
+      <dl class="dl-horizontal">
+        
+  <dt>Inheritance</dt>
+  <dd>
+    <ul class="gt-separated dark clazz-relationships">
+      <li><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a></li>
+        <li><a href="https://api.flutter.dev/flutter/foundation/ChangeNotifier-class.html">ChangeNotifier</a></li>
+      <li>Atom</li>
+    </ul>
+  </dd>
+
+        
+  <dt>Implemented types</dt>
+  <dd>
+    <ul class="comma-separated clazz-relationships">
+        <li><a href="https://api.flutter.dev/flutter/foundation/ValueListenable-class.html">ValueListenable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></li>
+    </ul>
+  </dd>
+        
+  <dt>Mixed-in types</dt>
+  <dd>
+    <ul class="comma-separated clazz-relationships">
+        <li><a href="https://api.flutter.dev/flutter/foundation/Diagnosticable-mixin.html">Diagnosticable</a></li>
+    </ul>
+  </dd>
+
+          <dt>Implementers</dt>
+          <dd><ul class="comma-separated clazz-relationships">
+              <li><a href="../core_nano_core/ComputedAtom-class.html">ComputedAtom</a></li>
+              <li><a href="../core_nano_core/ValueAtom-class.html">ValueAtom</a></li>
+          </ul></dd>
+
+        
+  <dt>Available extensions</dt>
+  <dd><ul class="comma-separated clazz-relationships">
+      <li><a href="../flutter_src_extensions_reactive/AsyncAtomWidgetExtension.html">AsyncAtomWidgetExtension</a></li>
+      <li><a href="../core_nano_core/AtomBoolExtension.html">AtomBoolExtension</a></li>
+      <li><a href="../core_nano_core/AtomIntExtension.html">AtomIntExtension</a></li>
+      <li><a href="../core_nano_core/AtomListExtension.html">AtomListExtension</a></li>
+      <li><a href="../core_nano_core/AtomMapExtension.html">AtomMapExtension</a></li>
+      <li><a href="../core_nano_core/AtomSelectorExtension.html">AtomSelectorExtension</a></li>
+      <li><a href="../core_nano_core/AtomSetExtension.html">AtomSetExtension</a></li>
+      <li><a href="../test_nano_matchers/AtomTestExtension.html">AtomTestExtension</a></li>
+      <li><a href="../flutter_src_extensions_reactive/AtomTextWidgetExtension.html">AtomTextWidgetExtension</a></li>
+      <li><a href="../core_nano_core/AtomTimeControlExtension.html">AtomTimeControlExtension</a></li>
+      <li><a href="../flutter_src_extensions_string/ValueListenableButtonExtension.html">ValueListenableButtonExtension</a></li>
+      <li><a href="../core_nano_core/ValueListenableStreamExtension.html">ValueListenableStreamExtension</a></li>
+      <li><a href="../flutter_src_extensions_reactive/ValueListenableWatcher.html">ValueListenableWatcher</a></li>
+  </ul></dd>
+        
+
+
+      </dl>
+    </section>
+
+    
+  <section class="summary offset-anchor" id="constructors">
+    <h2>Constructors</h2>
+    <dl class="constructor-summary-list">
+        <dt id="Atom.new" class="callable">
+          <span class="name"><a href="../core_nano_core/Atom/Atom.html">Atom</a></span><span class="signature">(<span class="parameter" id="-param-initial"><span class="type-annotation">T</span> <span class="parameter-name">initial</span>, {</span><span class="parameter" id="-param-label"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">label</span>, </span><span class="parameter" id="-param-meta"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter">dynamic</span>&gt;</span></span> <span class="parameter-name">meta</span>, </span><span class="parameter" id="-param-fromJson"><span class="type-annotation">T</span> <span class="parameter-name">fromJson</span>(<span class="parameter" id="param-"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter">dynamic</span>&gt;</span></span></span>)?</span>})</span>
+        </dt>
+        <dd>
+          
+            <div class="constructor-modifier features">factory</div>
+        </dd>
+        <dt id="Atom.internal" class="callable">
+          <span class="name"><a href="../core_nano_core/Atom/Atom.internal.html">Atom.internal</a></span><span class="signature">()</span>
+        </dt>
+        <dd>
+          Internal constructor for subclasses.
+        </dd>
+    </dl>
+  </section>
+    
+  <section
+      class="summary offset-anchor"
+      id="instance-properties">
+    <h2>Properties</h2>
+    <dl class="properties">
+        <dt id="fromJson" class="property">
+  <span class="name"><a href="../core_nano_core/Atom/fromJson.html">fromJson</a></span>
+  <span class="signature">&#8594; T Function<span class="signature">(<span class="parameter" id="param-"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter">dynamic</span>&gt;</span></span></span>)</span>?</span>
+  
+
+</dt>
+<dd>
+  
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+        <dt id="hashCode" class="property inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>
+  
+
+</dt>
+<dd class="inherited">
+  The hash code for this object.
+  <div class="features"><span class="feature">no setter</span><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="hasListeners" class="property inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/foundation/ChangeNotifier/hasListeners.html">hasListeners</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
+  
+
+</dt>
+<dd class="inherited">
+  Whether any listeners are currently registered.
+  <div class="features"><span class="feature">no setter</span><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="label" class="property">
+  <span class="name"><a href="../core_nano_core/Atom/label.html">label</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a>?</span>
+  
+
+</dt>
+<dd>
+  
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+        <dt id="meta" class="property">
+  <span class="name"><a href="../core_nano_core/Atom/meta.html">meta</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter">dynamic</span>&gt;</span></span>
+  
+
+</dt>
+<dd>
+  
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+        <dt id="runtimeType" class="property inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Type-class.html">Type</a></span>
+  
+
+</dt>
+<dd class="inherited">
+  A representation of the runtime type of the object.
+  <div class="features"><span class="feature">no setter</span><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="stream" class="property">
+  <span class="name"><a href="../test_nano_matchers/AtomTestExtension/stream.html">stream</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Stream-class.html">Stream</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="../core_nano_core/Atom-class.html">Atom</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="../test_nano_matchers/AtomTestExtension.html">AtomTestExtension</a> extension</span>
+      </p>
+  Returns a Stream of values emitted by this Atom.
+Useful for usage with <a href="https://api.flutter.dev/flutter/flutter_test/expectLater.html">expectLater</a> and <a href="https://pub.dev/documentation/matcher/0.12.17/flutter_test/emitsInOrder.html">emitsInOrder</a>.
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+        <dt id="stream" class="property">
+  <span class="name"><a href="../core_nano_core/ValueListenableStreamExtension/stream.html">stream</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Stream-class.html">Stream</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/foundation/ValueListenable-class.html">ValueListenable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="../core_nano_core/ValueListenableStreamExtension.html">ValueListenableStreamExtension</a> extension</span>
+      </p>
+  Returns a <a href="https://api.flutter.dev/flutter/dart-core/Stream-class.html">Stream</a> that emits the current value and subsequent updates.
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+        <dt id="tester" class="property">
+  <span class="name"><a href="../test_nano_matchers/AtomTestExtension/tester.html">tester</a></span>
+  <span class="signature">&#8594; <a href="../test_nano_matchers/NanoTester-class.html">NanoTester</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="../core_nano_core/Atom-class.html">Atom</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="../test_nano_matchers/AtomTestExtension.html">AtomTestExtension</a> extension</span>
+      </p>
+  Creates a <a href="../test_nano_matchers/NanoTester-class.html">NanoTester</a> to capture and verify emissions from this Atom.
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+        <dt id="value" class="property">
+  <span class="name"><a href="../core_nano_core/Atom/value.html">value</a></span>
+  <span class="signature">&#8596; T</span>
+  
+
+</dt>
+<dd>
+  The current value of the object. When the value changes, the callbacks
+registered with <a href="https://api.flutter.dev/flutter/foundation/ChangeNotifier/addListener.html">addListener</a> will be invoked.
+  <div class="features"><span class="feature">getter/setter pair</span><span class="feature">override-getter</span></div>
+
+</dd>
+
+    </dl>
+  </section>
+
+    
+  <section
+      class="summary offset-anchor"
+      id="instance-methods">
+    <h2>Methods</h2>
+    <dl class="callables">
+        <dt id="add" class="callable">
+  <span class="name"><a href="../core_nano_core/AtomListExtension/add.html">add</a></span><span class="signature">(<wbr><span class="parameter" id="add-param-element"><span class="type-annotation">E</span> <span class="parameter-name">element</span></span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="../core_nano_core/Atom-class.html">Atom</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span></span>&gt;</span>,
+        provided by the <a href="../core_nano_core/AtomListExtension.html">AtomListExtension</a> extension</span>
+      </p>
+  Adds <code>element</code> to the list.
+  
+
+</dd>
+
+        <dt id="add" class="callable">
+  <span class="name"><a href="../core_nano_core/AtomSetExtension/add.html">add</a></span><span class="signature">(<wbr><span class="parameter" id="add-param-element"><span class="type-annotation">E</span> <span class="parameter-name">element</span></span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="../core_nano_core/Atom-class.html">Atom</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Set-class.html">Set</a><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span></span>&gt;</span>,
+        provided by the <a href="../core_nano_core/AtomSetExtension.html">AtomSetExtension</a> extension</span>
+      </p>
+  Adds <code>element</code> to the set.
+  
+
+</dd>
+
+        <dt id="addAll" class="callable">
+  <span class="name"><a href="../core_nano_core/AtomListExtension/addAll.html">addAll</a></span><span class="signature">(<wbr><span class="parameter" id="addAll-param-elements"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span></span> <span class="parameter-name">elements</span></span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="../core_nano_core/Atom-class.html">Atom</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span></span>&gt;</span>,
+        provided by the <a href="../core_nano_core/AtomListExtension.html">AtomListExtension</a> extension</span>
+      </p>
+  Adds all <code>elements</code> to the list.
+  
+
+</dd>
+
+        <dt id="addAll" class="callable">
+  <span class="name"><a href="../core_nano_core/AtomSetExtension/addAll.html">addAll</a></span><span class="signature">(<wbr><span class="parameter" id="addAll-param-elements"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span></span> <span class="parameter-name">elements</span></span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="../core_nano_core/Atom-class.html">Atom</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Set-class.html">Set</a><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span></span>&gt;</span>,
+        provided by the <a href="../core_nano_core/AtomSetExtension.html">AtomSetExtension</a> extension</span>
+      </p>
+  Adds all <code>elements</code> to the set.
+  
+
+</dd>
+
+        <dt id="addListener" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/foundation/ChangeNotifier/addListener.html">addListener</a></span><span class="signature">(<wbr><span class="parameter" id="addListener-param-listener"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-ui/VoidCallback.html">VoidCallback</a></span> <span class="parameter-name">listener</span></span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Register a closure to be called when the object changes.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="button" class="callable">
+  <span class="name"><a href="../flutter_src_extensions_string/ValueListenableButtonExtension/button.html">button</a></span><span class="signature">(<wbr><span class="parameter" id="button-param-label"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">label</span>, {</span><span class="parameter" id="button-param-onPressed"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-ui/VoidCallback.html">VoidCallback</a></span> <span class="parameter-name">onPressed</span></span>})
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/widgets/Widget-class.html">Widget</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/foundation/ValueListenable-class.html">ValueListenable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="../flutter_src_extensions_string/ValueListenableButtonExtension.html">ValueListenableButtonExtension</a> extension</span>
+      </p>
+  Returns a <a href="https://api.flutter.dev/flutter/material/FilledButton-class.html">FilledButton</a> that is only enabled if the atom has a 'truthy' value.
+  
+
+</dd>
+
+        <dt id="call" class="callable">
+  <span class="name"><a href="../core_nano_core/Atom/call.html">call</a></span><span class="signature">(<wbr>[<span class="parameter" id="call-param-newValue"><span class="type-annotation">dynamic</span> <span class="parameter-name">newValue</span> = <span class="default-value">_sentinel</span></span>])
+    <span class="returntype parameter">&#8594; T</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Ergonomic shortcut to get/set the value.
+  
+
+</dd>
+
+        <dt id="clear" class="callable">
+  <span class="name"><a href="../core_nano_core/AtomMapExtension/clear.html">clear</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="../core_nano_core/Atom-class.html">Atom</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter">K</span>, <span class="type-parameter">V</span>&gt;</span></span>&gt;</span>,
+        provided by the <a href="../core_nano_core/AtomMapExtension.html">AtomMapExtension</a> extension</span>
+      </p>
+  Clears the map.
+  
+
+</dd>
+
+        <dt id="clear" class="callable">
+  <span class="name"><a href="../core_nano_core/AtomSetExtension/clear.html">clear</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="../core_nano_core/Atom-class.html">Atom</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Set-class.html">Set</a><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span></span>&gt;</span>,
+        provided by the <a href="../core_nano_core/AtomSetExtension.html">AtomSetExtension</a> extension</span>
+      </p>
+  Clears the set.
+  
+
+</dd>
+
+        <dt id="clear" class="callable">
+  <span class="name"><a href="../core_nano_core/AtomListExtension/clear.html">clear</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="../core_nano_core/Atom-class.html">Atom</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span></span>&gt;</span>,
+        provided by the <a href="../core_nano_core/AtomListExtension.html">AtomListExtension</a> extension</span>
+      </p>
+  Clears the list.
+  
+
+</dd>
+
+        <dt id="debounce" class="callable">
+  <span class="name"><a href="../core_nano_core/AtomTimeControlExtension/debounce.html">debounce</a></span><span class="signature">(<wbr><span class="parameter" id="debounce-param-duration"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Duration-class.html">Duration</a></span> <span class="parameter-name">duration</span>, {</span><span class="parameter" id="debounce-param-label"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">label</span></span>})
+    <span class="returntype parameter">&#8594; <a href="../core_nano_core/Atom-class.html">Atom</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="../core_nano_core/Atom-class.html">Atom</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="../core_nano_core/AtomTimeControlExtension.html">AtomTimeControlExtension</a> extension</span>
+      </p>
+  Returns a new <a href="../core_nano_core/Atom-class.html">Atom</a> that debounces updates from this atom.
+  
+
+</dd>
+
+        <dt id="debugFillProperties" class="callable">
+  <span class="name"><a href="../core_nano_core/Atom/debugFillProperties.html">debugFillProperties</a></span><span class="signature">(<wbr><span class="parameter" id="debugFillProperties-param-properties"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/foundation/DiagnosticPropertiesBuilder-class.html">DiagnosticPropertiesBuilder</a></span> <span class="parameter-name">properties</span></span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Add additional properties associated with the node.
+  <div class="features"><span class="feature">override</span></div>
+
+</dd>
+
+        <dt id="decrement" class="callable">
+  <span class="name"><a href="../core_nano_core/AtomIntExtension/decrement.html">decrement</a></span><span class="signature">(<wbr>[<span class="parameter" id="decrement-param-amount"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">amount</span> = <span class="default-value">1</span></span>])
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="../core_nano_core/Atom-class.html">Atom</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>&gt;</span>,
+        provided by the <a href="../core_nano_core/AtomIntExtension.html">AtomIntExtension</a> extension</span>
+      </p>
+  Decrements the value by <code>amount</code>.
+  
+
+</dd>
+
+        <dt id="dispose" class="callable">
+  <span class="name"><a href="../core_nano_core/Atom/dispose.html">dispose</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Discards any resources used by the object. After this is called, the
+object is not in a usable state and should be discarded (calls to
+<a href="https://api.flutter.dev/flutter/foundation/ChangeNotifier/addListener.html">addListener</a> will throw after the object is disposed).
+  <div class="features"><span class="feature">override</span></div>
+
+</dd>
+
+        <dt id="increment" class="callable">
+  <span class="name"><a href="../core_nano_core/AtomIntExtension/increment.html">increment</a></span><span class="signature">(<wbr>[<span class="parameter" id="increment-param-amount"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">amount</span> = <span class="default-value">1</span></span>])
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="../core_nano_core/Atom-class.html">Atom</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>&gt;</span>,
+        provided by the <a href="../core_nano_core/AtomIntExtension.html">AtomIntExtension</a> extension</span>
+      </p>
+  Increments the value by <code>amount</code>.
+  
+
+</dd>
+
+        <dt id="noSuchMethod" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></span><span class="signature">(<wbr><span class="parameter" id="noSuchMethod-param-invocation"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Invocation-class.html">Invocation</a></span> <span class="parameter-name">invocation</span></span>)
+    <span class="returntype parameter">&#8594; dynamic</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Invoked when a nonexistent method or property is accessed.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="notifyListeners" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/foundation/ChangeNotifier/notifyListeners.html">notifyListeners</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Call all the registered listeners.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="put" class="callable">
+  <span class="name"><a href="../core_nano_core/AtomMapExtension/put.html">put</a></span><span class="signature">(<wbr><span class="parameter" id="put-param-key"><span class="type-annotation">K</span> <span class="parameter-name">key</span>, </span><span class="parameter" id="put-param-val"><span class="type-annotation">V</span> <span class="parameter-name">val</span></span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="../core_nano_core/Atom-class.html">Atom</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter">K</span>, <span class="type-parameter">V</span>&gt;</span></span>&gt;</span>,
+        provided by the <a href="../core_nano_core/AtomMapExtension.html">AtomMapExtension</a> extension</span>
+      </p>
+  Adds <code>key</code>:<code>val</code> to the map.
+  
+
+</dd>
+
+        <dt id="putAll" class="callable">
+  <span class="name"><a href="../core_nano_core/AtomMapExtension/putAll.html">putAll</a></span><span class="signature">(<wbr><span class="parameter" id="putAll-param-other"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter">K</span>, <span class="type-parameter">V</span>&gt;</span></span> <span class="parameter-name">other</span></span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="../core_nano_core/Atom-class.html">Atom</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter">K</span>, <span class="type-parameter">V</span>&gt;</span></span>&gt;</span>,
+        provided by the <a href="../core_nano_core/AtomMapExtension.html">AtomMapExtension</a> extension</span>
+      </p>
+  Adds all entries from <code>other</code> to the map.
+  
+
+</dd>
+
+        <dt id="remove" class="callable">
+  <span class="name"><a href="../core_nano_core/AtomSetExtension/remove.html">remove</a></span><span class="signature">(<wbr><span class="parameter" id="remove-param-element"><span class="type-annotation">E</span> <span class="parameter-name">element</span></span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="../core_nano_core/Atom-class.html">Atom</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Set-class.html">Set</a><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span></span>&gt;</span>,
+        provided by the <a href="../core_nano_core/AtomSetExtension.html">AtomSetExtension</a> extension</span>
+      </p>
+  Removes <code>element</code> from the set.
+  
+
+</dd>
+
+        <dt id="remove" class="callable">
+  <span class="name"><a href="../core_nano_core/AtomListExtension/remove.html">remove</a></span><span class="signature">(<wbr><span class="parameter" id="remove-param-element"><span class="type-annotation">E</span> <span class="parameter-name">element</span></span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="../core_nano_core/Atom-class.html">Atom</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span></span>&gt;</span>,
+        provided by the <a href="../core_nano_core/AtomListExtension.html">AtomListExtension</a> extension</span>
+      </p>
+  Removes <code>element</code> from the list.
+  
+
+</dd>
+
+        <dt id="remove" class="callable">
+  <span class="name"><a href="../core_nano_core/AtomMapExtension/remove.html">remove</a></span><span class="signature">(<wbr><span class="parameter" id="remove-param-key"><span class="type-annotation">K</span> <span class="parameter-name">key</span></span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="../core_nano_core/Atom-class.html">Atom</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter">K</span>, <span class="type-parameter">V</span>&gt;</span></span>&gt;</span>,
+        provided by the <a href="../core_nano_core/AtomMapExtension.html">AtomMapExtension</a> extension</span>
+      </p>
+  Removes <code>key</code> from the map.
+  
+
+</dd>
+
+        <dt id="removeListener" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/foundation/ChangeNotifier/removeListener.html">removeListener</a></span><span class="signature">(<wbr><span class="parameter" id="removeListener-param-listener"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-ui/VoidCallback.html">VoidCallback</a></span> <span class="parameter-name">listener</span></span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Remove a previously registered closure from the list of closures that are
+notified when the object changes.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="scan" class="callable">
+  <span class="name"><a href="../core_nano_core/AtomTimeControlExtension/scan.html">scan</a></span><span class="signature">&lt;<wbr><span class="type-parameter">S</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="scan-param-initial"><span class="type-annotation">S</span> <span class="parameter-name">initial</span>, </span><span class="parameter" id="scan-param-accumulator"><span class="type-annotation">S</span> <span class="parameter-name">accumulator</span>(<span class="parameter" id="param-accumulated"><span class="type-annotation">S</span> <span class="parameter-name">accumulated</span>, </span><span class="parameter" id="param-current"><span class="type-annotation">T</span> <span class="parameter-name">current</span></span>), {</span><span class="parameter" id="scan-param-label"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">label</span></span>})
+    <span class="returntype parameter">&#8594; <a href="../core_nano_core/Atom-class.html">Atom</a><span class="signature">&lt;<wbr><span class="type-parameter">S</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="../core_nano_core/Atom-class.html">Atom</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="../core_nano_core/AtomTimeControlExtension.html">AtomTimeControlExtension</a> extension</span>
+      </p>
+  Returns a new <a href="../core_nano_core/Atom-class.html">Atom</a> that accumulates state over time.
+  
+
+</dd>
+
+        <dt id="select" class="callable">
+  <span class="name"><a href="../core_nano_core/AtomSelectorExtension/select.html">select</a></span><span class="signature">&lt;<wbr><span class="type-parameter">R</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="select-param-selector"><span class="type-annotation">R</span> <span class="parameter-name">selector</span>(<span class="parameter" id="param-"><span class="type-annotation">T</span></span>), {</span><span class="parameter" id="select-param-label"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">label</span></span>})
+    <span class="returntype parameter">&#8594; <a href="../core_nano_core/Atom-class.html">Atom</a><span class="signature">&lt;<wbr><span class="type-parameter">R</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="../core_nano_core/Atom-class.html">Atom</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="../core_nano_core/AtomSelectorExtension.html">AtomSelectorExtension</a> extension</span>
+      </p>
+  Selects a specific part <code>R</code> of the state <code>T</code>.
+  
+
+</dd>
+
+        <dt id="select" class="callable">
+  <span class="name"><a href="../core_nano_core/Atom/select.html">select</a></span><span class="signature">&lt;<wbr><span class="type-parameter">R</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="select-param-selector"><span class="type-annotation">R</span> <span class="parameter-name">selector</span>(<span class="parameter" id="param-value"><span class="type-annotation">T</span> <span class="parameter-name">value</span></span>), {</span><span class="parameter" id="select-param-label"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">label</span></span>})
+    <span class="returntype parameter">&#8594; <a href="../core_nano_core/Atom-class.html">Atom</a><span class="signature">&lt;<wbr><span class="type-parameter">R</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Creates a derived <a href="../core_nano_core/ComputedAtom-class.html">ComputedAtom</a> that selects a sub-field from this atom.
+It only notifies when the selected value actually changes.
+  
+
+</dd>
+
+        <dt id="set" class="callable">
+  <span class="name"><a href="../core_nano_core/Atom/set.html">set</a></span><span class="signature">(<wbr><span class="parameter" id="set-param-newValue"><span class="type-annotation">T</span> <span class="parameter-name">newValue</span></span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  
+  
+
+</dd>
+
+        <dt id="text" class="callable">
+  <span class="name"><a href="../flutter_src_extensions_reactive/AtomTextWidgetExtension/text.html">text</a></span><span class="signature">(<wbr>{<span class="parameter" id="text-param-format"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">format</span>(<span class="parameter" id="param-value"><span class="type-annotation">T</span> <span class="parameter-name">value</span></span>)?, </span><span class="parameter" id="text-param-style"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/painting/TextStyle-class.html">TextStyle</a>?</span> <span class="parameter-name">style</span></span>})
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/widgets/Widget-class.html">Widget</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/foundation/ValueListenable-class.html">ValueListenable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="../flutter_src_extensions_reactive/AtomTextWidgetExtension.html">AtomTextWidgetExtension</a> extension</span>
+      </p>
+  Returns a <a href="https://api.flutter.dev/flutter/widgets/Text-class.html">Text</a> widget that rebuilds when the atom changes.
+  
+
+</dd>
+
+        <dt id="throttle" class="callable">
+  <span class="name"><a href="../core_nano_core/AtomTimeControlExtension/throttle.html">throttle</a></span><span class="signature">(<wbr><span class="parameter" id="throttle-param-duration"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Duration-class.html">Duration</a></span> <span class="parameter-name">duration</span>, {</span><span class="parameter" id="throttle-param-label"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">label</span></span>})
+    <span class="returntype parameter">&#8594; <a href="../core_nano_core/Atom-class.html">Atom</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="../core_nano_core/Atom-class.html">Atom</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="../core_nano_core/AtomTimeControlExtension.html">AtomTimeControlExtension</a> extension</span>
+      </p>
+  Returns a new <a href="../core_nano_core/Atom-class.html">Atom</a> that throttles updates from this atom.
+  
+
+</dd>
+
+        <dt id="toDiagnosticsNode" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/foundation/Diagnosticable/toDiagnosticsNode.html">toDiagnosticsNode</a></span><span class="signature">(<wbr>{<span class="parameter" id="toDiagnosticsNode-param-name"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">name</span>, </span><span class="parameter" id="toDiagnosticsNode-param-style"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/foundation/DiagnosticsTreeStyle.html">DiagnosticsTreeStyle</a>?</span> <span class="parameter-name">style</span></span>})
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/foundation/DiagnosticsNode-class.html">DiagnosticsNode</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Returns a debug representation of the object that is used by debugging
+tools and by <a href="https://api.flutter.dev/flutter/foundation/DiagnosticsNode/toStringDeep.html">DiagnosticsNode.toStringDeep</a>.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="toggle" class="callable">
+  <span class="name"><a href="../core_nano_core/AtomBoolExtension/toggle.html">toggle</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="../core_nano_core/Atom-class.html">Atom</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>&gt;</span>,
+        provided by the <a href="../core_nano_core/AtomBoolExtension.html">AtomBoolExtension</a> extension</span>
+      </p>
+  Toggles the boolean value.
+  
+
+</dd>
+
+        <dt id="toString" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/foundation/Diagnosticable/toString.html">toString</a></span><span class="signature">(<wbr>{<span class="parameter" id="toString-param-minLevel"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/foundation/DiagnosticLevel.html">DiagnosticLevel</a></span> <span class="parameter-name">minLevel</span> = <span class="default-value">DiagnosticLevel.info</span></span>})
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  A string representation of this object.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="toStringShort" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/foundation/Diagnosticable/toStringShort.html">toStringShort</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  A brief description of this object, usually just the <a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a> and the
+<a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a>.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="update" class="callable">
+  <span class="name"><a href="../core_nano_core/Atom/update.html">update</a></span><span class="signature">(<wbr><span class="parameter" id="update-param-fn"><span class="type-annotation">T</span> <span class="parameter-name">fn</span>(<span class="parameter" id="param-current"><span class="type-annotation">T</span> <span class="parameter-name">current</span></span>)</span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  
+  
+
+</dd>
+
+        <dt id="watch" class="callable">
+  <span class="name"><a href="../flutter_src_extensions_reactive/ValueListenableWatcher/watch.html">watch</a></span><span class="signature">(<wbr><span class="parameter" id="watch-param-builder"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/widgets/Widget-class.html">Widget</a></span> <span class="parameter-name">builder</span>(<span class="parameter" id="param-context"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/widgets/BuildContext-class.html">BuildContext</a></span> <span class="parameter-name">context</span>, </span><span class="parameter" id="param-value"><span class="type-annotation">T</span> <span class="parameter-name">value</span></span>)</span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/widgets/Widget-class.html">Widget</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/foundation/ValueListenable-class.html">ValueListenable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="../flutter_src_extensions_reactive/ValueListenableWatcher.html">ValueListenableWatcher</a> extension</span>
+      </p>
+  Creates a <a href="../flutter_src_watch/Watch-class.html">Watch</a> widget from this <a href="https://api.flutter.dev/flutter/foundation/ValueListenable-class.html">ValueListenable</a>.
+  
+
+</dd>
+
+        <dt id="when" class="callable">
+  <span class="name"><a href="../flutter_src_extensions_reactive/AsyncAtomWidgetExtension/when.html">when</a></span><span class="signature">(<wbr>{<span class="parameter" id="when-param-data"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/widgets/Widget-class.html">Widget</a></span> <span class="parameter-name">data</span>(<span class="parameter" id="param-context"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/widgets/BuildContext-class.html">BuildContext</a></span> <span class="parameter-name">context</span>, </span><span class="parameter" id="param-data"><span class="type-annotation">T</span> <span class="parameter-name">data</span></span>), </span><span class="parameter" id="when-param-error"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/widgets/Widget-class.html">Widget</a></span> <span class="parameter-name">error</span>(<span class="parameter" id="param-context"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/widgets/BuildContext-class.html">BuildContext</a></span> <span class="parameter-name">context</span>, </span><span class="parameter" id="param-error"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a></span> <span class="parameter-name">error</span></span>), </span><span class="parameter" id="when-param-loading"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/widgets/Widget-class.html">Widget</a></span> <span class="parameter-name">loading</span>(<span class="parameter" id="param-context"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/widgets/BuildContext-class.html">BuildContext</a></span> <span class="parameter-name">context</span></span>), </span><span class="parameter" id="when-param-idle"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/widgets/Widget-class.html">Widget</a></span> <span class="parameter-name">idle</span>(<span class="parameter" id="param-context"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/widgets/BuildContext-class.html">BuildContext</a></span> <span class="parameter-name">context</span></span>)?</span>})
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/widgets/Widget-class.html">Widget</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.flutter.dev/flutter/foundation/ValueListenable-class.html">ValueListenable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../core_nano_core/AsyncState-class.html">AsyncState</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>&gt;</span>,
+        provided by the <a href="../flutter_src_extensions_reactive/AsyncAtomWidgetExtension.html">AsyncAtomWidgetExtension</a> extension</span>
+      </p>
+  Watches the <a href="../core_nano_core/AsyncState-class.html">AsyncState</a> and builds widgets based on the state.
+  
+
+</dd>
+
+    </dl>
+  </section>
+    
+  <section
+      class="summary offset-anchor inherited"
+      id="operators">
+    <h2>Operators</h2>
+    <dl class="callables">
+        <dt id="operator ==" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/operator_equals.html">operator ==</a></span><span class="signature">(<wbr><span class="parameter" id="==-param-other"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a></span> <span class="parameter-name">other</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  The equality operator.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+    </dl>
+  </section>
+    
+    
+    
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../index.html">nano</a></li>
+    <li><a href="../core_nano_core/">nano_core</a></li>
+    <li class="self-crumb">Atom<span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span> class</li>
+</ol>
+
+    <h5>nano_core library</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div>
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    nano
+      0.9.0
+  </span>
+  
+</footer>
+
+
+<script src="../static-assets/highlight.pack.js?v1"></script>
+<script src="../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

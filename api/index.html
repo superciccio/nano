@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="nano API docs, for the Dart programming language.">
+  <title>nano - Dart API docs</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="static-assets/github.css?v1">
+  <link rel="stylesheet" href="static-assets/styles.css?v1">
+  <link rel="icon" href="static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li class="self-crumb">nano package</li>
+  </ol>
+  <div class="self-name">nano</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
+</header>
+<main>
+  <div id="dartdoc-main-content" class="main-content">
+      
+<section class="desc markdown">
+  <h1 id="nano-">Nano 🪐</h1>
+<p><img src="https://img.shields.io/badge/coverage-90%25-brightgreen" alt="Coverage"></p>
+<p><strong>The invisible state management library for Flutter.</strong></p>
+<p>Nano is designed to be <strong>minimalist</strong>, <strong>atomic</strong>, and <strong>testable</strong>. It combines the simplicity of <code>ValueNotifier</code> with a clean Dependency Injection system and surgical rebuilds.</p>
+<hr>
+<h2 id="-choose-your-style">✨ Choose Your Style</h2>
+<p>Nano supports two development styles. Both share the same high-performance engine.</p>
+<h3 id="1-modern-nano-generated-">1. Modern Nano (Generated) 🚀</h3>
+<p><strong>Best for: Maximum velocity and minimal boilerplate.</strong> Uses code generation to hide Atoms and automate UI tracking.</p>
+<pre class="language-dart"><code class="language-dart">@nano
+abstract class _CounterLogic extends NanoLogic {
+  @state int count = 0;
+  void increment() =&gt; count++;
+}
+
+class CounterPage extends NanoComponent {
+  @override
+  List&lt;Object&gt; get modules =&gt; [NanoLazy((_) =&gt; CounterLogic())];
+
+  @override
+  Widget view(context) {
+    final logic = context.use&lt;CounterLogic&gt;();
+    return Text('Count: ${logic.count}'); // Automatically tracks usage!
+  }
+}
+</code></pre>
+<h3 id="2-classic-nano-manual-">2. Classic Nano (Manual) 🛠️</h3>
+<p><strong>Best for: Full control and zero build steps.</strong> Uses explicit Atoms and standard widgets.</p>
+<pre class="language-dart"><code class="language-dart">class CounterLogic extends NanoLogic {
+  final count = Atom(0);
+  void increment() =&gt; count.value++;
+}
+
+class CounterPage extends StatelessWidget {
+  @override
+  Widget build(context) {
+    return NanoView&lt;CounterLogic, void&gt;(
+      create: (r) =&gt; CounterLogic(),
+      builder: (context, logic) {
+        return logic.count.watch((context, value) =&gt; Text('Count: $value'));
+      },
+    );
+  }
+}
+</code></pre>
+<hr>
+<h2 id="-why-nano">✨ Why Nano?</h2>
+<ul>
+<li><strong>Atomic</strong>: State is broken down into small, independent <code>Atom</code>s.</li>
+<li><strong>Surgical</strong>: Rebuilds only what changed, either implicitly (Modern) or explicitly (Classic).</li>
+<li><strong>Component-Based</strong>: <code>NanoComponent</code> merges DI and View into a single, clean class.</li>
+<li><strong>Reactive Collections</strong>: Built-in <code>NanoList</code>, <code>NanoMap</code>, and <code>NanoSet</code> for mutable state.</li>
+<li><strong>Snapshot Testing</strong>: Record and verify complex user flows with zero manual assertions.</li>
+<li><strong>Time-Travel Debugging</strong>: DevTools extension to inspect and revert state changes.</li>
+</ul>
+<h2 id="-syntactic-sugar">🍬 Syntactic Sugar</h2>
+<p>Nano loves clean code.</p>
+<table>
+<thead>
+<tr>
+<th align="left">Operation</th>
+<th align="left">Classic</th>
+<th align="left">Modern (Generated)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><strong>Logic</strong></td>
+<td align="left"><code>final count = Atom(0)</code></td>
+<td align="left"><code>@state int count = 0</code></td>
+</tr>
+<tr>
+<td align="left"><strong>Mutation</strong></td>
+<td align="left"><code>count.value++</code></td>
+<td align="left"><code>count++</code></td>
+</tr>
+<tr>
+<td align="left"><strong>Read</strong></td>
+<td align="left"><code>count.value</code></td>
+<td align="left"><code>count</code></td>
+</tr>
+<tr>
+<td align="left"><strong>UI</strong></td>
+<td align="left"><code>logic.count.watch(...)</code></td>
+<td align="left"><code>logic.count</code> (inside <code>NanoComponent</code>)</td>
+</tr>
+<tr>
+<td align="left"><strong>Async</strong></td>
+<td align="left"><code>final data = AsyncAtom()</code></td>
+<td align="left"><code>@async AsyncState data = ...</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="-advanced-features">⚡ Advanced Features</h2>
+<h3 id="reactive-collections">Reactive Collections</h3>
+<p>Use mutable collections that trigger UI updates automatically.</p>
+<pre class="language-dart"><code class="language-dart">final todos = NanoList&lt;String&gt;();
+todos.add('New Item'); // UI updates automatically!
+</code></pre>
+<h3 id="snapshot-testing">Snapshot Testing</h3>
+<p>Test complex flows by comparing state history against a "Golden" JSON.</p>
+<pre class="language-dart"><code class="language-dart">test('Login flow', () async {
+  final harness = NanoTestHarness(MyLogic());
+  await harness.record((logic) =&gt; logic.login());
+  harness.expectSnapshot('login_success');
+});
+</code></pre>
+<h2 id="-devtools-extension">🛠️ DevTools Extension</h2>
+<p>Nano comes with a powerful DevTools extension to make debugging a breeze.</p>
+<ul>
+<li><strong>Atoms View</strong>: Inspect the live state of all registered <code>Atom</code>s.</li>
+<li><strong>History View</strong>: See a timeline of all state changes.</li>
+<li><strong>Time-Travel</strong>: Revert to any previous state with one click.</li>
+</ul>
+<h2 id="-ai--llm-usage">🤖 AI / LLM Usage</h2>
+<p>Are you an AI? <strong>Read <code>NANO_GUIDE.md</code></strong>.
+It contains the full technical specification, API signatures, and architectural rules designed specifically for code generation and analysis.</p>
+<h2 id="-installation">📦 Installation</h2>
+<pre class="language-yaml"><code class="language-yaml">dependencies:
+  nano:
+    path: ./
+  nano_annotations:
+    path: ./packages/nano_annotations
+
+dev_dependencies:
+  build_runner: ^2.4.6
+  nano_generator:
+    path: ./packages/nano_generator
+  nano_test_utils:
+    path: ./packages/nano_test_utils
+</code></pre>
+<h2 id="-license">📄 License</h2>
+<p>MIT</p>
+</section>
+
+
+      <section class="summary">
+          <h2>Libraries</h2>
+        <dl>
+          <dt id="debug_service">
+  <span class="name"><a href="core_debug_service/">core/debug_service</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="history_observer">
+  <span class="name"><a href="core_history_observer/">core/history_observer</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="nano_action">
+  <span class="name"><a href="core_nano_action/">core/nano_action</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="nano_collection">
+  <span class="name"><a href="core_nano_collection/">core/nano_collection</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="nano_config">
+  <span class="name"><a href="core_nano_config/">core/nano_config</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="nano_di">
+  <span class="name"><a href="core_nano_di/">core/nano_di</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="nano_forms">
+  <span class="name"><a href="core_nano_forms/">core/nano_forms</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="nano_middleware">
+  <span class="name"><a href="core_nano_middleware/">core/nano_middleware</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="nano_persistence">
+  <span class="name"><a href="core_nano_persistence/">core/nano_persistence</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="nano_reaction">
+  <span class="name"><a href="core_nano_reaction/">core/nano_reaction</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="nano_flutter">
+  <span class="name"><a href="flutter_nano_flutter/">flutter/nano_flutter</a></span> 
+
+</dt>
+<dd>Nano Flutter
+</dd>
+
+          <dt id="context">
+  <span class="name"><a href="flutter_src_extensions_context/">flutter/src/extensions/context</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="reactive">
+  <span class="name"><a href="flutter_src_extensions_reactive/">flutter/src/extensions/reactive</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="string">
+  <span class="name"><a href="flutter_src_extensions_string/">flutter/src/extensions/string</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="widget">
+  <span class="name"><a href="flutter_src_extensions_widget/">flutter/src/extensions/widget</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="forms">
+  <span class="name"><a href="flutter_src_forms/">flutter/src/forms</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="layout">
+  <span class="name"><a href="flutter_src_layout/">flutter/src/layout</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="nano_component">
+  <span class="name"><a href="flutter_src_nano_component/">flutter/src/nano_component</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="nano_widget">
+  <span class="name"><a href="flutter_src_nano_widget/">flutter/src/nano_widget</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="scope">
+  <span class="name"><a href="flutter_src_scope/">flutter/src/scope</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="testing">
+  <span class="name"><a href="flutter_src_testing/">flutter/src/testing</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="view">
+  <span class="name"><a href="flutter_src_view/">flutter/src/view</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="watch">
+  <span class="name"><a href="flutter_src_watch/">flutter/src/watch</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="test">
+  <span class="name"><a href="test/">test</a></span> 
+
+</dt>
+<dd>Nano Testing Library
+</dd>
+
+          <dt id="nano_matchers">
+  <span class="name"><a href="test_nano_matchers/">test/nano_matchers</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="nano_test_utils">
+  <span class="name"><a href="test_nano_test_utils/">test/nano_test_utils</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <h3>Core</h3>
+            <dt id="nano_core">
+  <span class="name"><a href="core_nano_core/">core/nano_core</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+            <dt id="nano">
+  <span class="name"><a href="nano/">nano</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <h3>Logic</h3>
+            <dt id="nano_logic">
+  <span class="name"><a href="core_nano_logic/">core/nano_logic</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+        </dl>
+      </section>
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li class="self-crumb">nano package</li>
+</ol>
+
+    <h5 class="hidden-xs"><span class="package-name">nano</span> <span class="package-kind">package</span></h5>
+    <ol>
+      <li class="section-title">Libraries</li>
+      <li><a href="core_debug_service/">core/debug_service</a></li>
+      <li><a href="core_history_observer/">core/history_observer</a></li>
+      <li><a href="core_nano_action/">core/nano_action</a></li>
+      <li><a href="core_nano_collection/">core/nano_collection</a></li>
+      <li><a href="core_nano_config/">core/nano_config</a></li>
+      <li><a href="core_nano_di/">core/nano_di</a></li>
+      <li><a href="core_nano_forms/">core/nano_forms</a></li>
+      <li><a href="core_nano_middleware/">core/nano_middleware</a></li>
+      <li><a href="core_nano_persistence/">core/nano_persistence</a></li>
+      <li><a href="core_nano_reaction/">core/nano_reaction</a></li>
+      <li><a href="flutter_nano_flutter/">flutter/nano_flutter</a></li>
+      <li><a href="flutter_src_extensions_context/">flutter/src/extensions/context</a></li>
+      <li><a href="flutter_src_extensions_reactive/">flutter/src/extensions/reactive</a></li>
+      <li><a href="flutter_src_extensions_string/">flutter/src/extensions/string</a></li>
+      <li><a href="flutter_src_extensions_widget/">flutter/src/extensions/widget</a></li>
+      <li><a href="flutter_src_forms/">flutter/src/forms</a></li>
+      <li><a href="flutter_src_layout/">flutter/src/layout</a></li>
+      <li><a href="flutter_src_nano_component/">flutter/src/nano_component</a></li>
+      <li><a href="flutter_src_nano_widget/">flutter/src/nano_widget</a></li>
+      <li><a href="flutter_src_scope/">flutter/src/scope</a></li>
+      <li><a href="flutter_src_testing/">flutter/src/testing</a></li>
+      <li><a href="flutter_src_view/">flutter/src/view</a></li>
+      <li><a href="flutter_src_watch/">flutter/src/watch</a></li>
+      <li><a href="test/">test</a></li>
+      <li><a href="test_nano_matchers/">test/nano_matchers</a></li>
+      <li><a href="test_nano_test_utils/">test/nano_test_utils</a></li>
+      <li class="section-subtitle">Core</li>
+        <li class="section-subitem"><a href="core_nano_core/">core/nano_core</a></li>
+        <li class="section-subitem"><a href="nano/">nano</a></li>
+      <li class="section-subtitle">Logic</li>
+        <li class="section-subitem"><a href="core_nano_logic/">core/nano_logic</a></li>
+</ol>
+
+  </div>
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div>
+</main>
+<footer>
+  <span class="no-break">
+    nano
+      0.9.0
+  </span>
+  
+</footer>
+
+
+<script src="static-assets/highlight.pack.js?v1"></script>
+<script src="static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+
